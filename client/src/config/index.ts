@@ -10,5 +10,5 @@ export const appinfo = {
       email: 'info@bricksseoul.com',
     },
   ],
-  url: 'https://www.bricksseoul.com/',
+  url: 'https://bricksseoul.vercel.app/',
 }

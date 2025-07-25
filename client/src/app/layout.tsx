@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { appinfo } from '../config/appinfo'
+import { appinfo } from '../config'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { Geist, Geist_Mono } from 'next/font/google'
 import '@/styles/globals.css'
