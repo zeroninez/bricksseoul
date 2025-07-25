@@ -18,7 +18,7 @@
 
 import classNames from 'classnames'
 import React from 'react'
-import { Header } from '@/components'
+import { Header, Footer } from '@/components'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -26,17 +26,12 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit bg-background')}>
+    <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
       <Header />
       {/* Main content area */}
-      <main className='space-y-4 p-6'>{children}</main>
+      <main className='flex-1'>{children}</main>
       {/* Footer can be added here if needed */}
-      <footer
-        className='p-4 sm:p-6 lg:p-8 border-t
-        border-gray-200 bg-background text-center text-sm text-foreground'
-      >
-        © {new Date().getFullYear()} Bricks Seoul. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   )
 }

@@ -15,8 +15,8 @@ export const Header = () => {
   const menuItems = [
     // { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/property', label: 'Properties' },
-    { href: '/activity', label: 'Activity' },
+    { href: '/properties', label: 'Properties' },
+    { href: '/activities', label: 'Activities' },
     { href: '/request', label: 'Request' },
   ]
 
@@ -29,12 +29,13 @@ export const Header = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
+          whileTap={{ scale: 0.95 }}
         >
           <Link href='/' className='flex items-center'>
             <Logo className='w-8 h-8' />
             <span
-              className='ml-2 text-lg font-semibold uppercase tracking-tight
- font-bodoniModa text-foreground'
+              className='ml-2 text-lg tracking-tight
+ font-bodoniModa font-bold'
             >
               Bricks Seoul
             </span>
