@@ -13,15 +13,16 @@
     "@next/third-parties": "^15.4.4",
     "@svgr/webpack": "^8.1.0",
     "classnames": "^2.5.1",
+    "motion": "^12.23.9",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^15.1.7",
-    "@types/classnames": "^2.3.1",
     "@eslint/eslintrc": "^3",
+    "@next/bundle-analyzer": "^15.1.7",
     "@tailwindcss/postcss": "^4",
+    "@types/classnames": "^2.3.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
