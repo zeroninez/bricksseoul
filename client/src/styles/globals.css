@@ -19,6 +19,11 @@
   --text-8xl: 6rem;
   --text-9xl: 7.5rem;
 
+  /* font-family */
+  --font-geist-sans: var(--geist-sans-font-family);
+  --font-geist-mono: var(--geist-mono-font-family);
+  --font-bodoniModa: 'Bodoni Moda', serif;
+
   /* colors */
   --color-primary: #1d4ed8;
   --color-secondary: #f59e0b;

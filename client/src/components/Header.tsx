@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { Logo } from './Logo'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -12,11 +13,11 @@ export const Header = () => {
   }
 
   const menuItems = [
-    { href: '/', label: 'Home' },
+    // { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/services', label: 'Services' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/login', label: 'Login' },
+    { href: '/property', label: 'Properties' },
+    { href: '/activity', label: 'Activity' },
+    { href: '/request', label: 'Request' },
   ]
 
   return (
@@ -30,14 +31,13 @@ export const Header = () => {
           transition={{ duration: 0.3 }}
         >
           <Link href='/' className='flex items-center'>
-            <motion.div
-              className='w-8 h-8 bg-primary rounded-lg flex items-center justify-center'
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <Logo className='w-8 h-8' />
+            <span
+              className='ml-2 text-lg font-semibold uppercase tracking-tight
+ font-bodoniModa text-foreground'
             >
-              <span className='text-white font-bold text-lg'>L</span>
-            </motion.div>
-            <span className='ml-2 text-lg font-semibold text-foreground'>Logo</span>
+              Bricks Seoul
+            </span>
           </Link>
         </motion.div>
 
@@ -48,12 +48,6 @@ export const Header = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Link href='/signup' className='bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-medium'>
-              Sign Up
-            </Link>
-          </motion.div>
-
           <motion.button
             onClick={toggleMobileMenu}
             className='text-foreground p-2 rounded-lg'

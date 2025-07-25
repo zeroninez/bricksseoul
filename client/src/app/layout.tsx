@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { appinfo } from '../config'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist, Geist_Mono, Bodoni_Moda } from 'next/font/google'
 import '@/styles/globals.css'
 import { Layout } from '@/components'
 
@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const bodoniModa = Bodoni_Moda({
+  variable: '--font-bodoni-moda',
+  subsets: ['latin'],
+})
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${bodoniModa.variable} antialiased`}>
         <Layout>{children}</Layout>
       </body>
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />

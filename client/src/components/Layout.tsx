@@ -29,7 +29,7 @@ export const Layout = ({ children }: LayoutProps) => {
     <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit bg-background')}>
       <Header />
       {/* Main content area */}
-      <main className='p-4 sm:p-6 lg:p-8'>{children}</main>
+      <main className='space-y-4 p-6'>{children}</main>
       {/* Footer can be added here if needed */}
       <footer
         className='p-4 sm:p-6 lg:p-8 border-t
