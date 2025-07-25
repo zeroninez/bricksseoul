@@ -83,7 +83,7 @@
   body {
     margin: 0;
     padding: 0;
-    background: #EEE;
+    background: var(--color-background);
     color: black;
     /* 16px */
     font-size: 100%;
