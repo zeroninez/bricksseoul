@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme {
+  /* font-size  */
+  --text-xxxs: 0.6rem;
+  --text-xxs: 0.65rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.125rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: 3rem;
+  --text-5xl: 3.75rem;
+  --text-6xl: 4.5rem;
+  --text-7xl: 5.25rem;
+  --text-8xl: 6rem;
+  --text-9xl: 7.5rem;
+}
+
+@theme {
+  /* colors */
+  --primary: #1d4ed8;
+  /* blue-700 */
+  --secondary: #f59e0b;
+  /* amber-500 */
+  --background: #f3f4f6;
+  /* gray-100 */
+  --foreground: #111827;
+  /* gray-900 */
+}
+
+@theme {
+  /* aspect-ratio */
+  --aspect-square: 1 / 1;
+  --aspect-video: 16 / 9;
+  --aspect-portrait: 9 / 16;
+  --aspect-landscape: 16 / 9;
+}
+
+
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
