@@ -1,6 +1,6 @@
 // Layout.tsx
 
-"use client";
+'use client'
 /**
  * Layout
  * - Layout은 페이지의 전체적인 레이아웃을 담당하는 컴포넌트입니다.
@@ -17,11 +17,13 @@
  * )
  **/
 
-import classNames from "classnames";
-import React from "react";
+import classNames from 'classnames'
+import React from 'react'
 
-export const Layout = ({ children }) => {
-  return (
-    <div className={classNames("w-full h-fit bg-background")}>{children}</div>
-  );
-};
+interface LayoutProps {
+  children: React.ReactNode
+}
+
+export const Layout = ({ children }: LayoutProps) => {
+  return <div className={classNames('w-full h-fit bg-background')}>{children}</div>
+}
