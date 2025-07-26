@@ -1,23 +1,51 @@
+// src/app/page.tsx
 'use client'
 
+import { useState } from 'react'
+import { AccessCodeManager } from '@/components/AccessCodeManager'
+import { AccessLogsViewer } from '@/components/AccessLogsViewer'
+
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<'codes' | 'logs'>('codes')
+
   return (
-    <>
-      <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
-        <h1 className='text-3xl font-bold font-bodoniModa tracking-tighter mb-4'>Admin Page</h1>
-        <p className='text-lg text-gray-700'>
-          Manage your properties, activities, and requests efficiently from this admin dashboard.
-        </p>
+    <div className='min-h-screen bg-gray-50'>
+      {/* 헤더 섹션 */}
+      <section className='w-full bg-white border-b border-gray-200 p-6'>
+        <div className='max-w-4xl mx-auto text-center'>
+          <h1 className='text-3xl font-bold font-bodoniModa tracking-tighter mb-4'>Bricks Seoul 관리자</h1>
+          <p className='text-lg text-gray-700'>입장코드와 접근 로그를 효율적으로 관리하세요.</p>
+        </div>
       </section>
-      <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
-        <h2 className='text-2xl font-semibold font-bodoniModa tracking-tight mb-4'>Explore Our Services</h2>
-        <p className='text-base text-gray-600'>
-          Discover a range of activities and properties designed to enhance your well-being.
-        </p>
+
+      {/* 탭 네비게이션 */}
+      <section className='w-full bg-white border-b border-gray-100 p-6'>
+        <div className='max-w-4xl mx-auto'>
+          <div className='flex space-x-1 bg-gray-100 p-1 rounded-lg w-fit mx-auto'>
+            <button
+              onClick={() => setActiveTab('codes')}
+              className={`px-6 py-2 rounded-md font-medium transition-all ${
+                activeTab === 'codes' ? 'bg-white text-primary shadow-sm' : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              입장코드 관리
+            </button>
+            <button
+              onClick={() => setActiveTab('logs')}
+              className={`px-6 py-2 rounded-md font-medium transition-all ${
+                activeTab === 'logs' ? 'bg-white text-primary shadow-sm' : 'text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              접근 로그
+            </button>
+          </div>
+        </div>
       </section>
-      <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
-        <div className='w-full h-auto aspect-landscape bg-gray-200 flex items-center justify-center'></div>
+
+      {/* 메인 컨텐츠 */}
+      <section className='w-full p-6'>
+        <div className='max-w-4xl mx-auto'>{activeTab === 'codes' ? <AccessCodeManager /> : <AccessLogsViewer />}</div>
       </section>
-    </>
+    </div>
   )
 }

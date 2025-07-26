@@ -11,14 +11,28 @@ export const AccessCodeForm = () => {
   const [error, setError] = useState('')
   const { login } = useAuth()
 
+  const getClientIP = async (): Promise<string | null> => {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const data = await res.json()
+      return data.ip
+    } catch (err) {
+      console.error('Failed to fetch IP address:', err)
+      return null
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
+    // const location = await ipify({ useIPv6: false })
+
     e.preventDefault()
     if (!code.trim()) return
 
     setIsLoading(true)
     setError('')
 
-    const success = await login(code.trim())
+    const ip = await getClientIP()
+    const success = await login(code.trim(), ip)
 
     if (!success) {
       setError('Invalid access code.')

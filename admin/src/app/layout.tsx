@@ -1,9 +1,11 @@
+// src/app/layout.tsx
 import type { Metadata } from 'next'
 import { appinfo } from '../config'
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import { Geist, Geist_Mono, Bodoni_Moda } from 'next/font/google'
 import '@/styles/globals.css'
-import { Layout } from '@/components'
+import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
+import { AdminLayout } from '@/components'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -28,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${geistSans.variable} ${geistMono.variable} ${bodoniModa.variable} antialiased`}>
-        <Layout>{children}</Layout>
+        <AdminAuthProvider>
+          <AdminLayout>{children}</AdminLayout>
+        </AdminAuthProvider>
       </body>
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />
@@ -41,21 +45,20 @@ export const metadata: Metadata = {
     canonical: appinfo.url,
   },
   title: {
-    default: appinfo.title,
+    default: appinfo.title + ' - 관리자',
     template: appinfo.titleTemplate,
   },
-  description: appinfo.description,
-  keywords: appinfo.keywords,
+  description: appinfo.description + ' 관리자 페이지',
+  keywords: [...appinfo.keywords, '관리자', 'admin'],
   authors: appinfo.authors,
   creator: appinfo.authors[0].name,
   publisher: appinfo.authors[0].name,
   manifest: '/manifest.json',
   generator: appinfo.authors[0].name,
-  applicationName: appinfo.name,
+  applicationName: appinfo.name + ' Admin',
   appleWebApp: {
     capable: true,
-    title: appinfo.title,
-    // startUpImage: [],
+    title: appinfo.title + ' 관리자',
   },
   category: 'webapp',
   formatDetection: {
@@ -65,12 +68,12 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    siteName: appinfo.name,
+    siteName: appinfo.name + ' 관리자',
     title: {
-      default: appinfo.title,
+      default: appinfo.title + ' - 관리자',
       template: appinfo.titleTemplate,
     },
-    description: appinfo.description,
+    description: appinfo.description + ' 관리자 페이지',
     locale: 'ko_KR',
     url: appinfo.url,
     images: {
@@ -79,15 +82,11 @@ export const metadata: Metadata = {
   },
   referrer: 'origin-when-cross-origin',
   robots: {
-    index: true,
-    follow: true,
+    index: false, // 관리자 페이지는 검색엔진에 노출하지 않음
+    follow: false,
     googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      index: false,
+      follow: false,
     },
   },
   icons: {
