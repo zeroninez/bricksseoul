@@ -4,12 +4,19 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Logo } from './Logo'
+import { useAuth } from '@/contexts/AuthContext'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { logout, accessCode } = useAuth()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const handleLogout = () => {
+    logout()
+    setIsMobileMenuOpen(false)
   }
 
   const menuItems = [
@@ -49,6 +56,9 @@ export const Header = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
+          <button onClick={handleLogout} className='text-foreground p-2 rounded-lg' aria-label='Logout'>
+            Logout
+          </button>
           <motion.button
             onClick={toggleMobileMenu}
             className='text-foreground p-2 rounded-lg'
@@ -115,7 +125,7 @@ export const Header = () => {
                 >
                   <Link
                     href={item.href}
-                    className='block py-3 text-foreground font-medium border-b border-gray-100 last:border-b-0 hover:text-primary transition-colors duration-200'
+                    className='block py-3 text-foreground border-b border-gray-100 last:border-b-0 hover:font-semibold transition-all duration-200'
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.label}

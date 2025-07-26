@@ -18,7 +18,8 @@
 
 import classNames from 'classnames'
 import React from 'react'
-import { Header, Footer } from '@/components'
+import { Header, Footer, ProtectedRoute } from '@/components'
+import { AuthProvider } from '@/contexts/AuthContext'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -26,12 +27,16 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
-      <Header />
-      {/* Main content area */}
-      <main className='flex-1'>{children}</main>
-      {/* Footer can be added here if needed */}
-      <Footer />
-    </div>
+    <AuthProvider>
+      <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
+        <ProtectedRoute>
+          <Header />
+          {/* Main content area */}
+          <main className='flex-1'>{children}</main>
+          {/* Footer can be added here if needed */}
+          <Footer />
+        </ProtectedRoute>
+      </div>
+    </AuthProvider>
   )
 }
