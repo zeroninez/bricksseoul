@@ -7,7 +7,7 @@ import { supabase, AccessCode } from '@/lib/supabase'
 interface AuthContextType {
   isAuthenticated: boolean
   accessCode: AccessCode | null
-  login: (code: string, location: string | null) => Promise<boolean>
+  login: (code: string, user_ip: string | null) => Promise<boolean>
   logout: () => void
   isLoading: boolean
 }
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false)
   }, [])
 
-  const login = async (code: string, location: string | null): Promise<boolean> => {
+  const login = async (code: string, user_ip: string | null): Promise<boolean> => {
     try {
       const { data, error } = await supabase
         .from('access_codes')
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await supabase.from('access_logs').insert({
         access_code_id: data.id,
         user_agent: navigator.userAgent,
-        location: location,
+        ip_address: user_ip,
       })
 
       // 로컬스토리지에 저장

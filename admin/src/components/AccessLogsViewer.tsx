@@ -10,7 +10,7 @@ interface AccessLog {
   access_code_id: number
   accessed_at: string
   user_agent: string | null
-  location: string | null
+  ip_address: string | null
   access_codes: {
     code: string
     name: string
@@ -139,7 +139,7 @@ export const AccessLogsViewer = () => {
           <div className='text-sm text-blue-700'>총 접근</div>
         </div>
         <div className='p-4 bg-green-50 rounded-lg text-center'>
-          <div className='text-2xl font-bold text-green-600'>{new Set(logs.map((log) => log.location)).size}</div>
+          <div className='text-2xl font-bold text-green-600'>{new Set(logs.map((log) => log.ip_address)).size}</div>
           <div className='text-sm text-green-700'>고유 IP</div>
         </div>
         <div className='p-4 bg-purple-50 rounded-lg text-center'>
@@ -185,7 +185,7 @@ export const AccessLogsViewer = () => {
                     </div>
                     <div className='flex items-center gap-4 text-xs text-gray-500'>
                       <span>🕒 {getRelativeTime(log.accessed_at)}</span>
-                      <span>🌐 {log.location || '알 수 없음'}</span>
+                      <span>🌐 {log.ip_address || '알 수 없음'}</span>
                       <span>💻 {getBrowserInfo(log.user_agent)}</span>
                     </div>
                   </div>
