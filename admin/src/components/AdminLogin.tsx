@@ -6,7 +6,7 @@ import { motion } from 'motion/react'
 import { Logo } from './Logo'
 
 interface AdminLoginProps {
-  onLogin: (password: string) => boolean
+  onLogin: (password: string) => Promise<boolean>
 }
 
 export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
@@ -25,17 +25,19 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     setIsLoading(true)
     setError('')
 
-    // 잠시 로딩 효과를 위한 지연
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    try {
+      const isValid = await onLogin(password)
 
-    const isValid = onLogin(password)
-
-    if (!isValid) {
-      setError('잘못된 비밀번호입니다.')
+      if (!isValid) {
+        setError('잘못된 비밀번호입니다.')
+        setPassword('')
+      }
+    } catch (error) {
+      setError('로그인 중 오류가 발생했습니다.')
       setPassword('')
+    } finally {
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
   }
 
   return (

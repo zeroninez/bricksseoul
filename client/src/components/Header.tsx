@@ -1,3 +1,4 @@
+// src/components/Header.tsx (client 폴더용)
 'use client'
 
 import Link from 'next/link'
@@ -5,6 +6,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { Logo } from './Logo'
 import { useAuth } from '@/contexts/AuthContext'
+import { PiBarcode } from 'react-icons/pi'
+import { a } from 'motion/react-client'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -40,28 +43,41 @@ export const Header = () => {
         >
           <Link href='/' className='flex items-center'>
             <Logo className='w-8 h-8' />
-            <span
-              className='ml-2 text-lg tracking-tight
- font-bodoniModa font-bold'
-            >
-              Bricks Seoul
-            </span>
+            <span className='ml-2 text-lg tracking-tight font-bodoniModa font-bold'>Bricks Seoul</span>
           </Link>
         </motion.div>
 
         {/* Mobile CTA + Menu Button */}
         <motion.div
-          className='flex items-center space-x-3'
+          className='flex items-center space-x-2'
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
         >
-          <button onClick={handleLogout} className='text-foreground p-2 rounded-lg' aria-label='Logout'>
+          {accessCode && (
+            <motion.button
+              className='bg-black mr-4 px-3 py-2 rounded-lg flex items-center justify-center gap-2 text-white text-xs font-mono cursor-pointer hover:bg-black/90 active:scale-95 transition-all'
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              onClick={() => {
+                alert(`Your access code is: ${accessCode.code}`)
+              }}
+            >
+              <PiBarcode className='w-4 h-4' />
+              <span className='font-semibold'>{accessCode.code}</span>
+            </motion.button>
+          )}
+          <button
+            onClick={handleLogout}
+            className='text-foreground p-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors'
+            aria-label='Logout'
+          >
             Logout
           </button>
           <motion.button
             onClick={toggleMobileMenu}
-            className='text-foreground p-2 rounded-lg'
+            className='text-foreground p-2 rounded-lg cursor-pointer'
             aria-label='Toggle menu'
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -104,13 +120,13 @@ export const Header = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className='absolute top-14 left-0 w-full h-fit bg-white border-t border-gray-200 py-3 overflow-hidden shadow-lg'
+            className='absolute top-14 left-0 w-full h-fit bg-white border-t border-gray-200 overflow-hidden shadow-lg'
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <motion.nav className='space-y-1 px-4'>
+            <motion.nav className='space-y-1'>
               {menuItems.map((item, index) => (
                 <motion.div
                   key={item.href}
@@ -119,13 +135,13 @@ export const Header = () => {
                   exit={{ x: -20, opacity: 0 }}
                   transition={{
                     duration: 0.2,
-                    delay: index * 0.05,
+                    delay: (index + 1) * 0.05,
                     ease: 'easeOut',
                   }}
                 >
                   <Link
                     href={item.href}
-                    className='block py-3 text-foreground border-b border-gray-100 last:border-b-0 hover:font-semibold transition-all duration-200'
+                    className='block py-4 px-4 text-foreground border-b border-gray-100 last:border-b-0 hover:font-semibold transition-all duration-200'
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.label}

@@ -98,7 +98,7 @@ export const AccessLogsViewer = () => {
     <div className='space-y-6'>
       {/* 헤더 */}
       <div className='flex justify-between items-center'>
-        <h3 className='text-xl font-bodoniModa font-bold'>접근 로그</h3>
+        <h3 className='text-xl font-bold'>접근 로그</h3>
         <div className='flex gap-2'>
           {[
             { value: 'all', label: '전체' },

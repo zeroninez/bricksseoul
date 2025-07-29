@@ -95,7 +95,7 @@ export const AccessCodeManager = () => {
     <div className='space-y-6'>
       {/* 헤더 */}
       <div className='flex justify-between items-center'>
-        <h2 className='text-2xl font-bodoniModa font-bold'>입장코드 관리</h2>
+        <h2 className='text-xl font-bold'>입장코드 관리</h2>
         <motion.button
           onClick={() => setIsAddingNew(true)}
           className='px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors'

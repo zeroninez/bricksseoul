@@ -1,4 +1,4 @@
-// src/components/index.ts
+// src/components/index.ts (admin 폴더용)
 export * from './Layout'
 export * from './Header'
 export * from './Footer'
@@ -6,3 +6,4 @@ export * from './Logo'
 export * from './AccessCodeManager'
 export * from './AdminLogin'
 export * from './AdminLayout'
+export * from './PasswordChangeModal'

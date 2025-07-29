@@ -2,18 +2,17 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { supabase } from '@/lib/supabase'
 
 interface AdminAuthContextType {
   isAuthenticated: boolean
-  login: (password: string) => boolean
+  login: (password: string) => Promise<boolean>
   logout: () => void
   isLoading: boolean
+  changePassword: (newPassword: string) => Promise<boolean>
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined)
-
-// 환경변수에서 관리자 비밀번호 가져오기 (fallback 포함)
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
 
 interface AdminAuthProviderProps {
   children: ReactNode
@@ -52,20 +51,56 @@ export const AdminAuthProvider = ({ children }: AdminAuthProviderProps) => {
     checkAuthStatus()
   }, [])
 
-  const login = (password: string): boolean => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
+  const login = async (password: string): Promise<boolean> => {
+    try {
+      // Supabase에서 관리자 비밀번호 조회
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('setting_value')
+        .eq('setting_key', 'admin_password')
+        .single()
 
-      // 로컬 스토리지에 인증 정보 저장 (1시간 유효)
-      const authData = {
-        timestamp: Date.now(),
-        isAuth: true,
+      if (error) {
+        console.error('Failed to fetch admin password:', error)
+        return false
       }
-      localStorage.setItem('admin_auth', JSON.stringify(authData))
+
+      if (password === data.setting_value) {
+        setIsAuthenticated(true)
+
+        // 로컬 스토리지에 인증 정보 저장 (1시간 유효)
+        const authData = {
+          timestamp: Date.now(),
+          isAuth: true,
+        }
+        localStorage.setItem('admin_auth', JSON.stringify(authData))
+
+        return true
+      }
+      return false
+    } catch (error) {
+      console.error('Login error:', error)
+      return false
+    }
+  }
+
+  const changePassword = async (newPassword: string): Promise<boolean> => {
+    try {
+      const { error } = await supabase
+        .from('admin_settings')
+        .update({ setting_value: newPassword })
+        .eq('setting_key', 'admin_password')
+
+      if (error) {
+        console.error('Failed to update password:', error)
+        return false
+      }
 
       return true
+    } catch (error) {
+      console.error('Change password error:', error)
+      return false
     }
-    return false
   }
 
   const logout = () => {
@@ -80,6 +115,7 @@ export const AdminAuthProvider = ({ children }: AdminAuthProviderProps) => {
         login,
         logout,
         isLoading,
+        changePassword,
       }}
     >
       {children}
