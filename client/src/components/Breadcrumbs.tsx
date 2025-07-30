@@ -9,10 +9,10 @@ export const Breadcrumbs = () => {
   const pathSegments = pathname.split('/').filter((segment) => segment)
 
   return (
-    <nav className='w-full h-fit text-left px-1 md:px-2 text-sm text-gray-500 py-2'>
-      <ul className='flex space-x-2'>
+    <nav className='w-full h-fit text-left text-sm px-6 pt-6 text-gray-500'>
+      <ul className='flex'>
         <li>
-          <Link href='/' className='hover:underline '>
+          <Link href='/' className='active:underline '>
             Home
           </Link>
         </li>
@@ -24,9 +24,9 @@ export const Breadcrumbs = () => {
             <li key={href} className='flex items-center'>
               <span className='mx-2'>/</span>
               {isLast ? (
-                <span className='text-gray-700'>{decodeURIComponent(segment)}</span>
+                <span className='text-gray-700 capitalize'>{decodeURIComponent(segment)}</span>
               ) : (
-                <Link href={href} className='hover:underline'>
+                <Link href={href} className='active:underline capitalize'>
                   {decodeURIComponent(segment)}
                 </Link>
               )}
