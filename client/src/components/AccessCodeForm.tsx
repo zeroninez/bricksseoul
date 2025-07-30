@@ -42,8 +42,8 @@ export const AccessCodeForm = () => {
   }
 
   return (
-    <div className='min-h-screen bg-background flex items-center justify-center p-4'>
-      <div className='max-w-md w-full bg-white shadow-lg p-8 border border-gray-200'>
+    <div className='h-dvh bg-background flex items-center justify-center p-4'>
+      <div className='w-full bg-white shadow-lg p-8 border border-gray-200'>
         <div className='text-center mb-8'>
           <Logo className='w-16 h-16 mx-auto mb-4' />
           <h1 className='text-2xl font-bold font-bodoniModa tracking-tighter mb-2'>Bricks Seoul</h1>

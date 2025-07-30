@@ -11,6 +11,7 @@ import { a } from 'motion/react-client'
 
 export const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false)
   const { logout, accessCode } = useAuth()
 
   const toggleMobileMenu = () => {
@@ -61,20 +62,60 @@ export const Header = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.2 }}
               onClick={() => {
-                alert(`Your access code is: ${accessCode.code}`)
+                setIsAuthMenuOpen(!isAuthMenuOpen)
               }}
             >
               <PiBarcode className='w-4 h-4' />
               <span className='font-semibold'>{accessCode.code}</span>
             </motion.button>
           )}
-          <button
+          <AnimatePresence>
+            {isAuthMenuOpen && (
+              <motion.div
+                className='fixed w-full h-full top-0 left-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center'
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={() => setIsAuthMenuOpen(false)}
+              >
+                <motion.div
+                  className='bg-white rounded-lg shadow-lg p-6 w-80 flex flex-col gap-4'
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.95, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className=''>
+                    <span className=''>Your Access Code:</span>
+                    <p className='text-sm text-gray-600'>{accessCode ? accessCode.code : ''}</p>
+                  </div>
+                  <div className='flex flex-row items-center justify-between gap-4'>
+                    <button
+                      onClick={() => setIsAuthMenuOpen(false)}
+                      className='block bg-black/10 rounded-xl w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors'
+                    >
+                      Okay
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className='block bg-black/10 rounded-xl w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors'
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {/* <button
             onClick={handleLogout}
             className='text-foreground p-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors'
             aria-label='Logout'
           >
             Logout
-          </button>
+          </button> */}
           <motion.button
             onClick={toggleMobileMenu}
             className='text-foreground p-2 rounded-lg cursor-pointer'
