@@ -41,7 +41,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4'>
+    <div className='h-dvh flex items-center justify-center p-4'>
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -57,10 +57,10 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
               transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
               className='inline-block'
             >
-              <Logo className='w-16 h-16 mx-auto mb-4 text-primary' />
+              <Logo className='w-16 h-16 mx-auto mb-4 text-black' />
             </motion.div>
-            <h1 className='text-2xl font-bodoniModa font-bold text-gray-900 mb-2'>관리자 로그인</h1>
-            <p className='text-gray-600'>
+            <h1 className='text-xl font-bodoniModa font-bold text-gray-900 mb-2'>관리자 로그인</h1>
+            <p className='text-gray-600 text-sm'>
               Bricks Seoul 관리자 페이지에 접속하려면
               <br />
               비밀번호를 입력해주세요.
@@ -78,7 +78,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
                 type='password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-lg'
+                className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200'
                 placeholder='비밀번호를 입력하세요'
                 disabled={isLoading}
               />
@@ -99,7 +99,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
             <motion.button
               type='submit'
               disabled={isLoading}
-              className='w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
+              className='w-full bg-black text-white py-3 px-4 rounded-lg font-medium hover:bg-black/90 focus:ring-2 focus:ring-black focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200'
               whileTap={{ scale: isLoading ? 1 : 0.98 }}
             >
               {isLoading ? (
@@ -124,11 +124,11 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className='mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg'
+          className='mt-6 p-4 bg-black/10 rounded-lg'
         >
           <div className='flex items-start'>
             <div className='flex-shrink-0'>
-              <svg className='w-5 h-5 text-blue-600 mt-0.5' fill='currentColor' viewBox='0 0 20 20'>
+              <svg className='w-5 h-5 text-black mt-0.5' fill='currentColor' viewBox='0 0 20 20'>
                 <path
                   fillRule='evenodd'
                   d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z'
@@ -137,9 +137,10 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
               </svg>
             </div>
             <div className='ml-3'>
-              <h3 className='text-sm font-medium text-blue-800'>보안 알림</h3>
-              <p className='text-sm text-blue-700 mt-1'>
-                이 페이지는 관리자 전용입니다. 승인되지 않은 접근은 기록됩니다.
+              <h3 className='text-sm font-medium text-black'>보안 알림</h3>
+              <p className='text-sm text-black mt-1'>
+                이 페이지는 관리자 전용입니다. <br />
+                승인되지 않은 접근은 기록됩니다.
               </p>
             </div>
           </div>

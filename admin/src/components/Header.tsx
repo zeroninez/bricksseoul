@@ -48,36 +48,20 @@ export const Header = () => {
             {/* 비밀번호 변경 버튼 */}
             <motion.button
               onClick={() => setIsPasswordModalOpen(true)}
-              className='flex items-center space-x-1 text-foreground hover:text-blue-600 p-2 rounded-lg hover:bg-blue-50 transition-colors'
+              className='flex items-center p-2 rounded-lg text-black/70 active:bg-black/20 transition-colors'
               whileTap={{ scale: 0.95 }}
               aria-label='비밀번호 변경'
             >
-              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'
-                />
-              </svg>
-              <span className='text-sm font-medium hidden sm:inline'>비밀번호 변경</span>
+              <span className='text-sm font-medium'>비밀번호 변경</span>
             </motion.button>
 
             {/* 로그아웃 버튼 */}
             <motion.button
               onClick={handleLogout}
-              className='flex items-center space-x-1 text-foreground hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors'
+              className='flex items-center p-2 rounded-lg bg-black/10 text-black/70 active:bg-transparent transition-colors'
               whileTap={{ scale: 0.95 }}
               aria-label='로그아웃'
             >
-              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
-                />
-              </svg>
               <span className='text-sm font-medium'>로그아웃</span>
             </motion.button>
           </motion.div>

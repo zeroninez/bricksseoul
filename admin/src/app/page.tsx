@@ -13,8 +13,8 @@ export default function Home() {
       {/* 헤더 섹션 */}
       <section className='w-full bg-white border-b border-gray-200 p-6'>
         <div className='w-full flex flex-col items-start justify-center'>
-          <h1 className='text-xl font-semibold tracking-tighter'>Bricks Seoul Admin</h1>
-          <p className=' text-gray-700'>입장코드와 접근 로그를 효율적으로 관리하세요.</p>
+          <h1 className='text-lg'>Bricks Seoul Admin</h1>
+          <p className='text-gray-700'>입장코드와 접근 로그를 효율적으로 관리하세요.</p>
         </div>
       </section>
 
@@ -25,7 +25,7 @@ export default function Home() {
             <button
               onClick={() => setActiveTab('codes')}
               className={`px-6 py-2 rounded-md font-medium transition-all cursor-pointer ${
-                activeTab === 'codes' ? 'bg-white text-primary shadow-sm' : 'text-gray-600 hover:text-gray-800'
+                activeTab === 'codes' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               입장코드 관리
@@ -33,7 +33,7 @@ export default function Home() {
             <button
               onClick={() => setActiveTab('logs')}
               className={`px-6 py-2 rounded-md font-medium transition-all cursor-pointer ${
-                activeTab === 'logs' ? 'bg-white text-primary shadow-sm' : 'text-gray-600 hover:text-gray-800'
+                activeTab === 'logs' ? 'bg-white text-black shadow-sm' : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               접근 로그
