@@ -24,9 +24,16 @@ export default async function Properties() {
                 <Link
                   href={`/properties/${property.id}`}
                   key={property.id}
-                  className='active:bg-gray-50 p-4 border rounded-lg hover:bg-gray-50 transition-colors'
+                  className='active:opacity-50 flex px-6 py-4 flex-col aspect-landscape relative overflow-hidden hover:opacity-50 transition-all'
                 >
-                  <h3 className='text-md font-medium'>{property.name}</h3>
+                  {property.images.length > 0 && (
+                    <img
+                      src={property.images[0].src!}
+                      alt={property.name}
+                      className='w-full h-auto absolute top-0 left-0 '
+                    />
+                  )}
+                  <h3 className='text-xl font-medium mix-blend-difference text-white z-10'>{property.name}</h3>
                 </Link>
               ))}
             </div>

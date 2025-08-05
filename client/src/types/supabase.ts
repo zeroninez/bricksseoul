@@ -111,6 +111,7 @@ export type Database = {
           longitude: number | null
           name: string
           payment_link: string | null
+          slug: string | null
         }
         Insert: {
           address?: string | null
@@ -122,6 +123,7 @@ export type Database = {
           longitude?: number | null
           name: string
           payment_link?: string | null
+          slug?: string | null
         }
         Update: {
           address?: string | null
@@ -133,6 +135,7 @@ export type Database = {
           longitude?: number | null
           name?: string
           payment_link?: string | null
+          slug?: string | null
         }
         Relationships: []
       }

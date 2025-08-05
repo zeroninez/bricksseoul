@@ -56,13 +56,13 @@ export async function getAllPropertiesFull() {
 export async function updateProperty({
   propertyId,
   property,
-  images,
   detail,
+  images,
 }: {
   propertyId: number
   property?: Partial<PropertyRow>
-  images?: Omit<PropertyImageRow, 'id' | 'property_id'>[]
   detail?: Partial<PropertyDetailRow>
+  images?: Partial<PropertyImageRow>[]
 }) {
   // 1. property 수정
   if (property) {
@@ -71,20 +71,38 @@ export async function updateProperty({
     if (propertyError) throw propertyError
   }
 
-  // 2. 이미지 업데이트 (여기서는 간단히 기존 삭제 후 재삽입)
+  // 2. 이미지 추가/수정/삭제
   if (images) {
-    // 기존 이미지 삭제
-    await supabase.from('property_image').delete().eq('property_id', propertyId)
-    // 새 이미지 삽입
-    if (images.length > 0) {
-      const { error: imageError } = await supabase.from('property_image').insert(
-        images.map((img, index) => ({
-          ...img,
-          property_id: propertyId,
-          sort_order: index,
-        })),
-      )
-      if (imageError) throw imageError
+    // (1) 현재 DB의 이미지 목록 불러오기
+    const { data: existingImages, error: fetchError } = await supabase
+      .from('property_image')
+      .select('*')
+      .eq('property_id', propertyId)
+    if (fetchError) throw fetchError
+
+    const existingIds = existingImages?.map((img) => img.id) ?? []
+    const incomingIds = images.filter((img) => !!img.id).map((img) => img.id!) // 새 이미지 제외
+
+    // (2) 삭제할 이미지 = 기존에는 있는데, 새 배열에는 없는 것
+    const toDelete = existingIds.filter((id) => !incomingIds.includes(id))
+    if (toDelete.length > 0) {
+      const { error: deleteError } = await supabase.from('property_image').delete().in('id', toDelete)
+      if (deleteError) throw deleteError
+    }
+
+    // (3) 수정할 이미지 (id가 있고, 기존에도 있는)
+    const toUpdate = images.filter((img) => img.id && existingIds.includes(img.id))
+    for (const img of toUpdate) {
+      const { id, ...rest } = img
+      const { error: updateError } = await supabase.from('property_image').update(rest).eq('id', id!)
+      if (updateError) throw updateError
+    }
+
+    // (4) 새로 추가할 이미지 (id가 없음)
+    const toInsert = images.filter((img) => !img.id).map((img) => ({ ...img, property_id: propertyId }))
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase.from('property_image').insert(toInsert)
+      if (insertError) throw insertError
     }
   }
 

@@ -17,6 +17,10 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     requester_email: '',
   })
 
+  // React.use()를 사용해서 params Promise를 unwrap
+  const resolvedParams = use(params)
+  const propertyId = parseInt(resolvedParams.id, 10)
+
   const handleReservationRequest = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!reservationRequest.startDate || !reservationRequest.endDate || !reservationRequest.requester_email) {
@@ -39,10 +43,6 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
       setError('예약 요청에 실패했습니다. 나중에 다시 시도해주세요.')
     }
   }
-
-  // React.use()를 사용해서 params Promise를 unwrap
-  const resolvedParams = use(params)
-  const propertyId = parseInt(resolvedParams.id, 10)
 
   useEffect(() => {
     const fetchProperty = async () => {
@@ -80,19 +80,16 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     <>
       <Breadcrumbs />
       <section className='max-w-4xl mx-auto px-4 py-6'>
-        <h2 className='text-xl font-semibold mt-6'>Images</h2>
-        <div className='mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {property.images.map((image: { id: number; url: string; name: string }) => (
+        <div className='w-full flex flex-row overflow-x-scroll snap-x gap-4 mb-4'>
+          {property.images.map((image: { id: number; src: string; name: string }) => (
             <img
               key={image.id}
-              src={image.url}
+              src={image.src}
               alt={image.name || 'Property Image'}
-              className='w-full h-auto rounded-lg shadow-md'
+              className='w-[90%] h-auto shadow-md snap-start'
             />
           ))}
         </div>
-
-        <h2 className='text-xl font-semibold mt-6'>Information</h2>
         <h1 className='text-2xl font-bold mb-4'>{property.name}</h1>
         <p className='text-gray-700 mb-2'>{property.address}</p>
         <p>{property.description}</p>
