@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { supabase, AccessCode } from '@/lib/supabase'
+import { supabase, AccessCodeRow } from '@/lib/supabase'
 import { TbRefresh } from 'react-icons/tb'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
 
 export const AccessCodeManager = () => {
-  const [accessCodes, setAccessCodes] = useState<AccessCode[]>([])
+  const [accessCodes, setAccessCodes] = useState<AccessCodeRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
@@ -274,12 +274,12 @@ export const AccessCodeManager = () => {
                   </div>
                   <p className='text-sm text-gray-700 mb-1'>{code.name}</p>
                   <p className='text-sm text-gray-500'>
-                    생성일: {new Date(code.created_at).toLocaleDateString('ko-KR')}
+                    생성일: {code.created_at ? new Date(code.created_at).toLocaleDateString('ko-KR') : '알 수 없음'}
                   </p>
                 </div>
                 <div className='flex gap-2'>
                   <button
-                    onClick={() => toggleCodeStatus(code.id, code.is_active)}
+                    onClick={() => toggleCodeStatus(code.id, !!code.is_active)}
                     className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
                       code.is_active
                         ? 'bg-red-100 text-red-700 hover:bg-red-200'

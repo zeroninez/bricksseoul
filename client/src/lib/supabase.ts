@@ -1,48 +1,82 @@
 // src/lib/supabase.ts
 import { createClient } from '@supabase/supabase-js'
+import { Database } from '@/types/supabase'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
+export type AccessCodeRow = Database['public']['Tables']['access_codes']['Row']
+export type PropertyRow = Database['public']['Tables']['property']['Row']
+export type PropertyImageRow = Database['public']['Tables']['property_image']['Row']
+export type PropertyDetailRow = Database['public']['Tables']['property_detail']['Row']
+export type PropertyReservationRow = Database['public']['Tables']['property_reservation']['Row']
 
-// 입장코드 타입 정의
-export interface AccessCode {
-  id: number
-  code: string
-  name: string
-  is_active: boolean
-  created_at: string
-}
-
-export interface Property {
-  id: number
-  title: string
-  location: string
-  description: string | null
-  content: string | null // HTML 컨텐츠
-  featured_image_url: string | null
-  is_published: boolean
-  sort_order: number
-  created_at: string
-  updated_at: string
-}
-
-// Property Read
-export const loadAllProperties = async () => {
-  const { data, error } = await supabase
-    .from('properties')
+export async function getAllPropertiesFull() {
+  // 1. property 기본 정보
+  const { data: properties, error } = await supabase
+    .from('property')
     .select('*')
-    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  if (!properties) return []
+
+  const propertyIds = properties.map((p) => p.id)
+
+  // 2. 이미지들
+  const { data: images } = await supabase
+    .from('property_image')
+    .select('*')
+    .in('property_id', propertyIds)
     .order('sort_order', { ascending: true })
 
-  if (error) throw error
-  return data as Property[]
+  // 3. 상세정보
+  const { data: details } = await supabase.from('property_detail').select('*').in('property_id', propertyIds)
+
+  // 4. 예약정보
+  const { data: reservations } = await supabase
+    .from('property_reservation')
+    .select('*')
+    .in('property_id', propertyIds)
+    .eq('status', 'approved') // 확정 예약만
+
+  // 5. 합치기
+  return properties.map((p) => ({
+    ...p,
+    images: images?.filter((img) => img.property_id === p.id) || [],
+    detail: details?.find((d) => d.property_id === p.id) || null,
+    reservations: reservations?.filter((r) => r.property_id === p.id) || [],
+  }))
 }
 
-export const loadProperty = async (id: number) => {
-  const { data, error } = await supabase.from('properties').select('*').eq('id', id).eq('is_published', true).single()
+/**
+ * 예약 요청 생성 함수
+ * @param propertyId 숙소 ID
+ * @param startDate 예약 시작 날짜 (YYYY-MM-DD)
+ * @param endDate 예약 종료 날짜 (YYYY-MM-DD)
+ * @param requesterEmail 요청자 이메일
+ */
+export async function createReservationRequest(
+  propertyId: number,
+  startDate: string,
+  endDate: string,
+  requesterEmail: string,
+) {
+  const { data, error } = await supabase
+    .from('property_reservation')
+    .insert([
+      {
+        property_id: propertyId,
+        start_date: startDate,
+        end_date: endDate,
+        status: 'pending', // 예약 요청 상태
+        requester_email: requesterEmail,
+      },
+    ])
+    .select()
+    .single()
 
   if (error) throw error
-  return data as Property
+  return data
 }

@@ -2,11 +2,11 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase, AccessCode } from '@/lib/supabase'
+import { supabase, AccessCodeRow } from '@/lib/supabase'
 
 interface AuthContextType {
   isAuthenticated: boolean
-  accessCode: AccessCode | null
+  accessCode: AccessCodeRow | null
   login: (code: string, user_ip: string | null) => Promise<boolean>
   logout: () => void
   isLoading: boolean
@@ -24,7 +24,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [accessCode, setAccessCode] = useState<AccessCode | null>(null)
+  const [accessCode, setAccessCode] = useState<AccessCodeRow | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   // 페이지 로드시 로컬스토리지에서 인증 상태 확인

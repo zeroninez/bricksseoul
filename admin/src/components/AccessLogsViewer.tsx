@@ -63,7 +63,13 @@ export const AccessLogsViewer = () => {
       const { data, error } = await query.limit(500) // 최근 500개로 늘림
 
       if (error) throw error
-      setLogs(data || [])
+      setLogs(
+        (data || []).map((log) => ({
+          ...log,
+          access_code_id: log.access_code_id ?? 0,
+          accessed_at: log.accessed_at ?? '',
+        })),
+      )
       setCurrentPage(1) // 새로운 데이터 로드 시 첫 페이지로
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그를 불러오는데 실패했습니다.')

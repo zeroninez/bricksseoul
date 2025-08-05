@@ -35,7 +35,6 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
     <div className={classNames('max-w-5xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
       <Header />
       <main className='flex-1'>{children}</main>
-      <Footer />
     </div>
   )
 }
