@@ -2,11 +2,10 @@ import { Logo } from './Logo'
 
 export const Footer = () => {
   return (
-    <footer className='p-4 sm:p-6 lg:p-8 bg-background border-t border-black/10 text-center'>
-      <Logo className='mx-auto mb-4 w-12' />
-      <div className='mb-4 text-xl font-bodoniModa font-bold'>
-        Rejuvenate your <br />
-        mind, body & soul
+    <footer className='px-4 pt-6 pb-10 flex flex-col gap-4 '>
+      <div className='flex flex-row items-center justify-start'>
+        <Logo className='w-10' />
+        <span className='text-xl tracking-tight font-bodoniModa font-bold'>Bricks Seoul</span>
       </div>
       <p className='text-base'> © {new Date().getFullYear()} Bricks Seoul. All rights reserved.</p>
     </footer>

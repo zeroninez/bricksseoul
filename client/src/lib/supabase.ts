@@ -50,6 +50,35 @@ export async function getAllPropertiesFull() {
   }))
 }
 
+export async function getPropertyBySlug(slug: string) {
+  // 1. property 기본 정보
+  const { data: properties, error } = await supabase.from('property').select('*').eq('slug', slug).single()
+  // slug로 단일 조회
+  if (error) throw error
+  if (!properties) return null
+  const propertyId = properties.id
+  // 2. 이미지들
+  const { data: images } = await supabase.from('property_image').select('*').eq('property_id', propertyId)
+  // property_id로 단일 조회
+  // 3. 상세정보
+  const { data: details } = await supabase.from('property_detail').select('*').eq('property_id', propertyId)
+  // property_id로 단일 조회
+  // 4. 예약정보
+  const { data: reservations } = await supabase
+    .from('property_reservation')
+    .select('*')
+    .eq('property_id', propertyId)
+    .eq('status', 'approved') // 확정 예약만
+  // property_id로 단일 조회
+  // 5. 합치기
+  return {
+    ...properties,
+    images: images || [],
+    detail: details?.[0] || null,
+    reservations: reservations || [],
+  }
+}
+
 /**
  * 예약 요청 생성 함수
  * @param propertyId 숙소 ID

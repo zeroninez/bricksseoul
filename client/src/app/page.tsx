@@ -28,11 +28,15 @@ export default function Home() {
 
   return (
     <>
+      <section className='w-full h-80 flex flex-col items-center text-center justify-center p-6'>
+        <h1 className='text-3xl font-bold font-bodoniModa tracking-tighter mb-4'>Welcome to Bricks Seoul</h1>
+        <p className='text-lg text-gray-700'>Your journey to rejuvenate your mind, body & soul starts here.</p>
+      </section>
       <section className='w-full h-fit flex flex-col items-center justify-center '>
         <Swiper
           pagination={pagination}
           modules={[Pagination]}
-          className='w-full h-[80vh]'
+          className='w-full h-[40vh]'
           spaceBetween={0}
           slidesPerView={1}
           loop={true}
@@ -46,10 +50,7 @@ export default function Home() {
           ))}
         </Swiper>
       </section>
-      <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
-        <h1 className='text-3xl font-bold font-bodoniModa tracking-tighter mb-4'>Welcome to Bricks Seoul</h1>
-        <p className='text-lg text-gray-700'>Your journey to rejuvenate your mind, body & soul starts here.</p>
-      </section>
+
       <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
         <h2 className='text-2xl font-semibold font-bodoniModa tracking-tight mb-4'>Explore Our Services</h2>
         <p className='text-base text-gray-600'>

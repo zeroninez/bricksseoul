@@ -1,198 +1,184 @@
-// src/components/Header.tsx (client 폴더용)
+// src/components/Header.tsx
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
-import { Logo } from './Logo'
+import { useEffect, useState, useCallback } from 'react'
+import { motion, AnimatePresence, Variants } from 'motion/react'
 import { useAuth } from '@/contexts/AuthContext'
-import { PiBarcode } from 'react-icons/pi'
-import { a } from 'motion/react-client'
 
-export const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isAuthMenuOpen, setIsAuthMenuOpen] = useState(false)
+interface MenuItem {
+  href: string
+  label: string
+}
+
+const MENU_ITEMS: MenuItem[] = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/properties', label: 'Properties' },
+  { href: '/activities', label: 'Activities' },
+  { href: '/request', label: 'Request' },
+]
+
+// Animation variants
+const iconVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.3, delay: 0.1 } },
+}
+
+const menuContainerVariants: Variants = {
+  closed: { width: 0, height: 0, opacity: 0 },
+  open: { width: '100%', height: '100%', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
+}
+
+const menuItemVariants: Variants = {
+  closed: { x: -20, opacity: 0 },
+  open: (i: number) => ({
+    x: 0,
+    opacity: 1,
+    transition: { duration: 0.2, delay: (i + 1) * 0.05, ease: 'easeOut' },
+  }),
+}
+
+export const Header: React.FC = () => {
   const { logout, accessCode } = useAuth()
+  const [isMobileOpen, setMobileOpen] = useState(false)
+  const [isAuthOpen, setAuthOpen] = useState(false)
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
+  const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), [])
+  const toggleAuth = useCallback(() => setAuthOpen((prev) => !prev), [])
 
-  const handleLogout = () => {
-    logout()
-    setIsMobileMenuOpen(false)
-  }
-
-  const menuItems = [
-    // { href: '/', label: 'Home' },
-    { href: '/about', label: 'About' },
-    { href: '/properties', label: 'Properties' },
-    { href: '/activities', label: 'Activities' },
-    { href: '/request', label: 'Request' },
-  ]
+  useEffect(() => {
+    document.body.style.overflow = isMobileOpen ? 'hidden' : 'auto'
+  }, [isMobileOpen])
 
   return (
-    <header className='bg-background sticky top-0 shadow-sm border-b border-gray-200 z-50'>
-      <div className='relative flex px-4 justify-between items-center h-14'>
-        {/* Logo */}
-        <motion.div
-          className='flex-shrink-0'
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
-          whileTap={{ scale: 0.95 }}
+    <>
+      {/* Toggle Button */}
+      <motion.button
+        className='fixed top-0 right-0 z-50 mix-blend-difference flex items-center p-4 active:opacity-70'
+        variants={iconVariants}
+        initial='hidden'
+        animate='visible'
+        onClick={toggleMobile}
+      >
+        <motion.svg
+          className='w-6 h-6 text-white'
+          fill='none'
+          stroke='currentColor'
+          viewBox='0 0 24 24'
+          animate={{ rotate: isMobileOpen ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
         >
-          <Link href='/' className='flex items-center'>
-            <Logo className='w-8 h-8' />
-            <span className='ml-2 text-lg tracking-tight font-bodoniModa font-bold'>Bricks Seoul</span>
-          </Link>
-        </motion.div>
-
-        {/* Mobile CTA + Menu Button */}
-        <motion.div
-          className='flex items-center space-x-2'
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
-        >
-          {accessCode && (
-            <motion.button
-              className='bg-black mr-4 px-3 py-2 rounded-lg flex items-center justify-center gap-2 text-white text-xs font-mono cursor-pointer hover:bg-black/90 active:scale-95 transition-all'
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.2 }}
-              onClick={() => {
-                setIsAuthMenuOpen(!isAuthMenuOpen)
-              }}
-            >
-              <PiBarcode className='w-4 h-4' />
-              <span className='font-semibold'>{accessCode.code}</span>
-            </motion.button>
-          )}
-          <AnimatePresence>
-            {isAuthMenuOpen && (
-              <motion.div
-                className='fixed w-full h-full top-0 left-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center'
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setIsAuthMenuOpen(false)}
-              >
-                <motion.div
-                  className='bg-white rounded-lg shadow-lg p-6 w-80 flex flex-col gap-4'
-                  initial={{ scale: 0.95, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.95, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className=''>
-                    <span className=''>Your Access Code:</span>
-                    <p className='text-sm text-gray-600'>{accessCode ? accessCode.code : ''}</p>
-                  </div>
-                  <div className='flex flex-row items-center justify-between gap-4'>
-                    <button
-                      onClick={() => setIsAuthMenuOpen(false)}
-                      className='block bg-black/10 rounded-xl w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors'
-                    >
-                      Okay
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className='block bg-black/10 rounded-xl w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors'
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {/* <button
-            onClick={handleLogout}
-            className='text-foreground p-2 rounded-lg text-sm font-medium hover:bg-gray-100 transition-colors'
-            aria-label='Logout'
-          >
-            Logout
-          </button> */}
-          <motion.button
-            onClick={toggleMobileMenu}
-            className='text-foreground p-2 rounded-lg cursor-pointer'
-            aria-label='Toggle menu'
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <motion.svg
-              className='w-6 h-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              animate={{ rotate: isMobileMenuOpen ? 90 : 0 }}
+          {isMobileOpen ? (
+            <motion.path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M6 18L18 6M6 6l12 12'
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
               transition={{ duration: 0.2 }}
-            >
-              {isMobileMenuOpen ? (
-                <motion.path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M6 18L18 6M6 6l12 12'
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.2 }}
-                />
-              ) : (
-                <motion.path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth={2}
-                  d='M4 6h16M4 12h16M4 18h16'
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 0.2 }}
-                />
-              )}
-            </motion.svg>
-          </motion.button>
-        </motion.div>
-      </div>
+            />
+          ) : (
+            <motion.path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M4 6h16M4 12h16M4 18h16'
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.2 }}
+            />
+          )}
+        </motion.svg>
+      </motion.button>
 
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            className='absolute top-14 left-0 w-full h-fit bg-white border-t border-gray-200 overflow-hidden shadow-lg'
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+        {isMobileOpen && (
+          <motion.aside
+            className='fixed top-0 right-0 w-full h-full z-40 bg-white'
+            initial='closed'
+            animate='open'
+            exit='closed'
+            variants={menuContainerVariants}
           >
-            <motion.nav className='space-y-1'>
-              {menuItems.map((item, index) => (
+            <nav className='flex flex-col justify-end px-4'>
+              {MENU_ITEMS.map((item, idx) => (
                 <motion.div
                   key={item.href}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -20, opacity: 0 }}
-                  transition={{
-                    duration: 0.2,
-                    delay: (index + 1) * 0.05,
-                    ease: 'easeOut',
-                  }}
+                  custom={idx}
+                  initial='closed'
+                  animate='open'
+                  exit='closed'
+                  whileTap={{ scale: 0.95 }}
+                  variants={menuItemVariants}
                 >
-                  <Link
-                    href={item.href}
-                    className='block py-4 px-4 text-foreground border-b border-gray-100 last:border-b-0 hover:font-semibold transition-all duration-200'
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
+                  <Link href={item.href} className='block py-4 text-lg text-black' onClick={() => setMobileOpen(false)}>
                     {item.label}
                   </Link>
                 </motion.div>
               ))}
-            </motion.nav>
+
+              {accessCode && (
+                <motion.div
+                  custom={MENU_ITEMS.length}
+                  initial='closed'
+                  animate='open'
+                  exit='closed'
+                  whileTap={{ scale: 0.95 }}
+                  variants={menuItemVariants}
+                >
+                  <button onClick={toggleAuth} className='block py-4 text-lg text-red-500'>
+                    Log Out
+                  </button>
+                </motion.div>
+              )}
+            </nav>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      {/* Auth Confirmation Modal */}
+      <AnimatePresence>
+        {isAuthOpen && (
+          <motion.div
+            className='fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center'
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={toggleAuth}
+          >
+            <motion.div
+              className='bg-white shadow-lg p-6 w-80'
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className='mb-4'>
+                <h3 className='text-lg font-medium'>Do you want to log out?</h3>
+                <p className='text-sm text-gray-600'>Access Code: {accessCode?.code || '-'}</p>
+              </div>
+              <div className='flex gap-4'>
+                <button
+                  onClick={() => {
+                    logout()
+                    setAuthOpen(false)
+                  }}
+                  className='flex-1 bg-black text-white py-2'
+                >
+                  Okay
+                </button>
+                <button onClick={toggleAuth} className='flex-1 border border-red-500 text-red-500 py-2'>
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   )
 }

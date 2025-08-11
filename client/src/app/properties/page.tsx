@@ -22,8 +22,8 @@ export default async function Properties() {
             <div className='flex flex-col gap-4'>
               {properties.map((property) => (
                 <Link
-                  href={`/properties/${property.id}`}
-                  key={property.id}
+                  href={`/properties/${property.slug}`}
+                  key={property.slug}
                   className='active:opacity-50 flex px-6 py-4 flex-col aspect-landscape relative overflow-hidden hover:opacity-50 transition-all'
                 >
                   {property.images.length > 0 && (

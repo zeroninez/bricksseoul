@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
-import { getAllPropertiesFull, updateProperty } from '@/lib/supabase'
+import { getPropertyBySlug, updateProperty } from '@/lib/supabase'
 import { Breadcrumbs } from '@/components'
 import { TbEye, TbEdit, TbCheck, TbX } from 'react-icons/tb'
 
-export default function PropertyPage({ params }: { params: Promise<{ id: string }> }) {
+export default function PropertyPage({ params }: { params: Promise<{ slug: string }> }) {
   const [property, setProperty] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -13,15 +13,14 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   const [draftProperty, setDraftProperty] = useState<any | null>(null)
 
   const resolvedParams = use(params)
-  const propertyId = parseInt(resolvedParams.id, 10)
+  const propertySlug = resolvedParams.slug
 
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const data = await getAllPropertiesFull()
-        const target = data.find((p) => p.id === propertyId) || null
-        setProperty(target)
-        setDraftProperty(target)
+        const data = await getPropertyBySlug(propertySlug)
+        setProperty(data)
+        setDraftProperty(data)
       } catch (err) {
         setError('숙소 정보를 불러오는 데 실패했습니다.')
       } finally {
@@ -30,7 +29,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     }
 
     fetchProperty()
-  }, [propertyId])
+  }, [propertySlug])
 
   if (loading) return <p className='text-gray-500'>로딩 중...</p>
   if (error || !property) return <p className='text-red-500'>Property not found</p>
@@ -85,32 +84,31 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
   return (
     <>
-      <Breadcrumbs />
-      <div className='w-full flex flex-row px-4 py-6 items-center justify-between'>
+      <div className='w-full sticky top-0 flex flex-row border-b border-gray-200 items-center justify-between'>
         <button
           disabled={!isEditing}
           onClick={() => setIsEditing(false)}
-          className='disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors'
+          className='disabled:opacity-50 disabled:cursor-not-allowed flex-1 text-center flex justify-center items-center gap-2 px-4 py-2 text-gray-500 transition-colors'
         >
           Preview
         </button>
         <button
           disabled={isEditing}
           onClick={() => setIsEditing(true)}
-          className='disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors'
+          className='disabled:opacity-50 disabled:cursor-not-allowed flex-1 text-center flex justify-center items-center gap-2 px-4 py-2 text-blue-500 transition-all'
         >
           Edit
         </button>
         <button
           onClick={resetDraft}
-          className='flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors'
+          className='flex items-center gap-2 px-4 py-2 text-red-500 flex-1 text-center justify-center transition-colors'
         >
           Reset
         </button>
         <button
           onClick={saveDraft}
           disabled={!isEditing}
-          className='flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors'
+          className='flex items-center gap-2 px-4 py-2 text-green-500 flex-1 text-center justify-center transition-colors'
         >
           Save
         </button>

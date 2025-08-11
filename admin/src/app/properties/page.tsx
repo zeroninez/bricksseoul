@@ -26,7 +26,7 @@ export default async function Properties() {
           <div className='flex flex-col gap-4'>
             {properties.map((property) => (
               <Link
-                href={`/properties/${property.id}`}
+                href={`/properties/${property.slug}`}
                 key={property.id}
                 className='active:bg-gray-50 p-4 border rounded-lg hover:bg-gray-50 transition-colors'
               >

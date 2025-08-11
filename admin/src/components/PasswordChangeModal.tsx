@@ -93,7 +93,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className='bg-white rounded-lg p-6 w-full max-w-md'
+            className='bg-white p-6 w-full max-w-md'
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className='text-xl font-bold mb-4'>관리자 비밀번호 변경</h2>
@@ -115,7 +115,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
@@ -126,7 +126,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
@@ -137,7 +137,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent'
+                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
@@ -150,14 +150,14 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                   <button
                     type='button'
                     onClick={handleClose}
-                    className='flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors'
+                    className='flex-1 px-4 py-2 bg-gray-300 text-gray-700 hover:bg-gray-400 transition-colors'
                     disabled={isLoading}
                   >
                     취소
                   </button>
                   <button
                     type='submit'
-                    className='flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50'
+                    className='flex-1 px-4 py-2 bg-black text-white hover:bg-black/90 transition-colors disabled:opacity-50'
                     disabled={isLoading}
                   >
                     {isLoading ? '변경 중...' : '변경'}

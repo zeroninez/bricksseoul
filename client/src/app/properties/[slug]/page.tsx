@@ -2,10 +2,25 @@
 
 //src/app/properties/[id]/page.tsx
 import { useState, useEffect, use } from 'react'
-import { getAllPropertiesFull, createReservationRequest } from '@/lib/supabase'
-import { Breadcrumbs } from '@/components'
+import { getPropertyBySlug, createReservationRequest } from '@/lib/supabase'
 
-export default function PropertyPage({ params }: { params: Promise<{ id: string }> }) {
+// Import Swiper React components
+import { Swiper, SwiperSlide } from 'swiper/react'
+
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/pagination'
+
+// import required modules
+import { Pagination } from 'swiper/modules'
+
+export default function PropertyPage({
+  params,
+}: {
+  params: Promise<{
+    slug: string
+  }>
+}) {
   const [property, setProperty] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -19,7 +34,7 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
 
   // React.use()를 사용해서 params Promise를 unwrap
   const resolvedParams = use(params)
-  const propertyId = parseInt(resolvedParams.id, 10)
+  const propertyId = parseInt(resolvedParams.slug, 10)
 
   const handleReservationRequest = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,8 +62,8 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const data = await getAllPropertiesFull()
-        setProperty(data.find((p) => p.id === propertyId) || null)
+        const data = await getPropertyBySlug(resolvedParams.slug)
+        setProperty(data)
         setReservationRequest((prev) => ({
           ...prev,
           property_id: propertyId,
@@ -76,23 +91,48 @@ export default function PropertyPage({ params }: { params: Promise<{ id: string 
     return <p className='text-red-500'>Property not found</p>
   }
 
+  const pagination = {
+    clickable: true,
+    renderBullet: function (index: number, className: string) {
+      return (
+        '<span class="' +
+        className +
+        ' text-white !text-xxs !bg-black !w-4 !rounded-none !h-4 flex flex-col items-center justify-center">' +
+        (index + 1) +
+        '</span>'
+      )
+    },
+  }
+
   return (
     <>
-      <Breadcrumbs />
-      <section className='max-w-4xl mx-auto px-4 py-6'>
-        <div className='w-full flex flex-row overflow-x-scroll snap-x gap-4 mb-4'>
+      <section className='w-full h-fit flex flex-col items-center justify-center '>
+        <Swiper
+          pagination={pagination}
+          modules={[Pagination]}
+          className='w-full h-fit'
+          spaceBetween={0}
+          slidesPerView={1}
+          loop={true}
+          onSlideChange={() => console.log('slide change')}
+          onSwiper={(swiper) => console.log(swiper)}
+        >
           {property.images.map((image: { id: number; src: string; name: string }) => (
-            <img
-              key={image.id}
-              src={image.src}
-              alt={image.name || 'Property Image'}
-              className='w-[90%] h-auto shadow-md snap-start'
-            />
+            <SwiperSlide key={image.id} className='w-full h-fit flex items-center justify-center bg-black'>
+              <img
+                key={image.id}
+                src={image.src}
+                alt={image.name || 'Property Image'}
+                className='w-full h-auto object-cover'
+              />
+            </SwiperSlide>
           ))}
-        </div>
-        <h1 className='text-2xl font-bold mb-4'>{property.name}</h1>
-        <p className='text-gray-700 mb-2'>{property.address}</p>
-        <p>{property.description}</p>
+        </Swiper>
+      </section>
+      <section className='px-4 py-6'>
+        <h1 className='text-4xl font-bold mb-4'>{property.name}</h1>
+        <p className='text-base text-gray-700 mb-2'>{property.address}</p>
+        <p className='text-lg text-gray-700 mb-2'>{property.description}</p>
         <div className='flex flex-row items-center gap-4 mt-4'>
           {property.features.map((feature: any, index: number) => (
             <span key={index} className='px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm'>
