@@ -1,13 +1,13 @@
 // admin/src/app/properties/page.tsx
 
 import { PageHeader } from '@/components'
-import { getAllPropertiesFull } from '@/lib/supabase'
+import { getAllProperties } from '@/lib/supabase'
 import Link from 'next/link'
 
 export const revalidate = 60 // 1분마다 새로고침
 
 export default async function Properties() {
-  const properties = await getAllPropertiesFull()
+  const properties = await getAllProperties()
 
   return (
     <>
@@ -26,9 +26,9 @@ export default async function Properties() {
                   key={property.slug}
                   className='active:opacity-50 flex px-6 py-4 flex-col aspect-landscape relative overflow-hidden hover:opacity-50 transition-all'
                 >
-                  {property.images.length > 0 && (
+                  {property.thumbnail && (
                     <img
-                      src={property.images[0].src!}
+                      src={property.thumbnail.src!}
                       alt={property.name}
                       className='w-full h-auto absolute top-0 left-0 '
                     />

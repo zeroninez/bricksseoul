@@ -12,7 +12,7 @@ export type PropertyImageRow = Database['public']['Tables']['property_image']['R
 export type PropertyDetailRow = Database['public']['Tables']['property_detail']['Row']
 export type PropertyReservationRow = Database['public']['Tables']['property_reservation']['Row']
 
-export async function getAllPropertiesFull() {
+export async function getAllProperties() {
   // 1. property 기본 정보
   const { data: properties, error } = await supabase
     .from('property')
@@ -24,29 +24,18 @@ export async function getAllPropertiesFull() {
 
   const propertyIds = properties.map((p) => p.id)
 
-  // 2. 이미지들
-  const { data: images } = await supabase
+  // 2. 이미지 첫번째만
+  const { data: image } = await supabase
     .from('property_image')
     .select('*')
     .in('property_id', propertyIds)
     .order('sort_order', { ascending: true })
-
-  // 3. 상세정보
-  const { data: details } = await supabase.from('property_detail').select('*').in('property_id', propertyIds)
-
-  // 4. 예약정보
-  const { data: reservations } = await supabase
-    .from('property_reservation')
-    .select('*')
-    .in('property_id', propertyIds)
-    .eq('status', 'approved') // 확정 예약만
+    .limit(1)
 
   // 5. 합치기
   return properties.map((p) => ({
     ...p,
-    images: images?.filter((img) => img.property_id === p.id) || [],
-    detail: details?.find((d) => d.property_id === p.id) || null,
-    reservations: reservations?.filter((r) => r.property_id === p.id) || [],
+    thumbnail: image?.find((img) => img.property_id === p.id) || null,
   }))
 }
 
