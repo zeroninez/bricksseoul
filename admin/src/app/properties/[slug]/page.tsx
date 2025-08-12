@@ -11,6 +11,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
   const [error, setError] = useState<string | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [draftProperty, setDraftProperty] = useState<any | null>(null)
+  const [isSaving, setIsSaving] = useState(false) // 저장 상태 추가
 
   const resolvedParams = use(params)
   const propertySlug = resolvedParams.slug
@@ -23,6 +24,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
         setDraftProperty(data)
       } catch (err) {
         setError('숙소 정보를 불러오는 데 실패했습니다.')
+        console.error('Fetch error:', err)
       } finally {
         setLoading(false)
       }
@@ -37,48 +39,71 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
   const resetDraft = () => {
     setDraftProperty({ ...property })
     setIsEditing(false)
+    setError(null)
   }
 
   const saveDraft = async () => {
+    if (isSaving) return // 중복 저장 방지
+
     try {
-      const filteredImages = draftProperty.images.filter((img: any) => img.src && img.src.trim() !== '')
+      setIsSaving(true)
+      setError(null)
+
+      console.log('저장 시작 - draftProperty:', draftProperty)
+
+      // 이미지 데이터 검증 및 정리
+      const filteredImages = draftProperty.images
+        .filter((img: any) => img.src && img.src.trim() !== '')
+        .map((img: any, index: number) => ({
+          id: img.id || null, // null이면 새 이미지로 처리
+          src: img.src.trim(),
+          name: img.name ? img.name.trim() : `Image ${index + 1}`,
+          sort_order: img.sort_order !== undefined ? img.sort_order : index,
+          property_id: property.id, // 추가
+        }))
+
+      console.log('필터링된 이미지:', filteredImages)
+
       const filteredFeatures = draftProperty.features.filter(
         (f: any) => f.icon && f.icon.trim() !== '' && f.name && f.name.trim() !== '',
       )
-      const filteredAmenities = draftProperty.detail.amenities.filter(
-        (a: any) => a.icon && a.icon.trim() !== '' && a.name && a.name.trim() !== '',
-      )
+
+      // 기본 property 정보 업데이트
+      const propertyUpdate = {
+        name: draftProperty.name,
+        address: draftProperty.address,
+        description: draftProperty.description,
+        latitude: draftProperty.latitude,
+        longitude: draftProperty.longitude,
+        features: filteredFeatures,
+        payment_link: draftProperty.payment_link,
+      }
+
+      console.log('Property 업데이트 데이터:', propertyUpdate)
+      console.log('이미지 업데이트 데이터:', filteredImages)
 
       await updateProperty({
         propertyId: property.id,
-        property: {
-          name: draftProperty.name,
-          address: draftProperty.address,
-          description: draftProperty.description,
-          latitude: draftProperty.latitude,
-          longitude: draftProperty.longitude,
-          features: filteredFeatures,
-          payment_link: draftProperty.payment_link,
-        },
-        images: filteredImages.map((img: any) => ({
-          id: img.id,
-          src: img.src,
-          name: img.name,
-          sort_order: img.sort_order,
-        })),
-        // detail: {
-        //   description_blocks: draftProperty.detail.description_blocks,
-        //   nearby_info: draftProperty.detail.nearby_info,
-        //   amenities: filteredAmenities,
-        // },
+        property: propertyUpdate,
+        images: filteredImages,
       })
 
-      setProperty({ ...draftProperty, images: filteredImages })
-      setDraftProperty({ ...draftProperty, images: filteredImages })
+      console.log('저장 완료')
+
+      // 성공 시 상태 업데이트
+      const updatedProperty = {
+        ...draftProperty,
+        images: filteredImages,
+      }
+
+      setProperty(updatedProperty)
+      setDraftProperty(updatedProperty)
       setIsEditing(false)
     } catch (err) {
-      console.error('Error saving property:', err)
-      setError('숙소 정보를 저장하는 데 실패했습니다.')
+      console.error('저장 오류:', err)
+      setError(`숙소 정보를 저장하는 데 실패했습니다: ${err instanceof Error ? err.message : '알 수 없는 오류'}`)
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -93,7 +118,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
           Preview
         </button>
         <button
-          disabled={isEditing}
+          disabled={isEditing || isSaving}
           onClick={() => setIsEditing(true)}
           className='disabled:opacity-50 disabled:cursor-not-allowed flex-1 text-center flex justify-center items-center gap-2 px-4 py-2 text-blue-500 transition-all'
         >
@@ -101,79 +126,107 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
         </button>
         <button
           onClick={resetDraft}
-          className='flex items-center gap-2 px-4 py-2 text-red-500 flex-1 text-center justify-center transition-colors'
+          disabled={isSaving}
+          className='flex items-center gap-2 px-4 py-2 text-red-500 flex-1 text-center justify-center transition-colors disabled:opacity-50'
         >
           Reset
         </button>
         <button
           onClick={saveDraft}
-          disabled={!isEditing}
-          className='flex items-center gap-2 px-4 py-2 text-green-500 flex-1 text-center justify-center transition-colors'
+          disabled={!isEditing || isSaving}
+          className='flex items-center gap-2 px-4 py-2 text-green-500 flex-1 text-center justify-center transition-colors disabled:opacity-50'
         >
-          Save
+          {isSaving ? 'Saving...' : 'Save'}
         </button>
       </div>
+
+      {/* 에러 메시지 표시 */}
+      {error && (
+        <div className='mx-4 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm'>{error}</div>
+      )}
+
       <section className='max-w-4xl mx-auto px-4 py-6'>
         {/* --- Image Section --- */}
         {isEditing ? (
           <div className='w-full flex flex-col gap-4 mb-4'>
-            {draftProperty.images.map((image: { id: number; src: string; name: string }) => (
-              <div key={image.id} className='relative'>
+            {draftProperty.images.map((image: { id: number; src: string; name: string }, index: number) => (
+              <div key={image.id || `new-${index}`} className='relative border border-gray-200 rounded-lg p-4'>
                 {image.src ? (
-                  <img src={image.src} alt={image.name || 'Property Image'} className='w-full h-auto shadow-md' />
+                  <img src={image.src} alt={image.name || 'Property Image'} className='w-full h-auto shadow-md mb-2' />
                 ) : (
-                  <div className='w-full h-40 bg-gray-100 flex items-center justify-center text-gray-400'>No Image</div>
+                  <div className='w-full h-40 bg-gray-100 flex items-center justify-center text-gray-400 mb-2'>
+                    No Image
+                  </div>
                 )}
                 <button
                   onClick={() =>
                     setDraftProperty({
                       ...draftProperty,
-                      images: draftProperty.images.filter((img: any) => img.id !== image.id),
+                      images: draftProperty.images.filter((_: any, i: number) => i !== index),
                     })
                   }
                   className='absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors'
                 >
                   <TbX />
                 </button>
-                <input
-                  type='text'
-                  value={image.src}
-                  onChange={(e) =>
-                    setDraftProperty({
-                      ...draftProperty,
-                      images: draftProperty.images.map((img: any) =>
-                        img.id === image.id ? { ...img, src: e.target.value } : img,
-                      ),
-                    })
-                  }
-                  className='w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-                />
-                <input
-                  type='text'
-                  value={image.name}
-                  onChange={(e) =>
-                    setDraftProperty({
-                      ...draftProperty,
-                      images: draftProperty.images.map((img: any) =>
-                        img.id === image.id ? { ...img, name: e.target.value } : img,
-                      ),
-                    })
-                  }
-                  className='w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
-                />
+
+                <div className='space-y-2'>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>이미지 URL</label>
+                    <input
+                      type='text'
+                      value={image.src}
+                      onChange={(e) =>
+                        setDraftProperty({
+                          ...draftProperty,
+                          images: draftProperty.images.map((img: any, i: number) =>
+                            i === index ? { ...img, src: e.target.value } : img,
+                          ),
+                        })
+                      }
+                      className='w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      placeholder='이미지 URL을 입력하세요'
+                    />
+                  </div>
+
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>이미지 이름</label>
+                    <input
+                      type='text'
+                      value={image.name}
+                      onChange={(e) =>
+                        setDraftProperty({
+                          ...draftProperty,
+                          images: draftProperty.images.map((img: any, i: number) =>
+                            i === index ? { ...img, name: e.target.value } : img,
+                          ),
+                        })
+                      }
+                      className='w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      placeholder='이미지 이름을 입력하세요'
+                    />
+                  </div>
+
+                  <div className='text-xs text-gray-500'>
+                    {image.id ? `기존 이미지 (ID: ${image.id})` : '새 이미지'}
+                  </div>
+                </div>
               </div>
             ))}
             <button
               onClick={() => {
-                const newId =
-                  draftProperty.images.length > 0
-                    ? Math.max(...draftProperty.images.map((img: any) => img.id || 0)) + 1
-                    : 1
+                const newId = Date.now() // 임시 ID로 현재 시간 사용
                 setDraftProperty({
                   ...draftProperty,
                   images: [
                     ...draftProperty.images,
-                    { id: newId, src: '', name: '', sort_order: draftProperty.images.length },
+                    {
+                      id: null, // 새 이미지는 ID를 null로 설정
+                      src: '',
+                      name: '',
+                      sort_order: draftProperty.images.length,
+                      property_id: property.id,
+                    },
                   ],
                 })
               }}
@@ -194,6 +247,8 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
             ))}
           </div>
         )}
+
+        {/* 나머지 컴포넌트는 동일... */}
         <div className='w-full h-fit relative mb-4'>
           {isEditing ? (
             <input
@@ -233,7 +288,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
           )}
         </div>
 
-        {/* --- Features Section --- */}
+        {/* Features Section */}
         <div className='flex flex-row items-center gap-2 mt-4 flex-wrap'>
           {isEditing
             ? draftProperty.features.map((feature: any, index: number) => (
@@ -300,6 +355,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
           </button>
         )}
 
+        {/* Details Section은 동일... */}
         <h2 className='text-xl font-semibold mt-6'>Details</h2>
         <div className='mt-4'>
           {property.detail ? (
