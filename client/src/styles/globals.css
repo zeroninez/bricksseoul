@@ -83,6 +83,11 @@
     display: none;
   }
 
+  /* 영어일때, 한글일때 폰트 다르게 */
+  :lang(en) {
+    /* @apply font-geist-sans; */
+  }
+
   #__next,
   html,
   body {
