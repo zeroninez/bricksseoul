@@ -68,7 +68,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
         (f: any) => f.icon && f.icon.trim() !== '' && f.name && f.name.trim() !== '',
       )
 
-      // 기본 property 정보 업데이트
+      // 기본 property 정보 업데이트 (detail 제외)
       const propertyUpdate = {
         name: draftProperty.name,
         address: draftProperty.address,
@@ -79,12 +79,30 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
         payment_link: draftProperty.payment_link,
       }
 
+      // detail 정보 별도 처리 - null 체크 추가
+      let detailUpdate = null
+      if (draftProperty.detail) {
+        const filteredAmenities = (draftProperty.detail.amenities || []).filter(
+          (a: any) => a.icon && a.icon.trim() !== '' && a.name && a.name.trim() !== '',
+        )
+
+        detailUpdate = {
+          description_blocks: draftProperty.detail.description_blocks || '',
+          nearby_info: draftProperty.detail.nearby_info || '',
+          amenities: filteredAmenities,
+          // property_id는 API 함수에서 자동으로 추가됨
+        }
+      }
+
       console.log('Property 업데이트 데이터:', propertyUpdate)
+      console.log('Detail 업데이트 데이터:', detailUpdate)
       console.log('이미지 업데이트 데이터:', filteredImages)
 
+      // updateProperty 호출 - detailUpdate가 있을 때만 전달
       await updateProperty({
         propertyId: property.id,
         property: propertyUpdate,
+        ...(detailUpdate && { detail: detailUpdate }), // detailUpdate가 truthy일 때만 포함
         images: filteredImages,
       })
 
@@ -94,6 +112,7 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
       const updatedProperty = {
         ...draftProperty,
         images: filteredImages,
+        detail: detailUpdate || draftProperty.detail, // detailUpdate가 null이면 기존 detail 유지
       }
 
       setProperty(updatedProperty)
@@ -360,8 +379,34 @@ export default function PropertyPage({ params }: { params: Promise<{ slug: strin
         <div className='mt-4'>
           {property.detail ? (
             <>
-              <h3 className='text-lg font-medium'>{property.detail.description_blocks}</h3>
-              <p className='text-gray-600'>{property.detail.nearby_info}</p>
+              {isEditing ? (
+                <textarea
+                  className='w-full h-24 p-2 border border-gray-300 focus:border-black'
+                  value={draftProperty.detail.description_blocks}
+                  onChange={(e) =>
+                    setDraftProperty({
+                      ...draftProperty,
+                      detail: { ...draftProperty.detail, description_blocks: e.target.value },
+                    })
+                  }
+                />
+              ) : (
+                <p className='text-gray-700'>{property.detail.description_blocks}</p>
+              )}
+              {isEditing ? (
+                <textarea
+                  className='w-full h-24 p-2 border border-gray-300 focus:border-black mt-4'
+                  value={draftProperty.detail.nearby_info}
+                  onChange={(e) =>
+                    setDraftProperty({
+                      ...draftProperty,
+                      detail: { ...draftProperty.detail, nearby_info: e.target.value },
+                    })
+                  }
+                />
+              ) : (
+                <p className='text-gray-700 mt-4'>{property.detail.nearby_info}</p>
+              )}
               <div className='mt-2 flex flex-wrap gap-2'>
                 {isEditing
                   ? draftProperty.detail.amenities.map((amenity: any, index: number) => (
