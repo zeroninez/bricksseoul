@@ -1,7 +1,7 @@
 // src/components/Header.tsx (admin 폴더용)
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { motion } from 'motion/react'
 import { Logo } from './Logo'
@@ -19,6 +19,7 @@ export const Header = () => {
   }
 
   const router = useRouter()
+  const pathname = usePathname()
 
   return (
     <>
@@ -26,7 +27,8 @@ export const Header = () => {
         <div className='relative flex justify-between items-center h-14'>
           {/* Logo */}
           <motion.button
-            className=' text-xl h-full aspect-square flex items-center justify-center'
+            disabled={pathname === '/'}
+            className=' text-xl h-full aspect-square flex items-center justify-center disabled:invisible'
             onClick={() => router.back()}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}

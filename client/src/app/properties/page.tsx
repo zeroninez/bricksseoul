@@ -1,6 +1,6 @@
 // admin/src/app/properties/page.tsx
 
-import { PageHeader } from '@/components'
+import { Breadcrumbs, Empty } from '@/components'
 import { getAllProperties } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -11,12 +11,12 @@ export default async function Properties() {
 
   return (
     <>
-      <PageHeader title='Properties' />
+      <section className='w-full h-fit pt-8 px-4 pb-4 flex flex-col gap-4'>
+        <Breadcrumbs />
+      </section>
       <section className='w-full'>
         {!properties || properties.length === 0 ? (
-          <section className='w-full h-96 flex flex-col items-center text-center justify-center p-6'>
-            <p className='text-gray-600'>등록된 숙소가 없습니다.</p>
-          </section>
+          <Empty />
         ) : (
           <div className='px-4 py-6'>
             <div className='flex flex-col gap-4'>

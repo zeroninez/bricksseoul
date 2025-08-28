@@ -20,6 +20,7 @@ import classNames from 'classnames'
 import React from 'react'
 import { Header, Footer, ProtectedRoute } from '@/components'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { HEADER_HEIGHT } from '@/theme/constants'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -32,7 +33,14 @@ export const Layout = ({ children }: LayoutProps) => {
         <ProtectedRoute>
           <Header />
           {/* Main content area */}
-          <main className='flex-1'>{children}</main>
+          <main
+            style={{
+              marginTop: HEADER_HEIGHT,
+            }}
+            className='flex-1'
+          >
+            {children}
+          </main>
           {/* Footer can be added here if needed */}
           <Footer />
         </ProtectedRoute>

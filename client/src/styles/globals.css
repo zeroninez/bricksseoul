@@ -27,8 +27,9 @@
   /* colors */
   --color-primary: #1d4ed8;
   --color-secondary: #f59e0b;
-  --color-background: #FFFFFF;
+  --color-background: #FFFCF9;
   --color-foreground: #111827;
+  --color-white: #FFFCF9;
 
   /* aspect-ratio */
   --aspect-square: 1 / 1;
@@ -68,7 +69,7 @@
   }
 
   input:-internal-autofill-selected {
-    background-color: #fff !important;
+    background-color: #FFFCF9 !important;
     color: #000 !important;
   }
 

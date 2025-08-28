@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence, Variants } from 'motion/react'
 import { useAuth } from '@/contexts/AuthContext'
+import { HEADER_HEIGHT } from '@/theme/constants'
+import { useRouter, usePathname } from 'next/navigation'
 
 interface MenuItem {
   href: string
@@ -20,14 +22,14 @@ const MENU_ITEMS: MenuItem[] = [
 ]
 
 // Animation variants
-const iconVariants: Variants = {
+const headerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 0.3, delay: 0.1 } },
 }
 
 const menuContainerVariants: Variants = {
-  closed: { width: 0, height: 0, opacity: 0 },
-  open: { width: '100%', height: '100%', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
+  closed: { height: 0, opacity: 0 },
+  open: { height: '100%', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
 }
 
 const menuItemVariants: Variants = {
@@ -40,6 +42,9 @@ const menuItemVariants: Variants = {
 }
 
 export const Header: React.FC = () => {
+  const router = useRouter()
+  const pathname = usePathname()
+
   const { logout, accessCode } = useAuth()
   const [isMobileOpen, setMobileOpen] = useState(false)
   const [isAuthOpen, setAuthOpen] = useState(false)
@@ -51,29 +56,42 @@ export const Header: React.FC = () => {
     document.body.style.overflow = isMobileOpen ? 'hidden' : 'auto'
   }, [isMobileOpen])
 
+  const goHome = () => {
+    setMobileOpen(false)
+    router.push('/')
+  }
+
   return (
     <>
       {/* Toggle Button */}
-      <motion.button
-        className='fixed top-0 right-0 z-50 mix-blend-difference flex items-center p-4 active:opacity-70'
-        variants={iconVariants}
+      <motion.div
+        style={{
+          height: HEADER_HEIGHT,
+        }}
+        className='fixed top-0 w-full px-4 py-6 border-b border-gray-200 bg-white text-black left-0 z-50 flex items-center justify-between'
+        variants={headerVariants}
         initial='hidden'
         animate='visible'
-        onClick={toggleMobile}
       >
+        {/* logo */}
+        <span onClick={goHome} className='text-base active:opacity-70 transition-all'>
+          BRICKS SEOUL
+        </span>
         <motion.svg
-          className='w-6 h-6 text-white'
+          className='w-6 h-6'
           fill='none'
           stroke='currentColor'
           viewBox='0 0 24 24'
+          whileTap={{ scale: 0.95 }}
           animate={{ rotate: isMobileOpen ? 90 : 0 }}
           transition={{ duration: 0.2 }}
+          onClick={toggleMobile}
         >
           {isMobileOpen ? (
             <motion.path
               strokeLinecap='round'
               strokeLinejoin='round'
-              strokeWidth={2}
+              strokeWidth={1}
               d='M6 18L18 6M6 6l12 12'
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
@@ -83,7 +101,7 @@ export const Header: React.FC = () => {
             <motion.path
               strokeLinecap='round'
               strokeLinejoin='round'
-              strokeWidth={2}
+              strokeWidth={1}
               d='M4 6h16M4 12h16M4 18h16'
               initial={{ pathLength: 0 }}
               animate={{ pathLength: 1 }}
@@ -91,7 +109,7 @@ export const Header: React.FC = () => {
             />
           )}
         </motion.svg>
-      </motion.button>
+      </motion.div>
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -114,7 +132,11 @@ export const Header: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   variants={menuItemVariants}
                 >
-                  <Link href={item.href} className='block py-4 text-lg text-black' onClick={() => setMobileOpen(false)}>
+                  <Link
+                    href={item.href}
+                    className='block py-4 text-base text-black'
+                    onClick={() => setMobileOpen(false)}
+                  >
                     {item.label}
                   </Link>
                 </motion.div>
@@ -129,7 +151,7 @@ export const Header: React.FC = () => {
                   whileTap={{ scale: 0.95 }}
                   variants={menuItemVariants}
                 >
-                  <button onClick={toggleAuth} className='block py-4 text-lg text-red-500'>
+                  <button onClick={toggleAuth} className='block py-4 text-base text-red-500'>
                     Log Out
                   </button>
                 </motion.div>
