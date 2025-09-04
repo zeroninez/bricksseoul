@@ -29,7 +29,7 @@ interface LayoutProps {
 export const Layout = ({ children }: LayoutProps) => {
   return (
     <AuthProvider>
-      <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
+      <div className={classNames('max-w-3xl relative shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
         <ProtectedRoute>
           <Header />
           {/* Main content area */}

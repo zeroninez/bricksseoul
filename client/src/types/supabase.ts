@@ -7,10 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
@@ -46,21 +46,21 @@ export type Database = {
           access_code_id: number | null
           accessed_at: string | null
           id: number
-          ip_address: string | null
+          ip_address: unknown | null
           user_agent: string | null
         }
         Insert: {
           access_code_id?: number | null
           accessed_at?: string | null
           id?: number
-          ip_address?: string | null
+          ip_address?: unknown | null
           user_agent?: string | null
         }
         Update: {
           access_code_id?: number | null
           accessed_at?: string | null
           id?: number
-          ip_address?: string | null
+          ip_address?: unknown | null
           user_agent?: string | null
         }
         Relationships: [
@@ -96,6 +96,45 @@ export type Database = {
           id?: number
           setting_key?: string
           setting_value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      properties: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          description: string | null
+          featured_image_url: string | null
+          id: number
+          is_published: boolean | null
+          location: string
+          sort_order: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_image_url?: string | null
+          id?: number
+          is_published?: boolean | null
+          location: string
+          sort_order?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          description?: string | null
+          featured_image_url?: string | null
+          id?: number
+          is_published?: boolean | null
+          location?: string
+          sort_order?: number | null
+          title?: string
           updated_at?: string | null
         }
         Relationships: []

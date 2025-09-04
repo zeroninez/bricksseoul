@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "supabase-gen": "supabase gen types typescript --project-id lmbngdcszvbobktyvywm --schema public > src/types/supabase.ts"
+    "supabase-gen": "supabase gen types typescript --project-id odcyrmefvfvaowtzkpet --schema public > src/types/supabase.ts"
   },
   "dependencies": {
     "@ducanh2912/next-pwa": "^10.2.9",

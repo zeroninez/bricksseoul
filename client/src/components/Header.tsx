@@ -14,7 +14,6 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/properties', label: 'Properties' },
   { href: '/activities', label: 'Activities' },
@@ -68,7 +67,7 @@ export const Header: React.FC = () => {
         style={{
           height: HEADER_HEIGHT,
         }}
-        className='fixed top-0 w-full px-4 py-6 border-b border-gray-200 bg-white text-black left-0 z-50 flex items-center justify-between'
+        className='fixed top-0 inset-x-0 w-full px-4 py-6 border-b border-gray-200 bg-white text-black z-50 flex items-center justify-between'
         variants={headerVariants}
         initial='hidden'
         animate='visible'
@@ -119,6 +118,9 @@ export const Header: React.FC = () => {
             initial='closed'
             animate='open'
             exit='closed'
+            style={{
+              marginTop: HEADER_HEIGHT,
+            }}
             variants={menuContainerVariants}
           >
             <nav className='flex flex-col justify-end px-4'>
