@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 
 @theme {
   /* font-size */
@@ -18,11 +19,6 @@
   --text-7xl: 5.25rem;
   --text-8xl: 6rem;
   --text-9xl: 7.5rem;
-
-  /* font-family */
-  --font-geist-sans: var(--geist-sans-font-family);
-  --font-geist-mono: var(--geist-mono-font-family);
-  --font-bodoniModa: 'Bodoni Moda', serif;
 
   /* colors */
   --color-primary: #1d4ed8;
@@ -96,6 +92,8 @@
     padding: 0;
     background: var(--color-background);
     color: black;
+    font-family: 'SF Pro Display',
+      sans-serif;
     /* 16px */
     font-size: 100%;
   }

@@ -42,46 +42,65 @@ export const AccessCodeForm = () => {
   }
 
   return (
-    <div className='h-dvh bg-background flex items-center justify-center p-4'>
-      <div className='w-full bg-white shadow-lg p-8 border border-gray-200'>
-        <div className='text-center mb-8'>
-          <Logo className='w-16 h-16 mx-auto mb-4' />
-          <h1 className='text-2xl font-bold font-bodoniModa tracking-tighter mb-2'>Bricks Seoul</h1>
-          <p className='text-gray-600'>Please enter your access code</p>
+    <div
+      style={{
+        backgroundImage: "url('/img/intro.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+      className='h-dvh relative flex flex-col items-center justify-between px-6 py-6 gap-10'
+    >
+      <div className='absolute inset-0 bg-black/30 z-0' />
+
+      <div className='w-full h-1/2 flex flex-col justify-between items-center z-10'>
+        <div className='w-full flex flex-col justify-start items-start gap-0.5 text-white'>
+          <div className='text-lg font-bold leading-none'>WELLNCHER</div>
+          <div className='text-base font-light leading-none'>Place to relax</div>
         </div>
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
-          <div>
-            <label htmlFor='accessCode' className='block text-sm font-medium text-gray-700 mb-2'>
-              Access Code
-            </label>
-            <input
-              type='text'
-              id='accessCode'
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder='Enter your access code'
-              className='w-full px-4 py-3 border border-gray-300 shadow-sm focus:outline-none focus:ring focus:ring-black focus:border-black'
-              disabled={isLoading}
-              required
-            />
+        <div className='w-full flex flex-col justify-start items-start gap-2 text-white'>
+          <div className='text-2xl font-bold leading-10'>WELCOME</div>
+          <div className='text-lg font-semibold leading-tight'>
+            Find your place to relax,
+            <br />
+            feel at home Where comfort
+            <br />
+            meets covenience.
           </div>
-
-          {error && (
-            <div className='bg-red-50 border border-red-200 p-3'>
-              <p className='text-sm text-red-600'>{error}</p>
-            </div>
-          )}
-
-          <button
-            type='submit'
-            disabled={isLoading || !code.trim()}
-            className='w-full bg-black text-white py-3 px-4 hover:bg-black/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
-          >
-            {isLoading ? 'Verifying...' : 'Enter'}
-          </button>
-        </form>
+        </div>
       </div>
+
+      <form onSubmit={handleSubmit} className='w-full h-1/2 flex flex-col justify-between items-center z-10'>
+        <div className='w-full h-fit flex flex-col gap-1.5'>
+          <label htmlFor='accessCode' className='block text-sm font-medium text-white'>
+            Code
+          </label>
+          <input
+            type='text'
+            id='accessCode'
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder='Enter your access code'
+            className='w-full px-4 py-3 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.15)] rounded-xl focus:outline-none '
+            disabled={isLoading}
+            required
+          />
+        </div>
+
+        {error && (
+          <div className='bg-red-50 border border-red-200 p-3'>
+            <p className='text-sm text-red-600'>{error}</p>
+          </div>
+        )}
+
+        <button
+          type='submit'
+          disabled={isLoading || !code.trim()}
+          className='w-full bg-black text-white py-3 px-4 rounded-xl hover:bg-black/90 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors'
+        >
+          {isLoading ? 'Verifying...' : 'Enter'}
+        </button>
+      </form>
     </div>
   )
 }
