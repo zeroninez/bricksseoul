@@ -1,11 +1,13 @@
-// src/components/AccessCodeForm.tsx
+// src/components/AccessPage.tsx
 'use client'
 
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Logo } from './Logo'
+import { Logo, Screen, LocaleDropdown } from '.'
+import { useTranslations } from 'next-intl'
+import classNames from 'classnames'
 
-export const AccessCodeForm = () => {
+export const AccessPage = () => {
   const [code, setCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -40,6 +42,7 @@ export const AccessCodeForm = () => {
 
     setIsLoading(false)
   }
+  const t = useTranslations('HomePage')
 
   return (
     <div
@@ -47,14 +50,16 @@ export const AccessCodeForm = () => {
         backgroundImage: "url('/img/intro.png')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
-      className='h-dvh relative flex flex-col items-center justify-between px-6 py-6 gap-10'
+      className='fixed z-10 w-screen inset-0 flex flex-col items-center justify-between px-6 py-6 gap-10'
     >
       <div className='absolute inset-0 bg-black/30 z-0' />
 
       <div className='w-full h-1/2 flex flex-col justify-between items-center z-10'>
         <div className='w-full flex flex-col justify-start items-start gap-0.5 text-white'>
-          <div className='text-lg font-bold leading-none'>WELLNCHER</div>
+          <Logo className='text-lg' />
+          <span>{t('title')}</span>
           <div className='text-base font-light leading-none'>Place to relax</div>
         </div>
 

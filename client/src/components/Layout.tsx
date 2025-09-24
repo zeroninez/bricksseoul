@@ -29,22 +29,11 @@ interface LayoutProps {
 export const Layout = ({ children }: LayoutProps) => {
   return (
     <AuthProvider>
-      <div className={classNames('max-w-3xl relative shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
-        <ProtectedRoute>
-          <Header />
-          {/* Main content area */}
-          <main
-            style={{
-              marginTop: HEADER_HEIGHT,
-            }}
-            className='flex-1'
-          >
-            {children}
-          </main>
-          {/* Footer can be added here if needed */}
-          <Footer />
-        </ProtectedRoute>
-      </div>
+      <ProtectedRoute>
+        <Header />
+        {children}
+        <Footer />
+      </ProtectedRoute>
     </AuthProvider>
   )
 }

@@ -2,8 +2,7 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { AccessCodeForm } from './AccessCodeForm'
-import { Logo } from './Logo'
+import { AccessPage, Logo } from '.'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -22,7 +21,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!isAuthenticated) {
-    return <AccessCodeForm />
+    return <AccessPage />
   }
 
   return <>{children}</>
