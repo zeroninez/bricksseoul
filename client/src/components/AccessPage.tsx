@@ -3,7 +3,9 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { Logo, Screen, LocaleDropdown } from '.'
+import { Logo, Screen, LocaleDropdown, Input, Button } from '.'
+import { FaRegKeyboard } from 'react-icons/fa6'
+
 import { useTranslations } from 'next-intl'
 import classNames from 'classnames'
 
@@ -37,7 +39,7 @@ export const AccessPage = () => {
     const success = await login(code.trim(), ip)
 
     if (!success) {
-      setError('Invalid access code.')
+      setError('*Invalid invitation code. Please try again.')
     }
 
     setIsLoading(false)
@@ -59,7 +61,6 @@ export const AccessPage = () => {
       <div className='w-full h-1/2 flex flex-col justify-between items-center z-10'>
         <div className='w-full flex flex-col justify-start items-start gap-0.5 text-white'>
           <Logo className='text-lg' />
-          <span>{t('title')}</span>
           <div className='text-base font-light leading-none'>Place to relax</div>
         </div>
 
@@ -76,35 +77,28 @@ export const AccessPage = () => {
       </div>
 
       <form onSubmit={handleSubmit} className='w-full h-1/2 flex flex-col justify-between items-center z-10'>
-        <div className='w-full h-fit flex flex-col gap-1.5'>
-          <label htmlFor='accessCode' className='block text-sm font-medium text-white'>
-            Code
-          </label>
-          <input
-            type='text'
-            id='accessCode'
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            placeholder='Enter your access code'
-            className='w-full px-4 py-3 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.15)] rounded-xl focus:outline-none '
-            disabled={isLoading}
-            required
-          />
-        </div>
-
-        {error && (
-          <div className='bg-red-50 border border-red-200 p-3'>
-            <p className='text-sm text-red-600'>{error}</p>
-          </div>
-        )}
-
-        <button
-          type='submit'
-          disabled={isLoading || !code.trim()}
-          className='w-full bg-black text-white py-3 px-4 rounded-xl hover:bg-black/90 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors'
-        >
-          {isLoading ? 'Verifying...' : 'Enter'}
-        </button>
+        <Input
+          label='Code'
+          type='text'
+          id='accessCode'
+          value={code}
+          setValue={(v) => {
+            setCode(v)
+            if (error) setError('') // 값 변경 시 에러 지우기
+          }}
+          disabled={isLoading}
+          placeholder='Enter 4-digit invitation code'
+          error={error}
+          required
+          labelClassName='text-white'
+          onFocus
+          action={{
+            icon: <FaRegKeyboard />,
+          }}
+        />
+        <Button type='submit' disabled={isLoading || !code.trim()}>
+          {isLoading ? 'Verifying...' : 'Verify'}
+        </Button>
       </form>
     </div>
   )

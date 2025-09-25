@@ -1,5 +1,9 @@
 import classNames from 'classnames'
 
-export const Logo = ({ className }: { className?: string }) => {
-  return <div className={classNames('font-bold leading-none tracking-[10%]', className)}>WELLNCHER</div>
+export const Logo = ({ className, onClick }: { className?: string; onClick?: () => void }) => {
+  return (
+    <div className={classNames('font-bold leading-none tracking-[7%]', className)} onClick={onClick}>
+      WELLNCHER
+    </div>
+  )
 }

@@ -1,44 +1,30 @@
 // src/components/Header.tsx
 'use client'
 
-import Link from 'next/link'
 import { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence, Variants } from 'motion/react'
 import { useAuth } from '@/contexts/AuthContext'
 import { HEADER_HEIGHT } from '@/theme/constants'
-import { useRouter, usePathname } from 'next/navigation'
+import { useRouter, usePathname, Link } from '@/i18n/routing'
+import { Logo } from './Logo'
+import { GoChevronRight } from 'react-icons/go'
+import { HiPhone } from 'react-icons/hi2'
+import { BsFillSuitcaseLgFill } from 'react-icons/bs'
+import { MdMarkEmailUnread } from 'react-icons/md'
+import { MdOutlineLanguage } from 'react-icons/md'
 
 interface MenuItem {
   href: string
   label: string
+  icon?: string
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { href: '/about', label: 'About' },
-  { href: '/properties', label: 'Properties' },
-  { href: '/activities', label: 'Activities' },
-  { href: '/request', label: 'Request' },
+  { href: '/contact', label: 'Contact us', icon: 'phone' },
+  { href: '/business', label: 'For business', icon: 'briefcase' },
+  { href: '/check-bookings', label: 'My bookings', icon: 'mailsearch' },
+  { href: '/language', label: 'Language', icon: 'language' },
 ]
-
-// Animation variants
-const headerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3, delay: 0.1 } },
-}
-
-const menuContainerVariants: Variants = {
-  closed: { height: 0, opacity: 0 },
-  open: { height: '100%', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } },
-}
-
-const menuItemVariants: Variants = {
-  closed: { x: -20, opacity: 0 },
-  open: (i: number) => ({
-    x: 0,
-    opacity: 1,
-    transition: { duration: 0.2, delay: (i + 1) * 0.05, ease: 'easeOut' },
-  }),
-}
 
 export const Header: React.FC = () => {
   const router = useRouter()
@@ -64,105 +50,108 @@ export const Header: React.FC = () => {
     <>
       {/* Toggle Button */}
       <motion.div
-        style={{
-          height: HEADER_HEIGHT,
-        }}
-        className='fixed top-0 inset-x-0 w-full px-4 py-6 border-b border-gray-200 bg-white text-black z-50 flex items-center justify-between'
-        variants={headerVariants}
-        initial='hidden'
-        animate='visible'
+        initial={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
+        animate={{ opacity: 1, y: 0, height: isMobileOpen ? '100%' : HEADER_HEIGHT }}
+        exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
+        transition={{ duration: 0.3 }}
+        className='fixed top-0 inset-x-0 w-full bg-zinc-50 z-50 '
       >
-        {/* logo */}
-        <span onClick={goHome} className='text-base active:opacity-70 transition-all'>
-          BRICKS SEOUL
-        </span>
-        <motion.svg
-          className='w-6 h-6'
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-          whileTap={{ scale: 0.95 }}
-          animate={{ rotate: isMobileOpen ? 90 : 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={toggleMobile}
+        <div
+          style={{
+            height: HEADER_HEIGHT,
+          }}
+          className='w-full text-black flex items-center justify-between pl-5'
         >
-          {isMobileOpen ? (
-            <motion.path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={1}
-              d='M6 18L18 6M6 6l12 12'
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.2 }}
-            />
-          ) : (
-            <motion.path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={1}
-              d='M4 6h16M4 12h16M4 18h16'
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 0.2 }}
-            />
-          )}
-        </motion.svg>
-      </motion.div>
+          {/* logo */}
+          <Logo className='text-[18px] cursor-pointer' onClick={goHome} />
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileOpen && (
-          <motion.aside
-            className='fixed top-0 right-0 w-full h-full z-40 bg-white'
-            initial='closed'
-            animate='open'
-            exit='closed'
-            style={{
-              marginTop: HEADER_HEIGHT,
-            }}
-            variants={menuContainerVariants}
+          <motion.button
+            className='py-3 px-5'
+            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            onClick={toggleMobile}
           >
-            <nav className='flex flex-col justify-end px-4'>
-              {MENU_ITEMS.map((item, idx) => (
-                <motion.div
-                  key={item.href}
-                  custom={idx}
-                  initial='closed'
-                  animate='open'
-                  exit='closed'
-                  whileTap={{ scale: 0.95 }}
-                  variants={menuItemVariants}
+            <motion.svg
+              animate={{ rotate: isMobileOpen ? 90 : 0 }}
+              transition={{ duration: 0.2 }}
+              className='w-6 h-6'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              {isMobileOpen ? (
+                <motion.path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M6 18L18 6M6 6l12 12'
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              ) : (
+                <motion.path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M4 6h16M4 12h16M4 18h16'
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              )}
+            </motion.svg>
+          </motion.button>
+        </div>
+        <div className='w-full h-fit px-5 pt-3 flex flex-col gap-3 items-center justify-center'>
+          <AnimatePresence>
+            {isMobileOpen && (
+              <>
+                <motion.nav
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className='w-full flex flex-col justify-end rounded-[20px] bg-white border border-zinc-100 h-fit'
                 >
-                  <Link
-                    href={item.href}
-                    className='block py-4 text-base text-black'
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {item.label}
-                  </Link>
-                </motion.div>
-              ))}
-
-              {accessCode && (
+                  {MENU_ITEMS.map((item, idx) => (
+                    <div
+                      key={item.href}
+                      className='pl-3.5 pr-2 py-4 w-full h-fit text-sm font-medium flex flex-row justify-between items-center active:opacity-70 transition-all cursor-pointer'
+                      onClick={() => {
+                        router.push(item.href)
+                        setMobileOpen(false)
+                      }}
+                    >
+                      <div className='w-full h-fit flex flex-row justify-start items-center gap-3'>
+                        {item.icon === 'phone' && <HiPhone className='text-lg' />}
+                        {item.icon === 'briefcase' && <BsFillSuitcaseLgFill className='text-lg' />}
+                        {item.icon === 'mailsearch' && <MdMarkEmailUnread className='text-lg' />}
+                        {item.icon === 'language' && <MdOutlineLanguage className='text-lg' />}
+                        {item.label}
+                      </div>
+                      <button className='block w-fit h-full text-lg text-black'>
+                        <GoChevronRight />
+                      </button>
+                    </div>
+                  ))}
+                </motion.nav>
                 <motion.div
                   custom={MENU_ITEMS.length}
                   initial='closed'
                   animate='open'
                   exit='closed'
                   whileTap={{ scale: 0.95 }}
-                  variants={menuItemVariants}
+                  onClick={toggleAuth}
+                  className='w-full border border-zinc-100 bg-white rounded-2xl h-fit px-5 text-sm text-rose-500 py-4 flex items-center justify-start'
                 >
-                  <button onClick={toggleAuth} className='block py-4 text-base text-red-500'>
-                    Log Out
-                  </button>
+                  Log out
                 </motion.div>
-              )}
-            </nav>
-          </motion.aside>
-        )}
-      </AnimatePresence>
-
+              </>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
       {/* Auth Confirmation Modal */}
       <AnimatePresence>
         {isAuthOpen && (
