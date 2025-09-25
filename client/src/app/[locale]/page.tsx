@@ -83,17 +83,9 @@ export default function Home() {
             <div
               data-property-1='Card 1'
               data-show-price='true'
-              className='w-80 px-3 pt-3 pb-6 bg-white rounded-[32px] shadow-[0px_1px_4px_0px_rgba(12,12,13,0.05)] shadow-[0px_1px_4px_0px_rgba(12,12,13,0.10)] inline-flex flex-col justify-center items-start gap-4'
+              className='w-full h-fit px-3 pt-3 pb-6 bg-white rounded-[32px] shadow-[0px_1px_4px_0px_rgba(12,12,13,0.05)] shadow-[0px_1px_4px_0px_rgba(12,12,13,0.10)] inline-flex flex-col justify-center items-start gap-4'
             >
-              <div className='self-stretch h-60 relative rounded-[20px]'>
-                <div className='px-3 py-1 left-[248px] top-[206px] absolute bg-black/50 rounded-2xl inline-flex flex-col justify-center items-start gap-2.5 overflow-hidden'>
-                  <div className='inline-flex justify-start items-center gap-2'>
-                    <div className='flex justify-start items-center gap-2'>
-                      <div className="justify-start text-white text-xs font-medium font-['SF_Pro_Display']">1 / 12</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <div className='self-stretch h-60 relative rounded-[20px]'></div>
               <div className='self-stretch px-1.5 flex flex-col justify-start items-start gap-1'>
                 <div className="w-80 justify-start text-zinc-800 text-xl font-semibold font-['SF_Pro_Display'] tracking-tight">
                   Serenity Lakes 5, Apartment I
@@ -105,29 +97,21 @@ export default function Home() {
                         <div className='w-1.5 h-1.5 left-[5.39px] top-[1.48px] absolute outline outline-[1.50px] outline-offset-[-0.75px] outline-orange-500' />
                         <div className='w-3 h-2 left-[2.13px] top-[6.70px] absolute outline outline-[1.50px] outline-offset-[-0.75px] outline-orange-500' />
                       </div>
-                      <div className="w-72 justify-start text-zinc-600 text-base font-normal font-['SF_Pro_Display'] tracking-tight">
+                      <div className='w-72 justify-start text-zinc-600 text-base font-normal tracking-tight'>
                         Jumeirah Village Circle,Dubai
                       </div>
                     </div>
                     <div className='inline-flex justify-start items-center gap-1'>
-                      <div className="justify-start text-zinc-600 text-xs font-normal font-['SF_Pro_Display'] tracking-tight">
-                        1st Floor{' '}
-                      </div>
-                      <div className="justify-start text-zinc-600 text-base font-light font-['SF_Pro_Display']">•</div>
-                      <div className="justify-start text-zinc-600 text-xs font-normal font-['SF_Pro_Display'] tracking-tight">
-                        482ft²
-                      </div>
-                      <div className="justify-start text-zinc-600 text-base font-light font-['SF_Pro_Display']">•</div>
-                      <div className="justify-start text-zinc-600 text-xs font-normal font-['SF_Pro_Display'] tracking-tight">
-                        1 bed
-                      </div>
+                      <div className='justify-start text-zinc-600 text-xs font-normal tracking-tight'>1st Floor </div>
+                      <div className='justify-start text-zinc-600 text-base font-light'>•</div>
+                      <div className='justify-start text-zinc-600 text-xs font-normal tracking-tight'>482ft²</div>
+                      <div className='justify-start text-zinc-600 text-base font-light'>•</div>
+                      <div className='justify-start text-zinc-600 text-xs font-normal tracking-tight'>1 bed</div>
                     </div>
                   </div>
                   <div className='inline-flex justify-start items-center gap-1.5'>
-                    <div className="justify-start text-zinc-800 text-xl font-semibold font-['SF_Pro_Display'] tracking-tight">
-                      $6,530
-                    </div>
-                    <div className="justify-start text-zinc-800 text-base font-medium font-['SF_Pro_Display'] tracking-tight">
+                    <div className='justify-start text-zinc-800 text-xl font-semibold tracking-tight'>$6,530</div>
+                    <div className='justify-start text-zinc-800 text-base font-medium tracking-tight'>
                       / For 19 Sep - 24 Oct 2025
                     </div>
                   </div>
