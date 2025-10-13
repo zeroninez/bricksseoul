@@ -1,5 +1,45 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
+  "LoginPage": {
+    "step1": {
+      "title": "FOR YOU!",
+      "description": "Find your place to relax, \nfeel at home Where comfort \nmeets convenience.",
+      "input": {
+        "placeholder": "Enter your access code",
+        "error": "*Invalid invitation code. Please try again."
+      },
+      "button": {
+        "default": "Verify",
+        "loading": "Verifying...",
+        "success": "Success",
+        "error": "Error"
+      }
+    },
+    "step2": {
+      "title": "WELCOME",
+      "description": "Find your place to relax, \nfeel at home Where comfort \nmeets convenience.",
+      "typeSelect": {
+        "label": "User Type",
+        "personal": {
+          "label": "Personal",
+          "description": "For Individual"
+        },
+        "business": {
+          "label": "Business",
+          "description": "For Companies"
+        }
+      },
+      "languageSelect": {
+        "label": "Language",
+        "options": {
+          "en": "English"
+        }
+      },
+      "button": {
+        "default": "Complete",
+        "loading": "Loading...",
+        "success": "Success",
+        "error": "Error"
+      }
+    }
   }
 }

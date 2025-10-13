@@ -25,6 +25,10 @@
   --aspect-video: 16 / 9;
   --aspect-portrait: 9 / 16;
   --aspect-landscape: 16 / 9;
+
+  /* color */
+  --color-primary: #3E160C;
+  --color-disabled: #513E39;
 }
 
 @layer base {
@@ -89,7 +93,6 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #000;
     font-family: 'SF Pro Display',
       sans-serif;
     /* 16px */

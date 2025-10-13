@@ -2,7 +2,8 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { AccessPage, Logo } from '.'
+import { AccessPage, Logo, SplashScreen } from '.'
+import { motion } from 'motion/react'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -12,17 +13,16 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
-    return (
-      <div className='w-full h-screen flex flex-col gap-4 items-center justify-center p-6'>
-        <Logo className='w-12 h-12 animate-spin' />
-        <p className='text-base text-gray-700'>Loading...</p>
-      </div>
-    )
+    return <SplashScreen />
   }
 
   if (!isAuthenticated) {
     return <AccessPage />
   }
 
-  return <>{children}</>
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+      {children}
+    </motion.div>
+  )
 }

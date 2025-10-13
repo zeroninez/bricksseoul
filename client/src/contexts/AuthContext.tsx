@@ -7,8 +7,9 @@ import { supabase, AccessCodeRow } from '@/lib/supabase'
 interface AuthContextType {
   isAuthenticated: boolean
   accessCode: AccessCodeRow | null
-  login: (code: string, user_ip: string | null) => Promise<boolean>
+  login: (code: string, user_ip: string | null, user_type: string) => Promise<boolean>
   logout: () => void
+  validateAccessCode: (code: string) => Promise<AccessCodeRow | null>
   isLoading: boolean
 }
 
@@ -45,7 +46,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(false)
   }, [])
 
-  const login = async (code: string, user_ip: string | null): Promise<boolean> => {
+  const validateAccessCode = async (code: string): Promise<AccessCodeRow | null> => {
+    try {
+      const { data, error } = await supabase
+        .from('access_codes')
+        .select('*')
+        .eq('code', code.toUpperCase())
+        .eq('is_active', true)
+        .single()
+
+      if (error || !data) {
+        return null
+      }
+      return data
+    } catch (error) {
+      console.error('Error validating access code:', error)
+      return null
+    }
+  }
+
+  const login = async (code: string, user_ip: string | null, user_type: string): Promise<boolean> => {
     try {
       const { data, error } = await supabase
         .from('access_codes')
@@ -63,6 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         access_code_id: data.id,
         user_agent: navigator.userAgent,
         ip_address: user_ip,
+        user_type: user_type,
       })
 
       // 로컬스토리지에 저장
@@ -92,6 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         accessCode,
         login,
         logout,
+        validateAccessCode,
         isLoading,
       }}
     >

@@ -48,6 +48,7 @@ export type Database = {
           id: number
           ip_address: unknown | null
           user_agent: string | null
+          user_type: string | null
         }
         Insert: {
           access_code_id?: number | null
@@ -55,6 +56,7 @@ export type Database = {
           id?: number
           ip_address?: unknown | null
           user_agent?: string | null
+          user_type?: string | null
         }
         Update: {
           access_code_id?: number | null
@@ -62,6 +64,7 @@ export type Database = {
           id?: number
           ip_address?: unknown | null
           user_agent?: string | null
+          user_type?: string | null
         }
         Relationships: [
           {
@@ -100,179 +103,211 @@ export type Database = {
         }
         Relationships: []
       }
+      amenities: {
+        Row: {
+          code: string
+          label: string
+        }
+        Insert: {
+          code: string
+          label: string
+        }
+        Update: {
+          code?: string
+          label?: string
+        }
+        Relationships: []
+      }
       properties: {
         Row: {
-          content: string | null
-          created_at: string | null
+          check_in: string | null
+          check_out: string | null
+          created_at: string
+          currency: string
           description: string | null
-          featured_image_url: string | null
-          id: number
-          is_published: boolean | null
-          location: string
-          sort_order: number | null
-          title: string
-          updated_at: string | null
+          id: string
+          name: string
+          price_per_night: number
+          updated_at: string
         }
         Insert: {
-          content?: string | null
-          created_at?: string | null
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          currency?: string
           description?: string | null
-          featured_image_url?: string | null
-          id?: number
-          is_published?: boolean | null
-          location: string
-          sort_order?: number | null
-          title: string
-          updated_at?: string | null
+          id?: string
+          name: string
+          price_per_night: number
+          updated_at?: string
         }
         Update: {
-          content?: string | null
-          created_at?: string | null
+          check_in?: string | null
+          check_out?: string | null
+          created_at?: string
+          currency?: string
           description?: string | null
-          featured_image_url?: string | null
-          id?: number
-          is_published?: boolean | null
-          location?: string
-          sort_order?: number | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      property: {
-        Row: {
-          address: string | null
-          created_at: string | null
-          description: string | null
-          features: Json | null
-          id: number
-          latitude: number | null
-          longitude: number | null
-          name: string
-          payment_link: string | null
-          slug: string | null
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string | null
-          description?: string | null
-          features?: Json | null
-          id?: number
-          latitude?: number | null
-          longitude?: number | null
-          name: string
-          payment_link?: string | null
-          slug?: string | null
-        }
-        Update: {
-          address?: string | null
-          created_at?: string | null
-          description?: string | null
-          features?: Json | null
-          id?: number
-          latitude?: number | null
-          longitude?: number | null
+          id?: string
           name?: string
-          payment_link?: string | null
-          slug?: string | null
+          price_per_night?: number
+          updated_at?: string
         }
         Relationships: []
       }
-      property_detail: {
+      property_address: {
         Row: {
-          amenities: Json | null
-          description_blocks: Json | null
-          nearby_info: string | null
-          property_id: number
+          address1: string | null
+          address2: string | null
+          guide: string | null
+          latitude: number
+          longitude: number
+          property_id: string
         }
         Insert: {
-          amenities?: Json | null
-          description_blocks?: Json | null
-          nearby_info?: string | null
-          property_id: number
+          address1?: string | null
+          address2?: string | null
+          guide?: string | null
+          latitude: number
+          longitude: number
+          property_id: string
         }
         Update: {
-          amenities?: Json | null
-          description_blocks?: Json | null
-          nearby_info?: string | null
-          property_id?: number
+          address1?: string | null
+          address2?: string | null
+          guide?: string | null
+          latitude?: number
+          longitude?: number
+          property_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "property_detail_property_id_fkey"
+            foreignKeyName: "property_address_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: true
-            referencedRelation: "property"
+            referencedRelation: "properties"
             referencedColumns: ["id"]
           },
         ]
       }
-      property_image: {
+      property_amenities: {
         Row: {
-          id: number
-          name: string | null
-          property_id: number | null
-          sort_order: number | null
-          src: string | null
+          amenity_code: string
+          property_id: string
         }
         Insert: {
-          id?: number
-          name?: string | null
-          property_id?: number | null
-          sort_order?: number | null
-          src?: string | null
+          amenity_code: string
+          property_id: string
         }
         Update: {
-          id?: number
-          name?: string | null
-          property_id?: number | null
-          sort_order?: number | null
-          src?: string | null
+          amenity_code?: string
+          property_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "property_image_property_id_fkey"
+            foreignKeyName: "property_amenities_amenity_code_fkey"
+            columns: ["amenity_code"]
+            isOneToOne: false
+            referencedRelation: "amenities"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "property_amenities_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
-            referencedRelation: "property"
+            referencedRelation: "properties"
             referencedColumns: ["id"]
           },
         ]
       }
-      property_reservation: {
+      property_images: {
         Row: {
-          end_date: string | null
-          id: number
-          property_id: number | null
-          requested_at: string | null
-          requester_email: string | null
-          start_date: string | null
-          status: string | null
+          category: string
+          id: string
+          is_primary: boolean
+          property_id: string
+          sort_order: number
+          url: string
         }
         Insert: {
-          end_date?: string | null
-          id?: number
-          property_id?: number | null
-          requested_at?: string | null
-          requester_email?: string | null
-          start_date?: string | null
-          status?: string | null
+          category: string
+          id?: string
+          is_primary?: boolean
+          property_id: string
+          sort_order?: number
+          url: string
         }
         Update: {
-          end_date?: string | null
-          id?: number
-          property_id?: number | null
-          requested_at?: string | null
-          requester_email?: string | null
-          start_date?: string | null
-          status?: string | null
+          category?: string
+          id?: string
+          is_primary?: boolean
+          property_id?: string
+          sort_order?: number
+          url?: string
         }
         Relationships: [
           {
-            foreignKeyName: "property_reservation_property_id_fkey"
+            foreignKeyName: "property_images_property_id_fkey"
             columns: ["property_id"]
             isOneToOne: false
-            referencedRelation: "property"
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_rules: {
+        Row: {
+          id: string
+          property_id: string
+          rule_text: string
+        }
+        Insert: {
+          id?: string
+          property_id: string
+          rule_text: string
+        }
+        Update: {
+          id?: string
+          property_id?: string
+          rule_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_rules_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      property_space: {
+        Row: {
+          available_people: number | null
+          bathrooms: number
+          bedrooms: number
+          living_rooms: number
+          property_id: string
+        }
+        Insert: {
+          available_people?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          living_rooms?: number
+          property_id: string
+        }
+        Update: {
+          available_people?: number | null
+          bathrooms?: number
+          bedrooms?: number
+          living_rooms?: number
+          property_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_space_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: true
+            referencedRelation: "properties"
             referencedColumns: ["id"]
           },
         ]

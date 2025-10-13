@@ -5,14 +5,17 @@ import classNames from 'classnames'
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
+  preset?: 'primary' | 'black'
 }
 
-export const Button = ({ children, className, ...props }: ButtonProps) => {
+export const Button = ({ children, className, preset = 'primary', ...props }: ButtonProps) => {
   return (
     <button
+      disabled={props.disabled}
       className={classNames(
-        'w-full h-14 px-6 py-3 bg-orange-500 text-white text-[18px] font-semibold rounded-2xl active:opacity-70 transition-all disabled:bg-zinc-400 disabled:cursor-not-allowed',
+        'w-full h-14 px-6 py-3  text-white text-[18px] font-medium active:opacity-70 transition-all disabled:text-white/50 disabled:bg-disabled disabled:cursor-not-allowed',
         className ? className : '',
+        preset === 'black' ? 'bg-black' : preset === 'primary' && 'bg-primary',
       )}
       {...props}
     >
