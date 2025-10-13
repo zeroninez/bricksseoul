@@ -317,7 +317,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      fn_property_create: {
+        Args: {
+          p_address?: Json
+          p_amenities?: string[]
+          p_check_in: string
+          p_check_out: string
+          p_currency?: string
+          p_description: string
+          p_images?: Json
+          p_name: string
+          p_price_per_night: number
+          p_rules?: string[]
+          p_space?: Json
+        }
+        Returns: string
+      }
+      fn_property_delete: {
+        Args: { p_id: string }
+        Returns: undefined
+      }
+      fn_property_get: {
+        Args: { p_id: string }
+        Returns: Json
+      }
+      fn_property_update: {
+        Args: {
+          p_address?: Json
+          p_amenities?: string[]
+          p_check_in?: string
+          p_check_out?: string
+          p_currency?: string
+          p_description?: string
+          p_id: string
+          p_images?: Json
+          p_name?: string
+          p_price_per_night?: number
+          p_rules?: string[]
+          p_space?: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

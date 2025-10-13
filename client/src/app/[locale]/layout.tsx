@@ -7,6 +7,7 @@ import { Locale, routing } from '@/i18n/routing'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
+import Providers from './providers'
 
 export default async function RootLayout({
   children,
@@ -27,9 +28,11 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`antialiased`}>
-        <NextIntlClientProvider messages={messages}>
-          <Layout>{children}</Layout>
-        </NextIntlClientProvider>
+        <Providers>
+          <NextIntlClientProvider messages={messages}>
+            <Layout>{children}</Layout>
+          </NextIntlClientProvider>
+        </Providers>
       </body>
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />

@@ -17,6 +17,9 @@ const withPWA = require('@ducanh2912/next-pwa').default({
 const withNextIntl = createNextIntlPlugin()
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [{ source: '/api/:path*', destination: '/api/:path*', locale: false }]
+  },
   /* config options here */
   reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
   images: {
