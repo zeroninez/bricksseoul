@@ -58,8 +58,8 @@ export const Input = ({
       <div
         className={classNames(
           mini
-            ? 'w-fit h-8 flex flex-row justify-center items-center gap-1 pl-4 pr-2 py-3 text-base bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.1)]'
-            : 'w-full h-fit flex flex-row justify-between items-center gap-1 px-4 py-3 text-base bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.1)]',
+            ? 'w-fit h-8 flex flex-row justify-center items-center gap-1 pl-4 pr-2 py-3 text-base rounded-lg bg-white border border-stone-200 focus-within:bg-stone-200 transition-all'
+            : 'w-full h-fit flex flex-row justify-between items-center gap-1 px-4 py-3 text-base rounded-lg bg-white border border-stone-200 focus-within:bg-stone-200 transition-all',
           'relative ',
         )}
         onClick={() => {
@@ -115,7 +115,7 @@ export const Input = ({
           {label}
         </label>
       )}
-      <div className='w-full flex flex-row gap-1 px-4 py-3 text-base bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.1)]'>
+      <div className='w-full flex flex-row gap-1 text-base bg-white rounded-lg border border-stone-200 focus-within:bg-stone-200 transition-all'>
         <input
           ref={inputRef}
           type={type}
@@ -124,8 +124,8 @@ export const Input = ({
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
           className={classNames(
-            'w-full focus:outline-none placeholder:text-zinc-400',
-            error ? 'text-rose-500 ' : 'text-zinc-800 ',
+            'w-full focus:outline-none placeholder:text-stone-400 px-4 py-3',
+            error ? 'text-rose-500 ' : 'text-stone-800 ',
             inputClassName,
           )}
           disabled={disabled}
@@ -135,7 +135,7 @@ export const Input = ({
           <button
             type='button'
             onClick={handleActionClick}
-            className='w-fit h-full flex justify-center items-center text-zinc-800 text-lg active:opacity-70 transition-all'
+            className='w-fit h-full flex justify-center items-center text-stone-800 text-lg active:opacity-70 transition-all pr-4'
           >
             {action.icon}
           </button>

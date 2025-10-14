@@ -1,7 +1,7 @@
 // src/components/AccessPage.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUserTypeStore } from '@/stores'
 import { Logo, LocaleDropdown, Input, Button } from '.'
@@ -68,6 +68,10 @@ export const AccessPage = () => {
     setIsLoading(false)
   }
 
+  const handleScrollReset = () => {
+    window.scrollTo(0, 0)
+  }
+
   return (
     <div
       style={{
@@ -76,7 +80,7 @@ export const AccessPage = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
-      className='fixed z-10 w-screen inset-0 flex flex-col items-center justify-between'
+      className='w-screen h-dvh flex flex-col items-center justify-between'
     >
       <div className='absolute inset-0 bg-black/30 z-0' />
 
@@ -87,15 +91,12 @@ export const AccessPage = () => {
         </div>
 
         <div className='w-full flex flex-col justify-start items-start gap-2 text-white'>
-          <div className='text-xl font-bold leading-10'>{step === 0 ? t('step1.title') : t('step2.title')}</div>
+          <div className='text-xl font-semibold leading-10'>{step === 0 ? t('step1.title') : t('step2.title')}</div>
           <div className='text-base leading-tight'>{step === 0 ? t('step1.description') : t('step2.description')}</div>
         </div>
       </section>
       <motion.section
-        style={{
-          backgroundColor: step === 0 ? 'transparent' : 'white',
-        }}
-        className={classNames('w-full h-1/2 flex z-10 px-6 py-6')}
+        className={classNames('w-full h-1/2 flex z-10 px-6 py-6', step === 0 ? 'bg-transparent' : 'bg-background')}
       >
         {step === 0 ? (
           <form onSubmit={handleVerify} className='w-full h-full flex flex-col justify-between items-center'>
@@ -118,7 +119,7 @@ export const AccessPage = () => {
                 icon: <FaRegKeyboard />,
               }}
             />
-            <Button type='submit' disabled={isLoading || !code.trim()}>
+            <Button type='submit' onClick={handleScrollReset} disabled={isLoading || !code.trim()}>
               {isLoading ? t('step1.button.loading') : t('step1.button.default')}
             </Button>
           </form>
@@ -126,16 +127,16 @@ export const AccessPage = () => {
           <div className='w-full h-full flex flex-col'>
             <div className='w-full h-full text-zinc-800 flex flex-col gap-2 justify-start items-start'>
               <span className='text-base font-medium'>{t('step2.typeSelect.label')}</span>
-              <div className='w-full flex flex-row gap-4 justify-between items-center'>
+              <div className='w-full flex flex-row gap-3 justify-between items-center'>
                 {['personal', 'business'].map((key, i) => (
                   <button
                     key={i}
                     type='button'
                     className={classNames(
-                      'w-full h-fit rounded-2xl pl-4 pr-3 py-2.5 flex flex-row justify-between items-start transition-all duration-300',
+                      'w-full h-fit rounded-lg pl-4 pr-3 py-2.5 flex flex-row justify-between items-start transition-all duration-300',
                       userType === key
                         ? 'border-2 border-primary bg-transparent'
-                        : 'border-2 border-transparent bg-zinc-100',
+                        : 'border-2 border-transparent bg-stone-100',
                     )}
                     onClick={() => setUserType(key as 'personal' | 'business')}
                   >
@@ -143,19 +144,19 @@ export const AccessPage = () => {
                       <span
                         className={classNames(
                           'font-medium transition-all duration-300',
-                          userType === key ? 'text-primary' : 'text-zinc-800',
+                          userType === key ? 'text-primary' : 'text-stone-800',
                         )}
                       >
                         {t(`step2.typeSelect.${key}.label`)}
                       </span>
-                      <span className='text-zinc-400'>{t(`step2.typeSelect.${key}.description`)}</span>
+                      <span className='text-stone-400'>{t(`step2.typeSelect.${key}.description`)}</span>
                     </div>
                     <div className='w-fit h-full flex items-center justify-center'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
                         className={classNames(
                           'w-5 h-5 transition-all duration-300',
-                          userType === key ? 'text-primary' : 'text-zinc-300',
+                          userType === key ? 'text-primary' : 'text-stone-100',
                         )}
                         viewBox='0 0 18 19'
                         fill='currentColor'
@@ -171,7 +172,7 @@ export const AccessPage = () => {
                 ))}
               </div>
             </div>
-            <div className='w-full h-full text-zinc-800 flex flex-col gap-2 justify-start items-start'>
+            <div className='w-full h-full text-stone-800 flex flex-col gap-2 justify-start items-start'>
               <span className='text-base font-medium'>{t('step2.languageSelect.label')}</span>
               <LocaleDropdown />
             </div>

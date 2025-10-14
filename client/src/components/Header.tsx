@@ -12,6 +12,7 @@ import { HiPhone } from 'react-icons/hi2'
 import { BsFillSuitcaseLgFill } from 'react-icons/bs'
 import { MdMarkEmailUnread } from 'react-icons/md'
 import { MdOutlineLanguage } from 'react-icons/md'
+import classNames from 'classnames'
 
 interface MenuItem {
   href: string
@@ -58,7 +59,7 @@ export const Header: React.FC = () => {
         }}
         exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
         transition={{ duration: 0.3 }}
-        className='fixed top-0 inset-x-0 w-full z-50 bg-white'
+        className={classNames('fixed top-0 inset-x-0 w-full z-50', isMobileOpen ? 'bg-background' : 'bg-transparent')}
       >
         <div
           style={{
@@ -116,7 +117,7 @@ export const Header: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className='w-full flex flex-col justify-end rounded-[20px] bg-white border border-zinc-100 h-fit'
+                  className='w-full flex flex-col justify-end rounded-[20px] bg-white border border-zinc-200 h-fit'
                 >
                   {MENU_ITEMS.map((item, idx) => (
                     <div
@@ -147,7 +148,7 @@ export const Header: React.FC = () => {
                   exit={{ opacity: 0 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleAuth}
-                  className='w-full border border-zinc-100 bg-white rounded-2xl h-fit px-5 text-sm text-rose-500 py-4 flex items-center justify-start'
+                  className='w-full border border-zinc-200 bg-white rounded-2xl h-fit px-5 text-sm text-rose-500 py-4 flex items-center justify-start'
                 >
                   Log out
                 </motion.div>

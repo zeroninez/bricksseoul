@@ -38,7 +38,7 @@ export default function Home() {
               <FaRegCalendarAlt className='text-lg text-primary' />
               <span className='text-lg font-bold'>Find option</span>
             </div>
-            <button className='w-fit h-8 bg-primary font-medium text-white py-2 px-4 flex items-center justify-center'>
+            <button className='w-fit h-8 bg-primary font-medium rounded-xl text-white py-2 px-4 flex items-center justify-center'>
               Filter
             </button>
           </div>
@@ -85,15 +85,7 @@ export default function Home() {
 
             {/* 데이터 있음 */}
             {properties && properties.length > 0
-              ? properties.map((p) => (
-                  <PropertyCard
-                    key={p.id}
-                    id={p.id}
-                    name={p.name}
-                    price_per_night={p.price_per_night}
-                    images={p.images}
-                  />
-                ))
+              ? properties.map((p) => <PropertyCard key={p.id} {...p} />)
               : // 데이터 없음
                 !isLoading &&
                 !error && (

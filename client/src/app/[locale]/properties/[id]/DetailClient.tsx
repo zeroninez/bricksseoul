@@ -1,9 +1,15 @@
 // app/[locale]/properties/[id]/DetailClient.tsx
 'use client'
+import { useEffect } from 'react'
 import { usePropertyGet } from '@/hooks/useProperty'
 
 export default function DetailClient({ id }: { id: string }) {
   const { data, isLoading, error } = usePropertyGet(id)
+
+  useEffect(() => {
+    // 페이지 로드 시 스크롤을 최상단으로
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [id]) // id가 변경될 때마다 실행
 
   return (
     <>

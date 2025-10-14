@@ -11,9 +11,8 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = ({ children, className, preset = 'primary', ...props }: ButtonProps) => {
   return (
     <button
-      disabled={props.disabled}
       className={classNames(
-        'w-full h-14 px-6 py-3  text-white text-[18px] font-medium active:opacity-70 transition-all disabled:text-white/50 disabled:bg-disabled disabled:cursor-not-allowed',
+        'w-full h-14 px-6 py-3  text-white text-[18px] rounded-lg font-medium active:opacity-70 transition-all disabled:text-white/50 disabled:bg-disabled disabled:cursor-not-allowed',
         className ? className : '',
         preset === 'black' ? 'bg-black' : preset === 'primary' && 'bg-primary',
       )}

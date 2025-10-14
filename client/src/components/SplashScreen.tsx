@@ -2,7 +2,7 @@ import { Logo } from './Logo'
 
 export const SplashScreen = () => {
   return (
-    <div className='w-screen h-dvh flex flex-col items-start justify-between p-6 relative bg-zinc-50 z-50'>
+    <div className='fixed inset-0 w-full h-dvh flex flex-col items-start justify-between p-6 bg-zinc-50 z-50'>
       {/* 상단 로고 */}
       <div className='w-full h-fit flex flex-col justify-start items-start gap-1 z-10'>
         <Logo className='text-lg' />

@@ -30,6 +30,7 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  console.log('Layout rendered')
   return (
     <AuthProvider>
       <ProtectedRoute>

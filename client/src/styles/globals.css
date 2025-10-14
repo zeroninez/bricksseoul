@@ -29,6 +29,7 @@
   /* color */
   --color-primary: #3E160C;
   --color-disabled: #513E39;
+  --color-background: #EFECE7;
 }
 
 @layer base {
@@ -97,6 +98,7 @@
       sans-serif;
     /* 16px */
     font-size: 100%;
+    background-color: var(--color-background);
   }
 
   /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
