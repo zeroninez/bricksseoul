@@ -51,10 +51,14 @@ export const Header: React.FC = () => {
       {/* Toggle Button */}
       <motion.div
         initial={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
-        animate={{ opacity: 1, y: 0, height: isMobileOpen ? '100%' : HEADER_HEIGHT }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          height: isMobileOpen ? '100%' : HEADER_HEIGHT,
+        }}
         exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
         transition={{ duration: 0.3 }}
-        className='fixed top-0 inset-x-0 w-full bg-zinc-50 z-50 '
+        className='fixed top-0 inset-x-0 w-full z-50 bg-white'
       >
         <div
           style={{
@@ -138,9 +142,9 @@ export const Header: React.FC = () => {
                 </motion.nav>
                 <motion.div
                   custom={MENU_ITEMS.length}
-                  initial='closed'
-                  animate='open'
-                  exit='closed'
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleAuth}
                   className='w-full border border-zinc-100 bg-white rounded-2xl h-fit px-5 text-sm text-rose-500 py-4 flex items-center justify-start'

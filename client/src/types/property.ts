@@ -1,6 +1,6 @@
 export type AmenityCode = string
 export type PropertyImage = {
-  category: 'main' | 'living_room' | 'bathroom' | 'bedroom' | 'extra'
+  category: string
   url: string
   sort_order?: number
   is_primary?: boolean
@@ -58,5 +58,9 @@ export type PropertyListItem = {
   id: string
   name: string
   price_per_night: number
+  currency: string
   created_at: string
+  thumbnail: string | null
+  images: { url: string }[]
+  location: string | null
 }

@@ -20,9 +20,5 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <AccessPage />
   }
 
-  return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-      {children}
-    </motion.div>
-  )
+  return <>{children}</>
 }

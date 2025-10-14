@@ -4,7 +4,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useUserTypeStore } from '@/stores'
-import { Logo, Screen, LocaleDropdown, Input, Button } from '.'
+import { Logo, LocaleDropdown, Input, Button } from '.'
 import { FaRegKeyboard } from 'react-icons/fa6'
 
 import { useTranslations } from 'next-intl'

@@ -1,5 +1,7 @@
 // Layout.tsx
 
+'use client'
+
 /**
  * Layout
  * - Layout은 페이지의 전체적인 레이아웃을 담당하는 컴포넌트입니다.
@@ -18,6 +20,7 @@
 
 import classNames from 'classnames'
 import React from 'react'
+import { motion } from 'motion/react'
 import { Header, Footer, ProtectedRoute } from '@/components'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { HEADER_HEIGHT } from '@/theme/constants'
@@ -31,7 +34,14 @@ export const Layout = ({ children }: LayoutProps) => {
     <AuthProvider>
       <ProtectedRoute>
         <Header />
-        {children}
+        <div
+          style={{
+            paddingTop: `calc(${HEADER_HEIGHT} + 16px)`,
+          }}
+          className='w-full min-h-screen h-fit px-5'
+        >
+          {children}
+        </div>
         <Footer />
       </ProtectedRoute>
     </AuthProvider>
