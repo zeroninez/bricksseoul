@@ -135,8 +135,8 @@ export const AccessPage = () => {
                     className={classNames(
                       'w-full h-fit rounded-lg pl-4 pr-3 py-2.5 flex flex-row justify-between items-start transition-all duration-300',
                       userType === key
-                        ? 'border-2 border-primary bg-transparent'
-                        : 'border-2 border-transparent bg-stone-100',
+                        ? 'border-2 border-primary bg-primary'
+                        : 'border-2 border-transparent bg-stone-50',
                     )}
                     onClick={() => setUserType(key as 'personal' | 'business')}
                   >
@@ -144,7 +144,7 @@ export const AccessPage = () => {
                       <span
                         className={classNames(
                           'font-medium transition-all duration-300',
-                          userType === key ? 'text-primary' : 'text-stone-800',
+                          userType === key ? 'text-white' : 'text-stone-800',
                         )}
                       >
                         {t(`step2.typeSelect.${key}.label`)}
@@ -156,7 +156,7 @@ export const AccessPage = () => {
                         xmlns='http://www.w3.org/2000/svg'
                         className={classNames(
                           'w-5 h-5 transition-all duration-300',
-                          userType === key ? 'text-primary' : 'text-stone-100',
+                          userType === key ? 'text-white' : 'text-stone-200',
                         )}
                         viewBox='0 0 18 19'
                         fill='currentColor'

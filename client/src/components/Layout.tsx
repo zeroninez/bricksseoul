@@ -37,9 +37,9 @@ export const Layout = ({ children }: LayoutProps) => {
         <Header />
         <div
           style={{
-            paddingTop: `calc(${HEADER_HEIGHT} + 16px)`,
+            paddingTop: `calc(${HEADER_HEIGHT})`,
           }}
-          className='w-full min-h-screen h-fit px-5'
+          className='w-full min-h-screen h-fit'
         >
           {children}
         </div>

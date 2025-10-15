@@ -58,7 +58,7 @@ export const Input = ({
       <div
         className={classNames(
           mini
-            ? 'w-fit h-8 flex flex-row justify-center items-center gap-1 pl-4 pr-2 py-3 text-base rounded-lg bg-white border border-stone-200 focus-within:bg-stone-200 transition-all'
+            ? 'w-fit h-8 flex flex-row justify-center items-center gap-1 pl-3 pr-1 py-3 text-base rounded-lg bg-white border border-stone-200 focus-within:bg-stone-200 transition-all'
             : 'w-full h-fit flex flex-row justify-between items-center gap-1 px-4 py-3 text-base rounded-lg bg-white border border-stone-200 focus-within:bg-stone-200 transition-all',
           'relative ',
         )}

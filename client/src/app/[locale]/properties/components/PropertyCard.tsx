@@ -1,7 +1,6 @@
 'use client'
 
 import { Link } from '@/i18n/routing'
-import Image from 'next/image'
 import { useState } from 'react'
 
 // Import Swiper React components
@@ -20,7 +19,7 @@ export const PropertyCard = (property: PropertyListItem & { key: string }) => {
     <Link
       href={`/properties/${property.id}`}
       scroll={true}
-      className='w-full h-fit text-left flex flex-col gap-4 relative'
+      className='w-full h-fit text-left flex flex-col gap-3.5 relative'
     >
       {/* 이미지 슬라이더 */}
       <Swiper
@@ -29,7 +28,7 @@ export const PropertyCard = (property: PropertyListItem & { key: string }) => {
           renderFraction: () => {
             // Tailwind purge 피하려고 우리가 정의한 고정 클래스만 사용
             return `
-            <div class="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 flex flex-row justify-center items-center rounded-full z-10 select-none">
+            <div class="absolute bottom-2 right-2 bg-stone-900/30 text-white text-xs px-2 py-1 flex flex-row justify-center items-center rounded-full z-10 select-none">
         <span class="swiper-pagination-current"></span>
         <span class="mx-1 opacity-70">/</span>
         <span class="swiper-pagination-total"></span>
@@ -38,22 +37,24 @@ export const PropertyCard = (property: PropertyListItem & { key: string }) => {
           },
         }}
         modules={[Pagination]}
-        className='w-full aspect-[4/3] bg-black relative'
+        spaceBetween={10}
+        className='w-full aspect-landscape relative'
       >
         {property.images?.map((img, idx) => (
-          <SwiperSlide key={idx}>
-            <div className='relative w-full h-full bg-black overflow-hidden'>
-              <Image src={img.url} alt={property.name} fill className='object-cover' />
-            </div>
+          <SwiperSlide key={idx} className='relative w-full h-full rounded-lg bg-primary overflow-hidden'>
+            <img src={img.url} alt={property.name} className='w-full h-full object-cover' />
           </SwiperSlide>
         ))}
       </Swiper>
 
       {/* 정보 */}
-      <div className='flex flex-col gap-1'>
-        <div className='text-lg font-semibold text-zinc-800 truncate'>{property.name}</div>
-        <div className='text-base font-semibold text-zinc-800 truncate'>{property.location}</div>
-        <div className='text-sm text-zinc-500'>{property.price_per_night.toLocaleString()}원 / night</div>
+      <div className='flex flex-col gap-1.5 px-1'>
+        <div className='text-xl leading-tight font-bold text-stone-800'>{property.name}</div>
+        <div className='text-lg font-medium text-stone-800'>
+          ₩{property.price_per_night.toLocaleString()}{' '}
+          <span className='text-sm font-normal text-stone-500 tracking-tight'>for 1 night</span>
+        </div>
+        <div className='text-xs leading-snug text-stone-500 pr-12'>{property.location}</div>
       </div>
     </Link>
   )

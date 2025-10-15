@@ -16,6 +16,9 @@ export type PropertyGetResponse = {
   currency: string
   created_at: string
   updated_at: string
+  images: { url: string; sort_order?: number; is_primary?: boolean; category?: string }[]
+  rules: string[]
+  amenities: string[]
   address?: {
     latitude: number
     longitude: number
@@ -29,9 +32,6 @@ export type PropertyGetResponse = {
     bedrooms?: number
     bathrooms?: number
   }
-  rules: string[]
-  amenities: AmenityCode[]
-  images: PropertyImage[]
 }
 
 export type PropertyCreatePayload = {

@@ -8,6 +8,7 @@ import { HEADER_HEIGHT } from '@/theme/constants'
 import { useRouter, usePathname, Link } from '@/i18n/routing'
 import { Logo } from './Logo'
 import { GoChevronRight } from 'react-icons/go'
+import { GoArrowLeft } from 'react-icons/go'
 import { HiPhone } from 'react-icons/hi2'
 import { BsFillSuitcaseLgFill } from 'react-icons/bs'
 import { MdMarkEmailUnread } from 'react-icons/md'
@@ -35,6 +36,8 @@ export const Header: React.FC = () => {
   const [isMobileOpen, setMobileOpen] = useState(false)
   const [isAuthOpen, setAuthOpen] = useState(false)
 
+  const isPropertyDetail = pathname?.includes('/properties/') && pathname !== '/properties'
+
   const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), [])
   const toggleAuth = useCallback(() => setAuthOpen((prev) => !prev), [])
 
@@ -59,16 +62,34 @@ export const Header: React.FC = () => {
         }}
         exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
         transition={{ duration: 0.3 }}
-        className={classNames('fixed top-0 inset-x-0 w-full z-50', isMobileOpen ? 'bg-background' : 'bg-transparent')}
+        className={classNames(
+          'fixed top-0 inset-x-0 w-full z-50',
+          isPropertyDetail && !isMobileOpen ? 'bg-transparent' : 'bg-background',
+        )}
       >
         <div
           style={{
             height: HEADER_HEIGHT,
           }}
-          className='w-full text-black flex items-center justify-between pl-5'
+          className='w-full flex items-center justify-between pl-5'
         >
           {/* logo */}
-          <Logo className='text-[18px] cursor-pointer' onClick={goHome} />
+          {isPropertyDetail && !isMobileOpen ? (
+            <GoArrowLeft className='text-xl cursor-pointer text-white' onClick={router.back} />
+          ) : (
+            <Logo className='text-[18px] cursor-pointer text-black' onClick={goHome} />
+          )}
+
+          {isPropertyDetail && !isMobileOpen && (
+            <span
+              style={{
+                height: HEADER_HEIGHT,
+              }}
+              className='absolute top-0 flex justify-center items-center left-1/2 -translate-x-1/2 text-[18px] text-white'
+            >
+              Details
+            </span>
+          )}
 
           <motion.button
             className='py-3 px-5'
@@ -96,6 +117,7 @@ export const Header: React.FC = () => {
                 />
               ) : (
                 <motion.path
+                  className={classNames('text-black', isPropertyDetail && 'text-white')}
                   strokeLinecap='round'
                   strokeLinejoin='round'
                   strokeWidth={2}
