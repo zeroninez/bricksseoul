@@ -4,7 +4,7 @@ import { usePropertyGet } from '@/hooks/useProperty'
 
 import { HEADER_HEIGHT } from '@/theme/constants'
 import classNames from 'classnames'
-import { motion, useInView } from 'motion/react'
+import { motion } from 'motion/react'
 
 import { Cover, RoomGallery } from './components'
 
@@ -21,20 +21,57 @@ export default function DetailClient({ id }: { id: string }) {
   const placesRef = useRef<HTMLDivElement | null>(null)
   const rulesRef = useRef<HTMLDivElement | null>(null)
 
-  // Observe which section is in view
-  const infoInView = useInView(infoRef, { amount: 0.5 })
-  const amenitiesInView = useInView(amenitiesRef, { amount: 0.5 })
-  const placesInView = useInView(placesRef, { amount: 0.5 })
-  const rulesInView = useInView(rulesRef, { amount: 0.5 })
+  // Scroll spy without IntersectionObserver
+  const SCROLL_OFFSET = 250 // match scroll-mt-[250px]
+  const programmaticScrollUntil = useRef<number>(0)
 
-  // Update active tab when sections change visibility
   useEffect(() => {
-    // Priority from bottom to top, so when two are true during threshold crossing, the deeper one wins
-    if (rulesInView) return setCurrentDetailTab('Rules')
-    if (placesInView) return setCurrentDetailTab('Places')
-    if (amenitiesInView) return setCurrentDetailTab('Amenities')
-    if (infoInView) return setCurrentDetailTab('Info')
-  }, [infoInView, amenitiesInView, placesInView, rulesInView])
+    let ticking = false
+
+    const sections = [
+      { key: 'Info' as const, ref: infoRef },
+      { key: 'Amenities' as const, ref: amenitiesRef },
+      { key: 'Places' as const, ref: placesRef },
+      { key: 'Rules' as const, ref: rulesRef },
+    ]
+
+    const updateActive = () => {
+      ticking = false
+      // If we're in a programmatic scroll window, skip auto-updating
+      if (performance.now() < (programmaticScrollUntil.current || 0)) return
+
+      const distances = sections.map(({ key, ref }) => {
+        const el = ref.current
+        if (!el) return { key, dist: Number.POSITIVE_INFINITY, top: Number.POSITIVE_INFINITY }
+        const rect = el.getBoundingClientRect()
+        const dist = Math.abs(rect.top - SCROLL_OFFSET)
+        return { key, dist, top: rect.top }
+      })
+
+      distances.sort((a, b) => {
+        const aAbove = a.top <= SCROLL_OFFSET ? 0 : 1
+        const bAbove = b.top <= SCROLL_OFFSET ? 0 : 1
+        if (aAbove !== bAbove) return aAbove - bAbove
+        if (a.dist !== b.dist) return a.dist - b.dist
+        return 0
+      })
+
+      const next = distances[0]?.key
+      if (next && next !== currentDetailTab) setCurrentDetailTab(next)
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(updateActive)
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    // initialize once
+    updateActive()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [currentDetailTab])
 
   // Smooth scroll to section with header offset handled by CSS scroll-margin
   const scrollToSection = (tab: (typeof DETAILS_TABS)[number]) => {
@@ -45,6 +82,8 @@ export default function DetailClient({ id }: { id: string }) {
       Rules: rulesRef,
     } as const
     const ref = map[tab]
+    // suppress scroll spy for 500ms while smooth-scrolling
+    programmaticScrollUntil.current = performance.now() + 500
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
