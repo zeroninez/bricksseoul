@@ -1,29 +1,52 @@
-// app/[locale]/properties/[id]/DetailClient.tsx
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { usePropertyGet } from '@/hooks/useProperty'
 
-// Import Swiper React components
-import { Swiper, SwiperSlide } from 'swiper/react'
-
-// Import Swiper styles
-import 'swiper/css'
-import 'swiper/css/pagination'
-
-// import required modules
-import { Pagination } from 'swiper/modules'
 import { HEADER_HEIGHT } from '@/theme/constants'
 import classNames from 'classnames'
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion, useInView } from 'motion/react'
+
+import { Cover, RoomGallery } from './components'
 
 export default function DetailClient({ id }: { id: string }) {
   const { data, isLoading, error } = usePropertyGet(id)
 
-  const { scrollY } = useScroll()
+  const DETAILS_TABS = ['Info', 'Amenities', 'Places', 'Rules'] as const
 
-  // 0~300px 사이에서만 줄이기
-  const headerH = useTransform(scrollY, [0, 300], [320, 120], { clamp: true })
-  // syntax : useTransform(value, inputRange, outputRange, options?)
+  const [currentDetailTab, setCurrentDetailTab] = useState<(typeof DETAILS_TABS)[number]>('Info')
+
+  // Section refs for scroll spy
+  const infoRef = useRef<HTMLDivElement | null>(null)
+  const amenitiesRef = useRef<HTMLDivElement | null>(null)
+  const placesRef = useRef<HTMLDivElement | null>(null)
+  const rulesRef = useRef<HTMLDivElement | null>(null)
+
+  // Observe which section is in view
+  const infoInView = useInView(infoRef, { amount: 0.5 })
+  const amenitiesInView = useInView(amenitiesRef, { amount: 0.5 })
+  const placesInView = useInView(placesRef, { amount: 0.5 })
+  const rulesInView = useInView(rulesRef, { amount: 0.5 })
+
+  // Update active tab when sections change visibility
+  useEffect(() => {
+    // Priority from bottom to top, so when two are true during threshold crossing, the deeper one wins
+    if (rulesInView) return setCurrentDetailTab('Rules')
+    if (placesInView) return setCurrentDetailTab('Places')
+    if (amenitiesInView) return setCurrentDetailTab('Amenities')
+    if (infoInView) return setCurrentDetailTab('Info')
+  }, [infoInView, amenitiesInView, placesInView, rulesInView])
+
+  // Smooth scroll to section with header offset handled by CSS scroll-margin
+  const scrollToSection = (tab: (typeof DETAILS_TABS)[number]) => {
+    const map = {
+      Info: infoRef,
+      Amenities: amenitiesRef,
+      Places: placesRef,
+      Rules: rulesRef,
+    } as const
+    const ref = map[tab]
+    ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   useEffect(() => {
     // 페이지 로드 시 스크롤을 최상단으로
@@ -32,80 +55,50 @@ export default function DetailClient({ id }: { id: string }) {
 
   return (
     <>
-      <div
-        style={{
-          marginTop: `-${HEADER_HEIGHT}`,
-        }}
-        className='w-full h-fit pb-40 relative'
-      >
-        {isLoading && <div className='text-zinc-500'>Loading...</div>}
-        {error && <div className='text-red-500'>Failed to load</div>}
-        {!isLoading && !data && <div>Not found</div>}
-        {data && (
-          <>
-            {/* header */}
-            <motion.section
-              style={{
-                height: headerH,
-              }}
-              className='w-full flex fixed top-0 z-10'
-            >
-              <div className='w-full h-full relative bg-black'>
-                <img
-                  src={data?.images?.find((img) => img.is_primary)?.url || data?.images?.[0].url}
-                  alt={data.name}
-                  className='w-full h-full object-cover'
-                />
-                <div className='absolute inset-0 bg-gradient-to-t from-black/90 to-transparent' />
-              </div>
-              <div className='absolute bottom-0 p-5 '>
-                <h1 className='text-2xl font-bold text-white'>{data.name}</h1>
-                <p className='text-sm text-white mt-1'>{data.address?.address1}</p>
-              </div>
-            </motion.section>
-            <div className='checking h-[320px]' />
-            {/* 이미지 슬라이더 */}
-            <section className='w-full h-fit text-left flex flex-col gap-2 p-5 '>
-              <div className='w-full h-fit flex overflow-x-scroll scrollbar-hide flex-row gap-2'>
-                {data.images?.map((img, idx) => (
-                  <button
-                    key={idx}
-                    className={classNames(
-                      'w-fit h-fit px-2 py-1 text-sm rounded-lg border border-primary text-primary whitespace-nowrap',
-                    )}
-                  >
-                    {img.category}
-                  </button>
-                )) || <div className='text-zinc-500'>No images</div>}
-              </div>
-
-              <Swiper
-                pagination={{
-                  type: 'fraction', // ← 반드시 추가
-                  renderFraction: () => {
-                    // Tailwind purge 피하려고 우리가 정의한 고정 클래스만 사용
-                    return `
-            <div class="absolute bottom-2 right-2 bg-stone-900/30 text-white text-xs px-2 py-1 flex flex-row justify-center items-center rounded-full z-10 select-none">
-        <span class="swiper-pagination-current"></span>
-        <span class="mx-1 opacity-70">/</span>
-        <span class="swiper-pagination-total"></span>
-        </div>
-      `
-                  },
+      {isLoading && <div className='text-zinc-500'>Loading...</div>}
+      {error && <div className='text-red-500'>Failed to load</div>}
+      {!isLoading && !data && <div>Not found</div>}
+      {data && (
+        <>
+          <Cover data={data} />
+          {/* 이미지 슬라이더 */}
+          <RoomGallery images={data.images || []} />
+          <div className='w-full h-fit flex flex-row sticky top-[200px] bg-background z-10'>
+            {DETAILS_TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => {
+                  setCurrentDetailTab(tab)
+                  scrollToSection(tab)
                 }}
-                modules={[Pagination]}
-                className='w-full aspect-landscape bg-black relative'
+                className={classNames(
+                  'flex-1 h-fit py-3 flex items-center justify-center border-b-2',
+                  currentDetailTab === tab ? 'border-primary font-medium' : 'border-stone-200 text-stone-500',
+                )}
               >
-                {data.images?.map((img, idx) => (
-                  <SwiperSlide key={idx}>
-                    <div className='relative w-full h-full bg-primary overflow-hidden'>
-                      <img src={img.url} alt={data.name} className='w-full h-full object-cover' />
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </section>
-            <section className='w-full text-left static top-0 flex flex-col gap-4 p-5'>
+                {tab}
+              </button>
+            ))}
+          </div>
+          <section id='Info' ref={infoRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
+            <div className='w-full h-fit text-2xl font-bold p-5'>Info</div>
+          </section>
+          <section
+            id='Amenities'
+            ref={amenitiesRef}
+            className='w-full h-screen flex flex-col checking scroll-mt-[250px]'
+          >
+            <div className='w-full h-fit text-2xl font-bold p-5'>Amenities</div>
+          </section>
+          <section id='Places' ref={placesRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
+            <div className='w-full h-fit text-2xl font-bold p-5'>Places</div>
+          </section>
+          <section id='Rules' ref={rulesRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
+            <div className='w-full h-fit text-2xl font-bold p-5'>Rules</div>
+          </section>
+
+          <motion.div className='w-full h-fit min-h-screen flex flex-col '>
+            <section className='w-full flex flex-col gap-4 p-5'>
               <div className='text-zinc-600'>
                 {data.price_per_night.toLocaleString()} {data.currency} / night
               </div>
@@ -139,9 +132,9 @@ export default function DetailClient({ id }: { id: string }) {
                 </ul>
               ) : null}
             </section>
-          </>
-        )}
-      </div>
+          </motion.div>
+        </>
+      )}
     </>
   )
 }

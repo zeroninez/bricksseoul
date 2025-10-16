@@ -27,7 +27,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased bg-background`}>
+      <body className={`antialiased`}>
         <Providers>
           <NextIntlClientProvider messages={messages}>
             <Layout>{children}</Layout>

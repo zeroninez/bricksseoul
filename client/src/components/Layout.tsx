@@ -23,7 +23,7 @@ import React from 'react'
 import { motion } from 'motion/react'
 import { Header, Footer, ProtectedRoute } from '@/components'
 import { AuthProvider } from '@/contexts/AuthContext'
-import { HEADER_HEIGHT } from '@/theme/constants'
+import { FOOTER_HEIGHT, HEADER_HEIGHT } from '@/theme/constants'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -35,12 +35,7 @@ export const Layout = ({ children }: LayoutProps) => {
     <AuthProvider>
       <ProtectedRoute>
         <Header />
-        <div
-          style={{
-            paddingTop: `calc(${HEADER_HEIGHT})`,
-          }}
-          className='w-full min-h-screen h-fit'
-        >
+        <div style={{ minHeight: `calc(100dvh - ${FOOTER_HEIGHT})` }} className='w-full h-fit flex flex-col'>
           {children}
         </div>
         <Footer />

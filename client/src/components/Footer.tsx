@@ -1,11 +1,16 @@
 import { Logo } from './Logo'
+import { FOOTER_HEIGHT } from '@/theme/constants'
 
 export const Footer = () => {
   return (
-    <footer className='w-full h-fit px-5 py-6 flex flex-row justify-between items-center gap-4'>
-      <div className='text-base flex flex-row justify-center items-center gap-2 text-zinc-500'>
-        <Logo /> {new Date().getFullYear()}
-      </div>
+    <footer
+      style={{
+        height: FOOTER_HEIGHT,
+      }}
+      className='w-full bg-black text-white px-5 py-6 flex flex-col justify-between items-start gap-4'
+    >
+      <Logo className='text-xl' />
+      <div className='text-sm text-zinc-300'>© {new Date().getFullYear()} Wellncher. All rights reserved.</div>
     </footer>
   )
 }
