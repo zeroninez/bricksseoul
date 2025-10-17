@@ -113,6 +113,7 @@ export const Input = ({
           )}
         >
           {label}
+          {required && <span className='ml-0.5 text-primary align-middle'>*</span>}
         </label>
       )}
       <div className='w-full flex flex-row gap-1 text-base bg-white rounded-lg border border-stone-200 focus-within:bg-stone-200 transition-all'>

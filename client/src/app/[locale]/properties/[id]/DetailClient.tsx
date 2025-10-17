@@ -2,23 +2,20 @@
 import { useEffect, useState, useRef } from 'react'
 import { usePropertyGet } from '@/hooks/useProperty'
 
-import { HEADER_HEIGHT } from '@/theme/constants'
-import classNames from 'classnames'
-import { motion } from 'motion/react'
-
-import { Cover, RoomGallery } from './components'
+import { Cover, RoomGallery, TabInfo, TabAmenities, TabLocation, TabRules, Tabs } from './components'
+import { AnimatePresence, motion } from 'motion/react'
 
 export default function DetailClient({ id }: { id: string }) {
   const { data, isLoading, error } = usePropertyGet(id)
 
-  const DETAILS_TABS = ['Info', 'Amenities', 'Places', 'Rules'] as const
+  const DETAILS_TABS = ['Info', 'Amenities', 'Location', 'Rules'] as const
 
   const [currentDetailTab, setCurrentDetailTab] = useState<(typeof DETAILS_TABS)[number]>('Info')
 
   // Section refs for scroll spy
   const infoRef = useRef<HTMLDivElement | null>(null)
   const amenitiesRef = useRef<HTMLDivElement | null>(null)
-  const placesRef = useRef<HTMLDivElement | null>(null)
+  const locationRef = useRef<HTMLDivElement | null>(null)
   const rulesRef = useRef<HTMLDivElement | null>(null)
 
   // Scroll spy without IntersectionObserver
@@ -31,7 +28,7 @@ export default function DetailClient({ id }: { id: string }) {
     const sections = [
       { key: 'Info' as const, ref: infoRef },
       { key: 'Amenities' as const, ref: amenitiesRef },
-      { key: 'Places' as const, ref: placesRef },
+      { key: 'Location' as const, ref: locationRef },
       { key: 'Rules' as const, ref: rulesRef },
     ]
 
@@ -78,7 +75,7 @@ export default function DetailClient({ id }: { id: string }) {
     const map = {
       Info: infoRef,
       Amenities: amenitiesRef,
-      Places: placesRef,
+      Location: locationRef,
       Rules: rulesRef,
     } as const
     const ref = map[tab]
@@ -94,84 +91,49 @@ export default function DetailClient({ id }: { id: string }) {
 
   return (
     <>
-      {isLoading && <div className='text-zinc-500'>Loading...</div>}
-      {error && <div className='text-red-500'>Failed to load</div>}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='w-full h-dvh bg-background text-primary flex items-center justify-center'
+          >
+            Loading...
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className='w-full h-dvh bg-background text-red-500 flex items-center justify-center '
+          >
+            Failed to load
+          </motion.div>
+        )}
+      </AnimatePresence>
       {!isLoading && !data && <div>Not found</div>}
       {data && (
         <>
           <Cover data={data} />
           {/* 이미지 슬라이더 */}
           <RoomGallery images={data.images || []} />
-          <div className='w-full h-fit flex flex-row sticky top-[200px] bg-background z-10'>
-            {DETAILS_TABS.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => {
-                  setCurrentDetailTab(tab)
-                  scrollToSection(tab)
-                }}
-                className={classNames(
-                  'flex-1 h-fit py-3 flex items-center justify-center border-b-2',
-                  currentDetailTab === tab ? 'border-primary font-medium' : 'border-stone-200 text-stone-500',
-                )}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-          <section id='Info' ref={infoRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
-            <div className='w-full h-fit text-2xl font-bold p-5'>Info</div>
-          </section>
-          <section
-            id='Amenities'
-            ref={amenitiesRef}
-            className='w-full h-screen flex flex-col checking scroll-mt-[250px]'
-          >
-            <div className='w-full h-fit text-2xl font-bold p-5'>Amenities</div>
-          </section>
-          <section id='Places' ref={placesRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
-            <div className='w-full h-fit text-2xl font-bold p-5'>Places</div>
-          </section>
-          <section id='Rules' ref={rulesRef} className='w-full h-screen flex flex-col checking scroll-mt-[250px]'>
-            <div className='w-full h-fit text-2xl font-bold p-5'>Rules</div>
-          </section>
-
-          <motion.div className='w-full h-fit min-h-screen flex flex-col '>
-            <section className='w-full flex flex-col gap-4 p-5'>
-              <div className='text-zinc-600'>
-                {data.price_per_night.toLocaleString()} {data.currency} / night
-              </div>
-
-              {/* 위치 */}
-              {data.address && (
-                <div className='text-sm text-zinc-500'>
-                  {data.address.address1} {data.address.address2 ?? ''}
-                </div>
-              )}
-
-              {/* 설명 */}
-              {data.description && <p className='text-zinc-700'>{data.description}</p>}
-
-              {/* 공간 정보 */}
-              {data.space_info && (
-                <div className='text-sm text-zinc-600'>
-                  인원 {data.space_info.available_people ?? '-'} · 거실 {data.space_info.living_rooms ?? 0} · 침실{' '}
-                  {data.space_info.bedrooms ?? 0} · 욕실 {data.space_info.bathrooms ?? 0}
-                </div>
-              )}
-
-              {/* 어메니티 */}
-              {data.amenities?.length ? (
-                <ul className='flex flex-wrap gap-2 text-sm text-zinc-600'>
-                  {data.amenities.map((a) => (
-                    <li key={a} className='px-2 py-1 bg-zinc-100 rounded'>
-                      {a}
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
-            </section>
-          </motion.div>
+          {/* 탭 */}
+          <Tabs
+            tabs={DETAILS_TABS}
+            currentDetailTab={currentDetailTab}
+            onHandleClick={(tab: (typeof DETAILS_TABS)[number]) => {
+              setCurrentDetailTab(tab)
+              scrollToSection(tab)
+            }}
+          />
+          <TabInfo id='Info' ref={infoRef} data={data} />
+          <TabAmenities id='Amenities' ref={amenitiesRef} data={data} />
+          <TabLocation id='Location' ref={locationRef} data={data} />
+          <TabRules id='Rules' ref={rulesRef} data={data} />
         </>
       )}
     </>

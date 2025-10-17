@@ -1,2 +1,7 @@
 export * from './Cover'
 export * from './RoomGallery'
+export * from './Tabs'
+export * from './TabInfo'
+export * from './TabAmenities'
+export * from './TabLocation'
+export * from './TabRules'

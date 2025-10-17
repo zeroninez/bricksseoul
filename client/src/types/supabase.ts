@@ -159,24 +159,21 @@ export type Database = {
           address1: string | null
           address2: string | null
           guide: string | null
-          latitude: number
-          longitude: number
+          iframe_src: string | null
           property_id: string
         }
         Insert: {
           address1?: string | null
           address2?: string | null
           guide?: string | null
-          latitude: number
-          longitude: number
+          iframe_src?: string | null
           property_id: string
         }
         Update: {
           address1?: string | null
           address2?: string | null
           guide?: string | null
-          latitude?: number
-          longitude?: number
+          iframe_src?: string | null
           property_id?: string
         }
         Relationships: [

@@ -1,4 +1,6 @@
 export type AmenityCode = string
+export type AmenityItem = { code: string; label: string }
+
 export type PropertyImage = {
   category: string
   url: string
@@ -18,10 +20,9 @@ export type PropertyGetResponse = {
   updated_at: string
   images: { url: string; sort_order?: number; is_primary?: boolean; category?: string }[]
   rules: string[]
-  amenities: string[]
+  amenities: AmenityItem[]
   address?: {
-    latitude: number
-    longitude: number
+    iframe_src?: string | null
     address1?: string | null
     address2?: string | null
     guide?: string | null

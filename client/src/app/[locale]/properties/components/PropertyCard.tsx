@@ -54,7 +54,7 @@ export const PropertyCard = (property: PropertyListItem & { key: string }) => {
           ₩{property.price_per_night.toLocaleString()}{' '}
           <span className='text-sm font-normal text-stone-500 tracking-tight'>for 1 night</span>
         </div>
-        <div className='text-xs leading-snug text-stone-500 pr-12'>{property.location}</div>
+        <div className='text-sm leading-snug text-stone-500 pr-12'>{property.location}</div>
       </div>
     </Link>
   )

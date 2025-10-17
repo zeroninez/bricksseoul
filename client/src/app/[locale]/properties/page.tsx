@@ -5,7 +5,6 @@
 import { useState } from 'react'
 import { Input, PageStart } from '@/components'
 import { HEADER_HEIGHT } from '@/theme/constants'
-import { TbNoteOff } from 'react-icons/tb'
 import { usePropertyList } from '@/hooks/useProperty'
 import { PropertyCard } from './components'
 
@@ -71,11 +70,17 @@ export default function PropertiesPage() {
           {/* cards */}
           <div className='w-full h-fit flex flex-col items-center justify-center gap-4 pb-32'>
             {/* 로딩 */}
-            {isLoading && <div className='text-stone-500 text-center'>Loading properties...</div>}
+            {isLoading && (
+              <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
+                Loading properties...
+              </div>
+            )}
 
             {/* 에러 */}
             {error && (
-              <div className='text-red-500 text-center'>{(error as Error).message || 'Failed to load properties.'}</div>
+              <div className='text-red-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
+                {(error as Error).message || 'Failed to load properties.'}
+              </div>
             )}
 
             {/* 데이터 있음 */}

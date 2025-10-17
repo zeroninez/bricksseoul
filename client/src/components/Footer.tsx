@@ -7,10 +7,10 @@ export const Footer = () => {
       style={{
         height: FOOTER_HEIGHT,
       }}
-      className='w-full bg-black text-white px-5 py-6 flex flex-col justify-between items-start gap-4'
+      className='w-full bg-background text-black px-5 py-6 flex flex-col justify-between items-start gap-4'
     >
       <Logo className='text-xl' />
-      <div className='text-sm text-zinc-300'>© {new Date().getFullYear()} Wellncher. All rights reserved.</div>
+      <div className='text-sm text-stone-700'>© {new Date().getFullYear()} Wellncher. All rights reserved.</div>
     </footer>
   )
 }
