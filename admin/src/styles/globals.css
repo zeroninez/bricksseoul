@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 
 @theme {
   /* font-size */
@@ -19,27 +20,23 @@
   --text-8xl: 6rem;
   --text-9xl: 7.5rem;
 
-  /* font-family */
-  --font-geist-sans: var(--geist-sans-font-family);
-  --font-geist-mono: var(--geist-mono-font-family);
-  --font-bodoniModa: 'Bodoni Moda', serif;
-
-  /* colors */
-  --color-primary: #1d4ed8;
-  --color-secondary: #f59e0b;
-  --color-background: #FFFFFF;
-  --color-foreground: #111827;
-
   /* aspect-ratio */
   --aspect-square: 1 / 1;
   --aspect-video: 16 / 9;
   --aspect-portrait: 9 / 16;
   --aspect-landscape: 16 / 9;
+
+  /* color */
+  --color-primary: #3E160C;
+  --color-disabled: #513E39;
+  --color-background: #EFECE7;
 }
 
 @layer base {
 
   * {
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
   }
 
@@ -61,6 +58,8 @@
     -webkit-border-radius: 0;
   }
 
+
+
   input:focus,
   textarea:focus {
     outline: none;
@@ -68,7 +67,7 @@
   }
 
   input:-internal-autofill-selected {
-    background-color: #fff !important;
+    background-color: #FFFCF9 !important;
     color: #000 !important;
   }
 
@@ -76,6 +75,8 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    /*화살표 배경 넣기*/
+    /* background: #fff url('이미지경로') no-repeat 98% center; */
   }
 
   select::-ms-expand {
@@ -83,19 +84,21 @@
     display: none;
   }
 
+  /* 영어일때, 한글일때 폰트 다르게 */
+  :lang(en) {
+    /* @apply font-geist-sans; */
+  }
+
   #__next,
   html,
   body {
     margin: 0;
     padding: 0;
-    background: var(--color-background);
-    color: black;
+    font-family: 'SF Pro Display',
+      sans-serif;
     /* 16px */
     font-size: 100%;
-  }
-
-  .bg-gradient-45 {
-    background-image: linear-gradient(-45deg, #000000, #ffffff, #000000);
+    background-color: var(--color-background);
   }
 
   /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
@@ -105,11 +108,14 @@
 
   .no-scroll-bar {
     -ms-overflow-style: none;
+    /* IE and Edge */
     scrollbar-width: none;
+    /* Firefox */
   }
 
   .no-scroll-bar::-webkit-scrollbar {
     display: none;
+    /* Chrome, Safari, Opera*/
   }
 
   .checking {

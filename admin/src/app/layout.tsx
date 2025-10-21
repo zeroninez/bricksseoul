@@ -6,6 +6,7 @@ import { Geist, Geist_Mono, Bodoni_Moda } from 'next/font/google'
 import '@/styles/globals.css'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { AdminLayout } from '@/components'
+import Providers from './providers'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,11 +18,6 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
-const bodoniModa = Bodoni_Moda({
-  variable: '--font-bodoni-moda',
-  subsets: ['latin'],
-})
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,10 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${bodoniModa.variable} antialiased`}>
-        <AdminAuthProvider>
-          <AdminLayout>{children}</AdminLayout>
-        </AdminAuthProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers>
+          <AdminAuthProvider>
+            <AdminLayout>{children}</AdminLayout>
+          </AdminAuthProvider>
+        </Providers>
       </body>
       <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || ''} />
       <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ''} />

@@ -48,20 +48,13 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
         transition={{ duration: 0.4 }}
         className='w-full max-w-md'
       >
-        <div className='bg-white rounded-2xl shadow-xl p-8'>
+        <div className='bg-white rounded-lg shadow-xl p-8'>
           {/* 로고 및 제목 */}
-          <div className='text-center mb-8'>
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className='inline-block'
-            >
-              <Logo className='w-16 h-16 mx-auto mb-4 text-black' />
-            </motion.div>
-            <h1 className='text-xl font-bodoniModa font-bold text-gray-900 mb-2'>관리자 로그인</h1>
+          <div className='text-center mb-8 gap-10'>
+            <Logo className='text-lg mb-4' />
+            <h1 className='text-lg font-bold text-gray-900 mb-2'>관리자 로그인</h1>
             <p className='text-gray-600 text-sm'>
-              Bricks Seoul 관리자 페이지에 접속하려면
+              관리자 페이지에 접속하려면
               <br />
               비밀번호를 입력해주세요.
             </p>

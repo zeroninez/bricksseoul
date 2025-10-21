@@ -21,22 +21,30 @@ export const Header = () => {
   const router = useRouter()
   const pathname = usePathname()
 
+  const pages = [
+    { name: '예약내역', path: '/reservations' },
+    { name: '공간정보', path: '/properties' },
+    { name: '고객문의', path: '/cs' },
+    { name: '설정', path: '/settings' },
+  ]
+
   return (
     <>
-      <header className='bg-background sticky top-0 border-b border-gray-200 z-50'>
+      <header className='bg-white sticky top-0 z-50'>
         <div className='relative flex justify-between items-center h-14'>
           {/* Logo */}
-          <motion.button
-            disabled={pathname === '/'}
-            className=' text-xl h-full aspect-square flex items-center justify-center disabled:invisible'
-            onClick={() => router.back()}
+
+          <motion.div
+            className='flex w-fit h-full justify-start items-center flex-row gap-0 px-4'
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3 }}
-            whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <LiaAngleLeftSolid />
-          </motion.button>
+            <Logo className='text-lg' />
+            <div className='w-fit h-fit rounded-full px-2 py-1.5 leading-none bg-black text-white text-xs ml-2'>
+              관리자
+            </div>
+          </motion.div>
 
           {/* 관리자 메뉴 */}
           <motion.div
@@ -45,8 +53,6 @@ export const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <span className='text-sm text-gray-600'>관리자님, 안녕하세요!</span>
-
             {/* 로그아웃 버튼 */}
             <motion.button
               onClick={handleLogout}
@@ -57,6 +63,21 @@ export const Header = () => {
               <span className='text-sm font-medium'>로그아웃</span>
             </motion.button>
           </motion.div>
+        </div>
+        <div className='w-full h-fit flex flex-row overflow-x-scroll justify-start border-b border-stone-200 items-center'>
+          {pages.map((page) => (
+            <button
+              key={page.path}
+              onClick={() => router.push(page.path)}
+              className={`w-fit h-12 px-4 text-sm font-medium ${
+                pathname === page.path
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-stone-600 hover:text-stone-800'
+              }`}
+            >
+              {page.name}
+            </button>
+          ))}
         </div>
       </header>
     </>

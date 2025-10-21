@@ -3,6 +3,8 @@
 import { Button, Input, LocaleDropdown, PageStart, TextArea } from '@/components'
 
 export default function Language() {
+
+  
   return (
     <>
       <PageStart />
