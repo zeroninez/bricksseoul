@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
-import { supabase } from '@/lib/supabase'
+import { AccessLogRow, supabase } from '@/lib/supabase'
 import { TbRefresh } from 'react-icons/tb'
 import { MdAccessTime, MdMyLocation, MdDevicesOther, MdChevronLeft, MdChevronRight } from 'react-icons/md'
 
@@ -44,13 +44,16 @@ export const AccessLogsViewer = () => {
         .from('access_logs')
         .select(
           `
-          *,
+          id,
+          access_code_id,
+          accessed_at,
+          user_agent,
+          ip_address,
           access_codes!inner(code, name)
         `,
         )
         .order('accessed_at', { ascending: false })
 
-      // 필터 적용
       const now = new Date()
       if (filter === 'today') {
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
@@ -60,17 +63,29 @@ export const AccessLogsViewer = () => {
         query = query.gte('accessed_at', weekAgo.toISOString())
       }
 
-      const { data, error } = await query.limit(500) // 최근 500개로 늘림
+      // ✨ 반환 타입 명시
+      const { data, error } = await query.limit(500).returns<AccessLogRow[]>()
 
       if (error) throw error
+
+      // ✨ 안전 매핑: ip_address를 string|null로 고정
       setLogs(
-        (data || []).map((log) => ({
-          ...log,
+        (data ?? []).map<AccessLog>((log) => ({
+          id: log.id,
           access_code_id: log.access_code_id ?? 0,
           accessed_at: log.accessed_at ?? '',
+          user_agent: log.user_agent ?? null,
+          ip_address:
+            typeof log.ip_address === 'string'
+              ? log.ip_address
+              : log.ip_address == null
+                ? null
+                : String(log.ip_address),
+          access_codes: log.access_codes,
         })),
       )
-      setCurrentPage(1) // 새로운 데이터 로드 시 첫 페이지로
+
+      setCurrentPage(1)
     } catch (err) {
       setError(err instanceof Error ? err.message : '로그를 불러오는데 실패했습니다.')
     } finally {
