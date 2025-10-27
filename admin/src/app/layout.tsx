@@ -7,6 +7,7 @@ import '@/styles/globals.css'
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext'
 import { AdminLayout } from '@/components'
 import Providers from './providers'
+import { Noto_Sans_KR } from 'next/font/google'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -18,6 +19,12 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 })
 
+const notoSansKR = Noto_Sans_KR({
+  variable: '--font-noto-sans-kr',
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+})
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${notoSansKR.variable} ${geistMono.variable} antialiased`}>
         <Providers>
           <AdminAuthProvider>
             <AdminLayout>{children}</AdminLayout>
