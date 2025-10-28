@@ -5,9 +5,19 @@ import { useState } from 'react'
 
 import { PropertyListItem } from '@/types/property'
 
-export const PropertyItem = (property: PropertyListItem & { key: string }) => {
+export const PropertyItem = (
+  property: PropertyListItem & {
+    key: string
+    onClick?: (propertyId: string) => void
+  },
+) => {
   return (
-    <div className='w-full h-fit flex flex-row gap-2 relative'>
+    <div
+      className='w-full h-fit flex flex-row gap-2 relative active:opacity-50 active:translate-y-0.5 transition-all'
+      onClick={() => {
+        property.onClick?.(property.id)
+      }}
+    >
       {/* 정보 */}
       <div className='w-full h-fit flex flex-col gap-1.5 px-1'>
         <div className='text-lg leading-tight font-medium text-black'>{property.name}</div>
