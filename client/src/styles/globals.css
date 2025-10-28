@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 
 @theme {
   /* font-size */
@@ -94,7 +93,7 @@
   body {
     margin: 0;
     padding: 0;
-    font-family: 'SF Pro Display',
+    font-family: var(--font-ibm-plex-sans-kr),
       sans-serif;
     /* 16px */
     font-size: 100%;
