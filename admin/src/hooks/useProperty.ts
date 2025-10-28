@@ -1,40 +1,39 @@
 'use client'
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/lib/api'
-import type {
-  PropertyCreatePayload,
-  PropertyGetResponse,
-  PropertyListItem,
-  PropertyUpdatePayload,
-} from '@/types/property'
+import { PropertyCreatePayload, PropertyUpdatePayload, PropertyListItem, PropertyGetResponse } from '@/types/property'
 
-// 키 헬퍼
-const qk = {
-  list: ['properties'] as const,
-  detail: (id: string) => ['property', id] as const,
+// 유틸
+async function api<T>(url: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(data.error || 'API Error')
+  return data
 }
 
-/** 목록 (필요시 쿼리스트링로 필터/페이지네이션 추가) */
+// 목록
 export function usePropertyList() {
   return useQuery<PropertyListItem[]>({
-    queryKey: qk.list,
+    queryKey: ['properties'],
     queryFn: () => api('/api/properties'),
   })
 }
 
-/** 단건 조회 */
-export function usePropertyGet(id?: string) {
+// 단건 조회
+export function usePropertyGet(id: string | null) {
   return useQuery<PropertyGetResponse>({
-    queryKey: id ? qk.detail(id) : ['property', 'empty'],
+    queryKey: ['property', id],
     queryFn: () => api(`/api/properties/get?id=${id}`),
     enabled: !!id,
   })
 }
 
-/** 생성 */
+// 생성
 export function usePropertyCreate() {
-  const qc = useQueryClient()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: PropertyCreatePayload) =>
       api<{ id: string }>('/api/properties/create', {
@@ -42,34 +41,34 @@ export function usePropertyCreate() {
         body: JSON.stringify(payload),
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.list })
+      queryClient.invalidateQueries({ queryKey: ['properties'] })
     },
   })
 }
 
-/** 수정 (부분 업데이트 + 서버에서 컬렉션 치환) */
+// 수정
 export function usePropertyUpdate() {
-  const qc = useQueryClient()
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (payload: PropertyUpdatePayload) =>
-      api('/api/properties/update', {
+      api<{ success: boolean }>('/api/properties/update', {
         method: 'PUT',
         body: JSON.stringify(payload),
       }),
-    onSuccess: (_res, vars) => {
-      if (vars.id) qc.invalidateQueries({ queryKey: qk.detail(vars.id) })
-      qc.invalidateQueries({ queryKey: qk.list })
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] })
+      queryClient.invalidateQueries({ queryKey: ['property', variables.id] })
     },
   })
 }
 
-/** 삭제 */
+// 삭제
 export function usePropertyDelete() {
-  const qc = useQueryClient()
+  const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (id: string) => api(`/api/properties/delete?id=${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => api<{ success: boolean }>(`/api/properties/delete?id=${id}`, { method: 'DELETE' }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: qk.list })
+      queryClient.invalidateQueries({ queryKey: ['properties'] })
     },
   })
 }

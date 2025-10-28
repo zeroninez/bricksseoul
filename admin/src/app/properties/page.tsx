@@ -2,18 +2,17 @@
 
 'use client'
 
-import { PageHeader } from '@/components'
-import { usePropertyList } from '@/hooks/useProperty'
-import { AddButton, AddCheckPopup, Drawer, PropertyItem } from './components'
 import { useState } from 'react'
-import { Sheet } from 'react-modal-sheet'
-import classNames from 'classnames'
+import { usePropertyList } from '@/hooks/useProperty'
+import { AddButton, AddCheckPopup, PropertyItem } from './components'
+import { CreateSheet } from './CreateSheet'
+import { EditSheet } from './EditSheet'
 
 export default function Properties() {
   const { data: properties, isLoading, error } = usePropertyList()
   const [isClickedAdd, setIsClickedAdd] = useState(false)
-  const [modalState, setModalState] = useState<{ isOpen: boolean; mode?: 'create' | 'edit'; propertyId?: string }>({
-    isOpen: false,
+  const [modalState, setModalState] = useState<{ state: 'none' | 'create' | 'edit'; propertyId?: string }>({
+    state: 'none',
   })
 
   return (
@@ -25,18 +24,13 @@ export default function Properties() {
         {/* 데이터 있음 */}
         {properties && properties.length > 0
           ? properties.map((p, index) => (
-              <>
-                <PropertyItem
-                  key={p.id}
-                  {...p}
-                  onClick={(propertyId) => {
-                    setModalState({ isOpen: true, mode: 'edit', propertyId })
-                  }}
-                />
-                {index === properties.length - 1 ? null : (
-                  <div key={p.id + 'divider'} className='w-full h-px bg-stone-200 my-2' />
-                )}
-              </>
+              <PropertyItem
+                key={p.id}
+                {...p}
+                onClick={(propertyId) => {
+                  setModalState({ state: 'edit', propertyId })
+                }}
+              />
             ))
           : // 데이터 없음
             !isLoading &&
@@ -68,18 +62,25 @@ export default function Properties() {
         isClickedAdd={isClickedAdd}
         setIsClickedAdd={setIsClickedAdd}
         onClickHousing={() => {
-          setModalState({ isOpen: true, mode: 'create' })
+          setModalState({
+            state: 'create',
+          })
           setIsClickedAdd(false)
         }}
         onClickRental={() => {}}
       />
-      <Drawer
-        isOpen={modalState.isOpen}
-        mode={modalState.mode}
-        propertyId={modalState.propertyId}
+      <CreateSheet
+        isOpen={modalState.state === 'create'}
         onClose={() => {
-          setModalState({ isOpen: false })
-          modalState.mode === 'create' && setIsClickedAdd(true)
+          setModalState({ state: 'none' })
+          setIsClickedAdd(true)
+        }}
+      />
+      <EditSheet
+        isOpen={modalState.state === 'edit'}
+        propertyId={modalState.propertyId!}
+        onClose={() => {
+          setModalState({ state: 'none' })
         }}
       />
     </>

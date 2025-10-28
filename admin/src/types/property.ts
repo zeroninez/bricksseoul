@@ -2,7 +2,7 @@ export type AmenityCode = string
 export type AmenityItem = { code: string; label: string }
 
 export type PropertyImage = {
-  category: string
+  category?: string | null // null 허용
   url: string
   sort_order?: number
   is_primary?: boolean
@@ -18,7 +18,7 @@ export type PropertyGetResponse = {
   currency: string
   created_at: string
   updated_at: string
-  images: { url: string; sort_order?: number; is_primary?: boolean; category?: string }[]
+  images: { url: string; sort_order?: number; is_primary?: boolean; category?: string | null }[]
   rules: string[]
   amenities: AmenityItem[]
   address?: {
@@ -53,6 +53,9 @@ export type PropertyUpdatePayload = Partial<Omit<PropertyCreatePayload, 'name' |
   id: string
   name?: string
   price_per_night?: number
+  // rules/amenities/images:
+  //  - undefined: 변경 없음
+  //  - []: 해당 목록을 비우기(치환)
 }
 
 export type PropertyListItem = {
