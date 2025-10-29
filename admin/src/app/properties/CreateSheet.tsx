@@ -18,8 +18,6 @@ type StepKey = 1 | 2 | 3 | 4 | 5
 export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
   const [depth, setDepth] = useState<StepKey | 0>(0)
 
-  const DEPTH_LIST = ['주소/숙소명', '공간 정보/어메니티/규율', '객실 사진', '체크인/아웃 시간', '요금']
-
   // 폼 상태 (create/edit 공용)
   const [form, setForm] = useState<{
     name: string
@@ -110,26 +108,57 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
         leftAction={{
           onClick: onExit,
         }}
-        nextAction={{
-          text: creating ? '저장 중...' : '등록하기',
-          onClick: handleSave,
-          disabled: creating || !form.name || form.price_per_night <= 0,
-        }}
       >
         <main className='w-full h-full flex flex-col justify-start items-start gap-6 p-5'>
           <div className='w-full h-fit flex flex-col justify-start items-start gap-4'>
-            {DEPTH_LIST.map((title, index) => (
-              <ListItem
-                key={index}
-                text={title}
-                onClick={() => {
-                  setDepth((index + 1) as StepKey)
-                }}
-              />
-            ))}
+            <ListItem
+              key={0}
+              text='주소/숙소명'
+              onClick={() => {
+                setDepth(1)
+              }}
+              value={form.name || ''}
+            />
+            <ListItem
+              key={1}
+              text='공간 정보/어메니티/규율'
+              onClick={() => {
+                setDepth(2)
+              }}
+              value={form.space_info.available_people ? `최대 ${form.space_info.available_people}명` : ''}
+            />
+            <ListItem
+              key={2}
+              text='객실 사진'
+              onClick={() => {
+                setDepth(3)
+              }}
+              value={form.images.length > 0 ? `${form.images.length}장` : ''}
+            />
+            <ListItem
+              key={3}
+              text='체크인/아웃 시간'
+              onClick={() => {
+                setDepth(4)
+              }}
+              value={form.check_in && form.check_out ? `${form.check_in} ~ ${form.check_out}` : ''}
+            />
+            <ListItem
+              key={4}
+              text='요금'
+              onClick={() => {
+                setDepth(5)
+              }}
+              value={form.price_per_night > 0 ? `${form.price_per_night.toLocaleString()} ${form.currency}` : ''}
+            />
           </div>
           <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div>
         </main>
+        <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
+          <Button onClick={handleSave} disabled={creating || !form.name || form.price_per_night <= 0}>
+            {creating ? '저장 중...' : '등록하기'}
+          </Button>
+        </div>
 
         <FirstStep
           isOpen={depth === 1}

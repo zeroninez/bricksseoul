@@ -160,4 +160,13 @@
     /* 스크롤바 호버 색상 */
   }
 
+
+  :root {
+    --viewport-height: 100vh;
+  }
+
+  .sheet-container {
+    height: var(--viewport-height);
+  }
+
 }

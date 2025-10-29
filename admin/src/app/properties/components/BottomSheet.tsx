@@ -1,16 +1,14 @@
 'use client'
 import { Button } from '@/components'
-import { Sheet } from 'react-modal-sheet'
+import { useRef } from 'react'
+import { Sheet, SheetRef } from 'react-modal-sheet'
 
 interface BottomSheetProps {
   isOpen: boolean
   onClose: () => void
   children: React.ReactNode
-  nextAction?: {
-    text?: string
-    onClick: () => void
-    disabled?: boolean
-  }
+  rootRef?: React.RefObject<SheetRef>
+  contentsRef?: React.RefObject<HTMLDivElement>
 }
 
 interface HeaderProps {
@@ -32,15 +30,18 @@ export const BottomSheet = ({
   title,
   leftAction,
   rightAction,
-  nextAction,
+  rootRef,
+  contentsRef,
 }: BottomSheetProps & HeaderProps) => {
+  const root = useRef<SheetRef>(null)
+  const contents = useRef<HTMLDivElement>(null)
+
   return (
     <>
-      <Sheet detent='full' disableDrag isOpen={isOpen} onClose={onClose}>
+      <Sheet ref={root} detent='full' disableDrag isOpen={isOpen} onClose={onClose} avoidKeyboard>
         <Sheet.Container className='!rounded-t-none'>
-          <Sheet.Content>
-            {/* header */}
-            <div className='w-full h-fit sticky top-0 flex bg-white flex-row justify-center items-center p-4'>
+          <Sheet.Header>
+            <div className='w-full h-fit flex bg-white flex-row justify-center items-center p-4'>
               {leftAction && (
                 <button className='absolute left-0 p-4 active:scale-90 transition-all' onClick={leftAction?.onClick}>
                   {leftAction.text ? (
@@ -59,15 +60,19 @@ export const BottomSheet = ({
                 </button>
               )}
             </div>
-
+          </Sheet.Header>
+          <Sheet.Content
+            style={
+              {
+                // 키보드가 올라올 때만 패딩 적용
+                // paddingBottom: keyboardHeight > 0 ? `${keyboardHeight}px` : '0px',
+                // transition: 'padding-bottom 0.3s ease-in-out', // 부드러운 전환 효과
+              }
+            }
+            scrollRef={contents}
+          >
             {/* content */}
-            <div className='w-full flex flex-col h-fit pb-24'>{children}</div>
-            {/* button */}
-            <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
-              <Button onClick={nextAction?.onClick} disabled={nextAction?.disabled}>
-                {nextAction?.text || '다음'}
-              </Button>
-            </div>
+            {children}
           </Sheet.Content>
         </Sheet.Container>
       </Sheet>
