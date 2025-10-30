@@ -117,8 +117,20 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(1)
               }}
-              value={form.name || ''}
-            />
+            >
+              {form.name && (
+                <div className='mt-2'>
+                  <span className='text-stone-400 font-medium mr-1.5'>숙소명</span>
+                  {form.name}
+                </div>
+              )}
+              {form.address.address1 && (
+                <div className=''>
+                  <span className='text-stone-400 font-medium mr-1.5'>주소</span>
+                  {form.address.address1}
+                </div>
+              )}
+            </ListItem>
             <ListItem
               key={1}
               text='공간 정보/어메니티/규율'
@@ -133,7 +145,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(3)
               }}
-              value={form.images.length > 0 ? `${form.images.length}장` : ''}
+              // value={form.images.length > 0 ? `${form.images.length}장` : ''}
             />
             <ListItem
               key={3}
@@ -141,7 +153,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(4)
               }}
-              value={form.check_in && form.check_out ? `${form.check_in} ~ ${form.check_out}` : ''}
+              // value={form.check_in && form.check_out ? `${form.check_in} ~ ${form.check_out}` : ''}
             />
             <ListItem
               key={4}
@@ -149,7 +161,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(5)
               }}
-              value={form.price_per_night > 0 ? `${form.price_per_night.toLocaleString()} ${form.currency}` : ''}
+              // value={form.price_per_night > 0 ? `${form.price_per_night.toLocaleString()} ${form.currency}` : ''}
             />
           </div>
           <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div>

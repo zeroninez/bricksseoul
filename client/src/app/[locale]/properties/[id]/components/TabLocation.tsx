@@ -15,15 +15,23 @@ export const TabLocation = ({ id, ref, data }: TabContainerProps) => {
           {/* 1 */}
           <div className='w-full h-fit flex flex-col gap-4'>
             <span className='text-xl font-bold'>Location</span>
-
-            <div className='w-full h-auto aspect-square rounded-lg overflow-hidden bg-primary'>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className='w-full h-auto aspect-square rounded-lg overflow-hidden bg-black relative'
+            >
+              <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white z-0'>
+                로딩 중...
+              </span>
               <iframe
                 src={data.address?.iframe_src || ''}
                 width='100%'
                 height='100%'
-                style={{ border: 0 }}
+                style={{
+                  border: 0,
+                }}
+                className='absolute top-0 left-0 w-full h-full z-10'
                 allowFullScreen={true}
-                loading='lazy'
+                loading='eager'
                 referrerPolicy='no-referrer-when-downgrade'
               ></iframe>
             </div>
