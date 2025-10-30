@@ -16,11 +16,10 @@ interface StepProps {
 type JusoItem = {
   korAddr: string
   roadAddr: string
-  zipNo: string
 }
 
 const DEBOUNCE_DELAY = 300
-const SCROLL_OFFSET = 72
+const SCROLL_OFFSET = 80
 
 export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
   const [depth, setDepth] = useState(0)
@@ -84,7 +83,6 @@ export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
           address: {
             ...prev.address,
             address1: null,
-            zipNo: null,
           },
         }))
       }
@@ -99,7 +97,6 @@ export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
         address: {
           ...prev.address,
           address1: null,
-          zipNo: null,
         },
       }))
     }
@@ -159,13 +156,11 @@ export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
       setLoading(false)
       setIsInputFocused(false) // 선택 시 포커스 해제
 
-      // form에는 영문주소와 zipNo만 저장 (한글주소는 selectedJuso에서만 관리)
       setForm((prev: any) => ({
         ...prev,
         address: {
           ...prev.address,
           address1: item.roadAddr, // 영문 주소만 저장
-          zipNo: item.zipNo,
           address2: prev.address.address2 || null,
           guide: prev.address.guide || null,
           iframe_src: prev.address.iframe_src || null,
@@ -347,7 +342,7 @@ const SearchStep = ({
 
   return (
     <div className='w-full h-fit flex flex-col gap-6 px-5 pt-4 pb-5'>
-      <div className='text-2xl font-bold'>
+      <div className='text-xl font-bold'>
         숙박 장소의
         <br />
         주소를 등록해주세요

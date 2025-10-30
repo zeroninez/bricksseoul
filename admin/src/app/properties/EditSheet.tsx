@@ -38,19 +38,6 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
                 onClick={() => {
                   setDepth(index + 1)
                 }}
-                value={
-                  index === 0
-                    ? propertyData?.name
-                    : index === 1
-                      ? ''
-                      : index === 2
-                        ? `${propertyData?.images.length || 0}장`
-                        : index === 3
-                          ? `${propertyData?.check_in} 입실 / ${propertyData?.check_out} 퇴실`
-                          : index === 4
-                            ? `${propertyData?.price_per_night.toLocaleString()}원 / 1박`
-                            : 'null'
-                }
               />
             ))}
           </div>

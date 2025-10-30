@@ -6,7 +6,7 @@ import { usePropertyCreate, usePropertyGet } from '@/hooks/useProperty'
 import { BottomSheet, ListItem } from './components'
 import { PropertyCreatePayload, PropertyUpdatePayload } from '@/types/property'
 import { Button } from '@/components'
-import { FirstStep } from './steps'
+import { FirstStep, SecondStep } from './steps'
 
 interface CreateSheetProps {
   isOpen: boolean
@@ -112,7 +112,6 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
         <main className='w-full h-full flex flex-col justify-start items-start gap-6 p-5'>
           <div className='w-full h-fit flex flex-col justify-start items-start gap-4'>
             <ListItem
-              key={0}
               text='주소/숙소명'
               onClick={() => {
                 setDepth(1)
@@ -132,15 +131,22 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               )}
             </ListItem>
             <ListItem
-              key={1}
               text='공간 정보/어메니티/규율'
               onClick={() => {
                 setDepth(2)
               }}
-              value={form.space_info.available_people ? `최대 ${form.space_info.available_people}명` : ''}
-            />
+            >
+              {form.space_info.available_people && (
+                <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                  <span className='text-stone-400 font-medium mr-1.5'>수용 인원</span>
+                  {form.space_info.available_people}명 / <span className='text-stone-400 font-medium mr-1.5'>거실</span>
+                  {form.space_info.living_rooms}개 / <span className='text-stone-400 font-medium mr-1.5'>침실</span>
+                  {form.space_info.bedrooms}개 / <span className='text-stone-400 font-medium mr-1.5'>욕실</span>
+                  {form.space_info.bathrooms}개
+                </div>
+              )}
+            </ListItem>
             <ListItem
-              key={2}
               text='객실 사진'
               onClick={() => {
                 setDepth(3)
@@ -148,7 +154,6 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               // value={form.images.length > 0 ? `${form.images.length}장` : ''}
             />
             <ListItem
-              key={3}
               text='체크인/아웃 시간'
               onClick={() => {
                 setDepth(4)
@@ -156,7 +161,6 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               // value={form.check_in && form.check_out ? `${form.check_in} ~ ${form.check_out}` : ''}
             />
             <ListItem
-              key={4}
               text='요금'
               onClick={() => {
                 setDepth(5)
@@ -180,6 +184,15 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           form={form}
           setForm={setForm}
         />
+        <SecondStep
+          isOpen={depth === 2}
+          onClose={() => {
+            setDepth(0)
+          }}
+          form={form}
+          setForm={setForm}
+        />
+        {/* ThirdStep, FourthStep, FifthStep 컴포넌트도 동일한 패턴으로 추가 */}
       </BottomSheet>
     </>
   )

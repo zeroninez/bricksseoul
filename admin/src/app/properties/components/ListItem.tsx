@@ -1,12 +1,10 @@
 export const ListItem = ({
   text,
   onClick,
-  value,
   children,
 }: {
   text: string
   onClick: () => void
-  value?: string
   children?: React.ReactNode
 }) => {
   return (
