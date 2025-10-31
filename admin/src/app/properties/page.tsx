@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { usePropertyList } from '@/hooks/useProperty'
-import { AddButton, AddCheckPopup, PropertyItem } from './components'
+import { AddButton, AddSheet, PropertyItem } from './components'
 import { CreateSheet } from './CreateSheet'
 import { EditSheet } from './EditSheet'
 
@@ -58,7 +58,7 @@ export default function Properties() {
           </div>
         )}
       </div>
-      <AddCheckPopup
+      <AddSheet
         isClickedAdd={isClickedAdd}
         setIsClickedAdd={setIsClickedAdd}
         onClickHousing={() => {

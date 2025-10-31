@@ -61,16 +61,7 @@ export const BottomSheet = ({
               )}
             </div>
           </Sheet.Header>
-          <Sheet.Content
-            style={
-              {
-                // 키보드가 올라올 때만 패딩 적용
-                // paddingBottom: keyboardHeight > 0 ? `${keyboardHeight}px` : '0px',
-                // transition: 'padding-bottom 0.3s ease-in-out', // 부드러운 전환 효과
-              }
-            }
-            scrollRef={contents}
-          >
+          <Sheet.Content scrollRef={contents}>
             {/* content */}
             {children}
           </Sheet.Content>

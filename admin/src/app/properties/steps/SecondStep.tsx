@@ -5,6 +5,8 @@ import { BottomSheet } from '../components'
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion } from 'motion/react'
 import { MdClose } from 'react-icons/md'
+import { useAmenities } from '@/hooks/useAmenities'
+import classNames from 'classnames'
 
 interface StepProps {
   isOpen: boolean
@@ -17,6 +19,8 @@ const SCROLL_OFFSET = 80
 
 export const SecondStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
   const [depth, setDepth] = useState(0)
+
+  const { data: amenities, isLoading } = useAmenities()
 
   // Validation
 
@@ -91,6 +95,85 @@ export const SecondStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
     },
     [setForm],
   )
+
+  // ---------- Rules helpers ----------
+  const RULE_MAX_LEN = 80
+
+  const addRule = useCallback(
+    (text: string) => {
+      const value = text.trim()
+      if (!value) return
+      if (value.length > RULE_MAX_LEN) return
+      setForm((prev: any) => {
+        if (prev.rules.includes(value)) return prev // 중복 방지
+        return { ...prev, rules: [...prev.rules, value] }
+      })
+    },
+    [setForm],
+  )
+
+  const removeRule = useCallback(
+    (index: number) => {
+      setForm((prev: any) => ({
+        ...prev,
+        rules: prev.rules.filter((_: string, i: number) => i !== index),
+      }))
+    },
+    [setForm],
+  )
+
+  const updateRule = useCallback(
+    (index: number, next: string) => {
+      const value = next.trimStart() // 입력중에는 앞 공백만 제거 (뒤 공백은 사용자가 타이핑 중일 수 있어 남김)
+      if (value.length > RULE_MAX_LEN) return
+      setForm((prev: any) => {
+        const nextRules = [...prev.rules]
+        nextRules[index] = value
+        return { ...prev, rules: nextRules }
+      })
+    },
+    [setForm],
+  )
+
+  const blurRule = useCallback(
+    (index: number) => {
+      // blur에서 최종 트림 + 빈값 제거
+      setForm((prev: any) => {
+        const trimmed = prev.rules[index].trim()
+        if (!trimmed) {
+          return { ...prev, rules: prev.rules.filter((_: string, i: number) => i !== index) }
+        }
+        const nextRules = [...prev.rules]
+        nextRules[index] = trimmed
+        return { ...prev, rules: nextRules }
+      })
+    },
+    [setForm],
+  )
+
+  const moveRule = useCallback(
+    (from: number, to: number) => {
+      setForm((prev: any) => {
+        const list = [...prev.rules]
+        if (to < 0 || to >= list.length) return prev
+        const [item] = list.splice(from, 1)
+        list.splice(to, 0, item)
+        return { ...prev, rules: list }
+      })
+    },
+    [setForm],
+  )
+
+  const [ruleInput, setRuleInput] = useState('')
+  const canAdd =
+    ruleInput.trim().length > 0 && ruleInput.trim().length <= RULE_MAX_LEN && !form.rules.includes(ruleInput.trim())
+
+  const handleRuleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && canAdd) {
+      addRule(ruleInput)
+      setRuleInput('')
+    }
+  }
 
   return (
     <BottomSheet
@@ -212,20 +295,48 @@ export const SecondStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
           </div>
         </>
       ) : depth === 1 ? (
-        <div className='w-full h-fit flex flex-col gap-12 px-5 pt-4 pb-5'>
-          <div className='text-xl font-bold'>
+        <div className='w-full h-full overflow-auto snap-y flex flex-col gap-12 px-5 pb-5'>
+          <div className='text-xl font-bold snap-start pt-4'>
             시설 및 어메니티를
             <br />
             추가해주세요
           </div>
           {/* available_people */}
-          <div className='w-full h-fit flex flex-col gap-3'>
+          <div className='w-full h-fit flex flex-col gap-3 pb-32 snap-start'>
             <span className='text-sm font-semibold text-black/50'>어메니티 옵션</span>
             <div className='w-full h-fit grid grid-cols-4 gap-3'>
-              <div className='w-full h-auto aspect-square rounded-lg bg-stone-100 flex flex-col justify-center items-center gap-2 p-3'>
-                <div className='w-5 h-5 bg-stone-200'></div>
-                <span className='text-sm'>에어컨</span>
-              </div>
+              {amenities &&
+                amenities.map((item) => (
+                  <div
+                    key={item.code}
+                    onClick={() => {
+                      const isSelected = form.amenities.includes(item.code)
+                      if (isSelected) {
+                        // 이미 선택된 경우 제거
+                        setForm((prev: any) => ({
+                          ...prev,
+                          amenities: prev.amenities.filter((code: string) => code !== item.code),
+                        }))
+                      } else {
+                        // 선택되지 않은 경우 추가
+                        setForm((prev: any) => ({
+                          ...prev,
+                          amenities: [...prev.amenities, item.code],
+                        }))
+                      }
+                    }}
+                    className={classNames(
+                      'w-full h-auto aspect-square rounded-lg bg-stone-100 flex flex-col justify-between items-center gap-2 p-3 transition-all',
+                      { 'border-[1.5px] border-black': form.amenities.includes(item.code) },
+                    )}
+                  >
+                    <div className='w-full h-full flex flex-1 bg-stone-200'>
+                      {/* 아이콘 들어갈 자리 */}
+                      {/* {item.code} */}
+                    </div>
+                    <span className='w-full h-fit flex text-center truncate text-xs'>{item.label}</span>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
@@ -236,11 +347,128 @@ export const SecondStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
             <br />
             선택해주세요
           </div>
-          {/* available_people */}
-          <div className='w-full h-fit flex flex-col gap-3'></div>
+          <div className='w-full h-fit flex flex-col gap-6 pb-24'>
+            {/* 수정하거나 삭제할 수 있는 아이템으로 rules 리스트를 만들고 제일 마지막에는 생성할 수 있는 input으로 하고 키다운하면 규율이 추가되도록 구현 */}
+            <div className='w-full h-fit flex flex-col gap-2'>
+              <span className='text-sm font-semibold text-black/50'>추가하기</span>
+              <div className='w-full h-fit flex flex-col gap-2'>
+                <input
+                  type='text'
+                  value={ruleInput}
+                  onChange={(e) => setRuleInput(e.target.value)}
+                  onFocus={handleInputFocus}
+                  onKeyDown={handleRuleKeyDown}
+                  placeholder='예: 실내에서는 큰 소리로 통화하지 말아주세요'
+                  className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
+                  maxLength={RULE_MAX_LEN + 5} // 여유
+                />
+                <button
+                  type='button'
+                  onClick={() => {
+                    if (canAdd) {
+                      addRule(ruleInput)
+                      setRuleInput('')
+                    }
+                  }}
+                  disabled={!canAdd}
+                  className={`px-4 h-12 rounded-md text-sm font-medium transition-all ${
+                    canAdd ? 'bg-black text-white' : 'bg-stone-200 text-stone-500 cursor-not-allowed'
+                  }`}
+                >
+                  추가
+                </button>
+              </div>
+              <div className='text-xs text-stone-500'>
+                {ruleInput.trim().length}/{RULE_MAX_LEN}자
+                {!canAdd &&
+                ruleInput.trim().length > 0 &&
+                ruleInput.trim().length <= RULE_MAX_LEN &&
+                form.rules.includes(ruleInput.trim())
+                  ? ' · 중복 규칙'
+                  : ''}
+              </div>
+            </div>
+
+            {/* 규칙 리스트 */}
+            <div className='w-full h-fit flex flex-col gap-3'>
+              <span className='text-sm font-semibold text-black/50'>등록된 규율 ({form.rules.length})</span>
+
+              {form.rules.length === 0 ? (
+                <div className='w-full h-fit text-sm text-stone-500 px-1'>아직 추가된 규율이 없어요.</div>
+              ) : (
+                <div className='w-full h-fit flex flex-col gap-2'>
+                  {form.rules.map((rule: string, idx: number) => (
+                    <div
+                      key={`${rule}-${idx}`}
+                      className='w-full h-fit flex flex-row justify-between items-center gap-0 bg-stone-100 rounded-md'
+                    >
+                      {/* 삭제 */}
+                      <button
+                        type='button'
+                        onClick={() => removeRule(idx)}
+                        className='w-fit p-3 h-fit text-sm text-red-500 active:scale-95'
+                        aria-label='삭제'
+                        title='삭제'
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          className='w-5 h-5 text-red-500'
+                          viewBox='0 0 24 24'
+                          fill='none'
+                        >
+                          <rect
+                            x='2.75'
+                            y='2.75'
+                            width='18.5'
+                            height='18.5'
+                            rx='9.25'
+                            stroke='currentColor'
+                            strokeWidth='1.5'
+                          />
+                          <path d='M6 12H18' stroke='currentColor' strokeWidth='1.5' />
+                        </svg>
+                      </button>
+
+                      {/* 인라인 편집 입력 */}
+                      <input
+                        value={rule}
+                        onChange={(e) => updateRule(idx, e.target.value)}
+                        onFocus={handleInputFocus}
+                        onBlur={() => blurRule(idx)}
+                        className='flex-1 bg-transparent outline-none h-full text-sm'
+                        maxLength={RULE_MAX_LEN + 5}
+                      />
+                      {/* 순서 이동 */}
+                      <div className='flex flex-col gap-0.5 px-3 text-sm'>
+                        <button
+                          type='button'
+                          onClick={() => moveRule(idx, idx - 1)}
+                          className='leading-none text-black/40 active:scale-90 disabled:opacity-30'
+                          disabled={idx === 0}
+                          aria-label='위로'
+                          title='위로'
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type='button'
+                          onClick={() => moveRule(idx, idx + 1)}
+                          className='leading-none text-black/40 active:scale-90 disabled:opacity-30'
+                          disabled={idx === form.rules.length - 1}
+                          aria-label='아래로'
+                          title='아래로'
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       ) : null}
-
       <div className='fixed bottom-0 w-full h-fit px-5 pb-5 z-10'>
         <Button onClick={handleNext} disabled={false}>
           {depth < 2 ? '다음으로' : '완료'}

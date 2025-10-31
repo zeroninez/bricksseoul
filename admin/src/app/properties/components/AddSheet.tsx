@@ -17,14 +17,14 @@ const CREATE_STEP_LIST = [
   },
 ]
 
-interface AddCheckPopupProps {
+interface AddSheetProps {
   isClickedAdd: boolean
   setIsClickedAdd: React.Dispatch<React.SetStateAction<boolean>>
   onClickHousing: () => void
   onClickRental: () => void
 }
 
-export const AddCheckPopup = (props: AddCheckPopupProps) => {
+export const AddSheet = (props: AddSheetProps) => {
   const { isClickedAdd, setIsClickedAdd, onClickHousing, onClickRental } = props
 
   return (
@@ -48,7 +48,7 @@ export const AddCheckPopup = (props: AddCheckPopupProps) => {
             </div>
           </Sheet.Header>
           <Sheet.Content>
-            <div className='px-5 flex flex-col gap-5 pb-10'>
+            <div className='px-5 flex flex-col gap-10 pb-10'>
               <span className='text-xl font-bold'>Space 유형을 선택해주세요</span>
               <div className='w-full h-fit flex flex-col gap-4'>
                 <Item item={CREATE_STEP_LIST[0]} onClick={onClickHousing} />
@@ -67,7 +67,7 @@ const Item = ({ item, onClick }: { item: any; onClick: () => void }) => {
   return (
     <div
       className={classNames(
-        'w-full h-fit flex flex-col px-5 py-8 border-2 rounded-xl active:bg-black active:border-black active:text-white transition-all cursor-pointer',
+        'w-full h-fit flex flex-col px-5 py-8 border-[1.5px] rounded-xl active:bg-black active:border-black active:text-white transition-all cursor-pointer',
         item.disabled ? 'border-stone-200 bg-stone-50 text-stone-300 pointer-events-none' : '',
       )}
       key={item.key}

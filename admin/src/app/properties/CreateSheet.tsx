@@ -145,6 +145,25 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
                   {form.space_info.bathrooms}개
                 </div>
               )}
+              {form.amenities.length > 0 && (
+                <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                  {form.amenities.map((amenity, index) => (
+                    <span key={index} className='px-2 py-1 bg-stone-200 text-stone-600 text-xxs rounded-md mr-2'>
+                      {amenity}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {form.rules.length > 0 && (
+                <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                  {form.rules.map((rule, index) => (
+                    <span key={index} className='text-xxs mr-2 mb-2'>
+                      {rule}
+                    </span>
+                  ))}
+                </div>
+              )}
             </ListItem>
             <ListItem
               text='객실 사진'

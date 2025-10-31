@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 
-type Amenity = { code: string; label: string }
+export type Amenity = { code: string; label: string }
 
 export function useAmenities() {
   return useQuery<Amenity[]>({
