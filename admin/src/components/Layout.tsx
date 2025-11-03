@@ -26,10 +26,10 @@ interface LayoutProps {
 
 export const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className={classNames('max-w-3xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-background')}>
+    <div className={classNames('max-w-3xl shadow-md m-auto min-h-svh h-fit flex flex-col bg-background')}>
       <Header />
       {/* Main content area */}
-      <main className='flex-1'>{children}</main>
+      <main className='flex'>{children}</main>
       {/* Footer can be added here if needed */}
       <Footer />
     </div>
