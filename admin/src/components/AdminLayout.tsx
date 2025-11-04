@@ -2,10 +2,11 @@
 'use client'
 
 import classNames from 'classnames'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Header, Footer, AdminLogin } from '@/components'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
 import { SplashScreen } from '@/components'
+import { usePathname } from 'next/navigation'
 interface AdminLayoutProps {
   children: React.ReactNode
 }
@@ -25,9 +26,9 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   // 인증된 사용자에게 관리자 페이지 표시
   return (
-    <div className={classNames('max-w-5xl shadow-md m-auto min-h-screen h-fit flex flex-col bg-white')}>
+    <div className={classNames('max-w-5xl shadow-md m-auto min-h-svh h-fit flex flex-col bg-white')}>
       <Header />
-      <main className='flex-1'>{children}</main>
+      <main className='flex w-full h-fit flex-col'>{children}</main>
     </div>
   )
 }

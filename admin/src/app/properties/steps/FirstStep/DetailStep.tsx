@@ -4,7 +4,6 @@ import React from 'react'
 import { JusoItem } from '.'
 import { motion } from 'motion/react'
 import { MdClose } from 'react-icons/md'
-import { useInputFocus } from '@/hooks/useInputFocus'
 
 // 상세 입력 스텝
 interface DetailStepProps {
@@ -15,6 +14,7 @@ interface DetailStepProps {
   onResearch: () => void
   updateAddress: (field: string, value: string) => void
   updateForm: (field: string, value: string) => void
+  onInputFocus: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void
 }
 
 export const DetailStep = ({
@@ -25,76 +25,96 @@ export const DetailStep = ({
   onResearch,
   updateAddress,
   updateForm,
-}: DetailStepProps) => (
-  <div className='w-full h-fit flex flex-col gap-6 p-5 pb-32'>
-    <Field label='기본주소 (영문)' rightText='재검색' rightAction={onResearch}>
-      <div className='w-full h-fit p-4 bg-stone-100 rounded-md flex flex-col gap-3 justify-start items-start'>
-        <div className='w-fit h-fit flex flex-col gap-2 justify-start items-start'>
-          <div className='w-full h-fit text-sm break-words'>{form.address.address1 || '—'}</div>
+  onInputFocus,
+}: DetailStepProps) => {
+  function extractIframeSrc(html: string): string | null {
+    const match = html.match(/src="([^"]+)"/)
+    return match ? match[1] : null
+  }
+  return (
+    <div className='w-full h-fit flex flex-col gap-6 p-5 pb-32'>
+      <Field label='기본주소 (영문)' rightText='재검색' rightAction={onResearch}>
+        <div className='w-full h-fit p-4 bg-stone-100 rounded-md flex flex-col gap-3 justify-start items-start'>
+          <div className='w-fit h-fit flex flex-col gap-2 justify-start items-start'>
+            <div className='w-full h-fit text-sm break-words'>{form.address.address1 || '—'}</div>
+          </div>
         </div>
-      </div>
-    </Field>
+      </Field>
 
-    <Field label='상세주소' required='영문작성'>
-      <input
-        type='text'
-        placeholder='상세주소 입력'
-        className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
-        value={form.address.address2 || ''}
-        onChange={(e) => updateAddress('address2', e.target.value)}
-        onFocus={useInputFocus}
-      />
-    </Field>
+      <Field label='상세주소' required='영문작성'>
+        <input
+          type='text'
+          placeholder='상세주소 입력'
+          className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
+          value={form.address.address2 || ''}
+          onChange={(e) => updateAddress('address2', e.target.value)}
+          onFocus={onInputFocus}
+        />
+      </Field>
 
-    <Field label='숙소명' required='영문작성'>
-      <input
-        type='text'
-        placeholder='숙소명 입력'
-        className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
-        value={form.name || ''}
-        onChange={(e) => updateForm('name', e.target.value)}
-        onFocus={useInputFocus}
-      />
-    </Field>
+      <Field label='숙소명' required='영문작성'>
+        <input
+          type='text'
+          placeholder='숙소명 입력'
+          className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
+          value={form.name || ''}
+          onChange={(e) => updateForm('name', e.target.value)}
+          onFocus={onInputFocus}
+        />
+      </Field>
 
-    <Field label='길 안내' required='영문작성'>
-      <textarea
-        placeholder='길 안내 입력'
-        className='w-full min-h-24 bg-stone-100 px-4 py-2 rounded-md focus:bg-stone-200 transition-all outline-none resize-none'
-        value={form.address.guide || ''}
-        onChange={(e) => updateAddress('guide', e.target.value)}
-        onFocus={useInputFocus}
-      />
-    </Field>
+      <Field label='길 안내' required='영문작성'>
+        <textarea
+          placeholder='길 안내 입력'
+          className='w-full min-h-36 bg-stone-100 px-4 py-2 rounded-md focus:bg-stone-200 transition-all outline-none resize-none'
+          value={form.address.guide || ''}
+          onChange={(e) => updateAddress('guide', e.target.value)}
+          onFocus={onInputFocus}
+        />
+      </Field>
 
-    <Field
-      label='구글 지도 임베드 링크'
-      rightText='미리보기'
-      rightAction={() => form.address.iframe_src && setIframePreview(true)}
-    >
-      <input
-        type='text'
-        placeholder='구글 지도 임베드 링크 입력'
-        className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
-        value={form.address.iframe_src || ''}
-        onChange={(e) => updateAddress('iframe_src', e.target.value)}
-        onFocus={useInputFocus}
-      />
-    </Field>
+      <Field label='구글 지도 임베드 링크'>
+        <input
+          type='text'
+          placeholder='구글 지도 임베드 링크 입력'
+          className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
+          value={form.address.iframe_src || ''}
+          onChange={(e) => updateAddress('iframe_src', extractIframeSrc(e.target.value) || '')}
+          onFocus={onInputFocus}
+        />
+      </Field>
+      {form.address.iframe_src && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className='w-full h-auto aspect-square rounded-lg overflow-hidden bg-black relative'
+        >
+          <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white z-0'>로딩 중...</span>
+          <iframe
+            src={form.address.iframe_src}
+            width='100%'
+            height='100%'
+            style={{ border: 0 }}
+            className='absolute top-0 left-0 w-full h-full z-10'
+            allowFullScreen
+            loading='eager'
+            referrerPolicy='no-referrer-when-downgrade'
+            title='구글 지도'
+          />
+        </div>
+      )}
 
-    {iframePreview && <IframePreview src={form.address.iframe_src} onClose={() => setIframePreview(false)} />}
-
-    <Field label='숙소 설명' required='영문작성'>
-      <textarea
-        placeholder='숙소 설명 입력'
-        className='w-full min-h-24 bg-stone-100 px-4 py-2 rounded-md focus:bg-stone-200 transition-all outline-none resize-none'
-        value={form.description || ''}
-        onChange={(e) => updateForm('description', e.target.value)}
-        onFocus={useInputFocus}
-      />
-    </Field>
-  </div>
-)
+      <Field label='숙소 설명' required='영문작성'>
+        <textarea
+          placeholder='숙소 설명 입력'
+          className='w-full min-h-48 bg-stone-100 px-4 py-2 rounded-md focus:bg-stone-200 transition-all outline-none resize-none'
+          value={form.description || ''}
+          onChange={(e) => updateForm('description', e.target.value)}
+          onFocus={onInputFocus}
+        />
+      </Field>
+    </div>
+  )
+}
 
 // 아이프레임 미리보기 모달
 const IframePreview = ({ src, onClose }: { src: string; onClose: () => void }) => (
@@ -150,7 +170,7 @@ const Field = ({
   children: React.ReactNode
 }) => {
   return (
-    <div className='w-full h-fit flex flex-col gap-2'>
+    <div className='w-full h-fit flex flex-col gap-3'>
       <div className='w-full h-fit flex flex-row justify-between items-center'>
         <span className='text-sm font-medium'>
           {label && `${label}${required ? '*' : ''}`}

@@ -6,7 +6,7 @@ import { usePropertyCreate, usePropertyGet } from '@/hooks/useProperty'
 import { BottomSheet, ListItem } from './components'
 import { PropertyCreatePayload, PropertyUpdatePayload } from '@/types/property'
 import { Button } from '@/components'
-import { FirstStep, SecondStep } from './steps'
+import { FirstStep, SecondStep, ThirdStep } from './steps'
 
 interface CreateSheetProps {
   isOpen: boolean
@@ -109,7 +109,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           onClick: onExit,
         }}
       >
-        <main className='w-full h-full flex flex-col justify-start items-start gap-6 p-5'>
+        <main className='w-full h-full overflow-y-scroll flex flex-col justify-start items-start gap-6 p-5 pb-32'>
           <div className='w-full h-fit flex flex-col justify-start items-start gap-4'>
             <ListItem
               text='주소/숙소명'
@@ -138,17 +138,17 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
             >
               {form.space_info.available_people && (
                 <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
-                  <span className='text-stone-400 font-medium mr-1.5'>수용 인원</span>
-                  {form.space_info.available_people}명 / <span className='text-stone-400 font-medium mr-1.5'>거실</span>
-                  {form.space_info.living_rooms}개 / <span className='text-stone-400 font-medium mr-1.5'>침실</span>
-                  {form.space_info.bedrooms}개 / <span className='text-stone-400 font-medium mr-1.5'>욕실</span>
+                  <span className='mr-1.5'>수용 인원</span>
+                  {form.space_info.available_people}명 / <span className='mr-1.5'>거실</span>
+                  {form.space_info.living_rooms}개 / <span className='mr-1.5'>침실</span>
+                  {form.space_info.bedrooms}개 / <span className='mr-1.5'>욕실</span>
                   {form.space_info.bathrooms}개
                 </div>
               )}
               {form.amenities.length > 0 && (
-                <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                <div className='mt-2 w-full flex flex-row flex-wrap gap-2 h-fit justify-start items-center'>
                   {form.amenities.map((amenity, index) => (
-                    <span key={index} className='px-2 py-1 bg-stone-200 text-stone-600 text-xxs rounded-md mr-2'>
+                    <span key={index} className='p-1 bg-stone-200 text-stone-500 text-xxs rounded-md'>
                       {amenity}
                     </span>
                   ))}
@@ -156,9 +156,9 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               )}
 
               {form.rules.length > 0 && (
-                <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                <div className='mt-2 w-full flex flex-col flex-wrap h-fit justify-start items-start'>
                   {form.rules.map((rule, index) => (
-                    <span key={index} className='text-xxs mr-2 mb-2'>
+                    <span key={index} className='text-xxs mr-2 mb-1'>
                       {rule}
                     </span>
                   ))}
@@ -170,8 +170,25 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(3)
               }}
-              // value={form.images.length > 0 ? `${form.images.length}장` : ''}
-            />
+            >
+              {form.images.length > 0 && (
+                <div className='mt-4 w-full flex flex-row flex-wrap gap-2 h-fit justify-start items-center'>
+                  {form.images.map((image, index) => (
+                    <div key={index} className='relative flex flex-col justify-center items-center'>
+                      <img
+                        key={index}
+                        src={image.url}
+                        alt={`숙소 이미지 ${index + 1}`}
+                        className='w-16 h-16 object-cover rounded-t-md'
+                      />
+                      <span className='bg-white text-black text-[8px] leading-none py-1 px-1 w-full rounded-b '>
+                        {image.category}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ListItem>
             <ListItem
               text='체크인/아웃 시간'
               onClick={() => {
@@ -205,6 +222,14 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
         />
         <SecondStep
           isOpen={depth === 2}
+          onClose={() => {
+            setDepth(0)
+          }}
+          form={form}
+          setForm={setForm}
+        />
+        <ThirdStep
+          isOpen={depth === 3}
           onClose={() => {
             setDepth(0)
           }}

@@ -20,7 +20,10 @@ export const Amenities = ({ form, setForm }: AmenitiesProps) => {
         <div className='w-full h-fit flex flex-col gap-3 pb-32 snap-start'>
           <span className='text-sm font-semibold text-black/50'>어메니티 옵션</span>
           <div className='w-full grid grid-cols-4 gap-3'>
-            {amenities &&
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : (
+              amenities &&
               amenities.map((item) => {
                 const selected = form.amenities.includes(item.code)
                 return (
@@ -39,11 +42,16 @@ export const Amenities = ({ form, setForm }: AmenitiesProps) => {
                       { 'border-[1.5px] border-black': selected },
                     )}
                   >
-                    <div className='w-full h-full flex flex-1 bg-stone-200' />
-                    <span className='truncate text-xs'>{item.label}</span>
+                    <img
+                      src={`/svgs/amenities/${item.code}.svg`}
+                      alt={item.label}
+                      className='w-8 h-8 object-contain opacity-50'
+                    />
+                    <span className='truncate text-xxs'>{item.label}</span>
                   </div>
                 )
-              })}
+              })
+            )}
           </div>
         </div>
       </div>

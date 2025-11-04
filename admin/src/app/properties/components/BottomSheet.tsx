@@ -9,6 +9,7 @@ interface BottomSheetProps {
   children: React.ReactNode
   rootRef?: React.RefObject<SheetRef>
   contentsRef?: React.RefObject<HTMLDivElement>
+  className?: string
 }
 
 interface HeaderProps {
@@ -32,6 +33,7 @@ export const BottomSheet = ({
   rightAction,
   rootRef,
   contentsRef,
+  className,
 }: BottomSheetProps & HeaderProps) => {
   const root = useRef<SheetRef>(null)
   const contents = useRef<HTMLDivElement>(null)
@@ -61,7 +63,7 @@ export const BottomSheet = ({
               )}
             </div>
           </Sheet.Header>
-          <Sheet.Content scrollRef={contents}>
+          <Sheet.Content scrollRef={contents} className={className}>
             {/* content */}
             {children}
           </Sheet.Content>

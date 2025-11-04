@@ -21,7 +21,7 @@ export const ListItem = ({
         </div>
       </div>
       {children && (
-        <div className='w-full h-fit flex flex-col justify-start items-start text-xs text-stone-400'>{children}</div>
+        <div className='w-full h-fit flex flex-col justify-start items-start text-xs text-stone-500'>{children}</div>
       )}
     </div>
   )

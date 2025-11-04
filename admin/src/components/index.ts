@@ -1,5 +1,4 @@
 // src/components/index.ts (admin 폴더용)
-export * from './Layout'
 export * from './Header'
 export * from './Footer'
 export * from './Logo'

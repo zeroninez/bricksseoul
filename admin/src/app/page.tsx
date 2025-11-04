@@ -9,7 +9,7 @@ import { useState } from 'react'
 export default function Home() {
   const router = useRouter()
 
-  // 공간정보 페이지로 이동
+  // /properties로 이동
   useState(() => {
     router.replace('/properties')
   })

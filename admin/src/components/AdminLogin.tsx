@@ -1,7 +1,7 @@
 // src/components/AdminLogin.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { Logo } from './Logo'
 
@@ -13,6 +13,8 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+
+  const passwordInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,8 +42,13 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
     }
   }
 
+  // page scroll to up
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <div className='h-dvh flex items-center justify-center p-4'>
+    <div className='w-full h-svh flex items-center justify-center p-4'>
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -67,10 +74,12 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
                 관리자 비밀번호
               </label>
               <input
+                ref={passwordInputRef}
                 id='password'
                 type='password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onBlur={scrollToTop}
                 className='w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200'
                 placeholder='비밀번호를 입력하세요'
                 disabled={isLoading}

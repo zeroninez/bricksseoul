@@ -2,7 +2,7 @@
 'use client'
 
 import { useRouter, usePathname } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { Logo } from './Logo'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
@@ -28,12 +28,15 @@ export const Header = () => {
     { name: '설정', path: '/settings' },
   ]
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
     <>
-      <header className='bg-white sticky top-0 z-50'>
+      <header className='bg-white sticky top-0 z-50 w-full h-fit flex flex-col'>
         <div className='relative flex justify-between items-center h-14'>
           {/* Logo */}
-
           <motion.div
             className='flex w-fit h-full justify-start items-center flex-row gap-0 px-4'
             initial={{ opacity: 0, x: -20 }}
@@ -68,7 +71,10 @@ export const Header = () => {
           {pages.map((page) => (
             <button
               key={page.path}
-              onClick={() => router.push(page.path)}
+              onClick={() => {
+                scrollToTop()
+                router.push(page.path)
+              }}
               className={`w-fit h-12 px-4 text-sm font-medium ${
                 pathname === page.path
                   ? 'border-b-2 border-primary text-primary'

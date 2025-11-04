@@ -240,6 +240,31 @@ export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
     [setForm],
   )
 
+  const scrollOffset = 80
+
+  const handleInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setTimeout(() => {
+      const element = e.target
+      const container = element.closest('[data-rsbs-scroll]')
+
+      if (container) {
+        const elementRect = element.getBoundingClientRect()
+        const containerRect = container.getBoundingClientRect()
+        const scrollTop = container.scrollTop + elementRect.top - containerRect.top - scrollOffset
+
+        container.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth',
+        })
+      } else {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
+    }, 300)
+  }, [])
+
   return (
     <BottomSheet isOpen={isOpen} onClose={handleClose} leftAction={{ onClick: handleBack }} title='숙소 등록'>
       {depth === 0 ? (
@@ -264,6 +289,7 @@ export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
           onResearch={handleResearch}
           updateAddress={updateAddress}
           updateForm={updateForm}
+          onInputFocus={handleInputFocus}
         />
       )}
 

@@ -98,8 +98,6 @@
     /* 16px */
     font-size: 100%;
     background-color: var(--color-background);
-    height: var(--viewport-height);
-
   }
 
   /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
