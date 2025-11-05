@@ -24,9 +24,27 @@ export async function uploadPropertyImage(file: File) {
   form.append('file', compressed)
 
   // --- 서버 업로드 ---
-  const res = await fetch('/api/upload', { method: 'POST', body: form })
+  const res = await fetch('/api/images/upload', { method: 'POST', body: form })
   const json = await res.json()
 
   if (!res.ok) throw new Error(json.error || 'Upload failed')
   return json as { url: string }
+}
+
+export async function deletePropertyImage(url: string) {
+  if (!url) {
+    throw new Error('URL is required')
+  }
+
+  const res = await fetch(`/api/images/delete?url=${encodeURIComponent(url)}`, {
+    method: 'DELETE',
+  })
+
+  const json = await res.json()
+
+  if (!res.ok) {
+    throw new Error(json.error || 'Delete failed')
+  }
+
+  return json as { success: boolean; deleted: string }
 }
