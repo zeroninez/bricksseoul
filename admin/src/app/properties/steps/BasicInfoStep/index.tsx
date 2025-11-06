@@ -20,7 +20,7 @@ export type JusoItem = {
 }
 
 const DEBOUNCE_DELAY = 300
-export const FirstStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const BasicInfoStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
   const [depth, setDepth] = useState(0)
   const [iframePreview, setIframePreview] = useState(false)
 

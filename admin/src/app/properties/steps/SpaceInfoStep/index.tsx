@@ -15,7 +15,7 @@ interface StepProps {
   setForm: React.Dispatch<React.SetStateAction<any>>
 }
 
-export const SecondStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const SpaceInfoStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
   const [depth, setDepth] = useState(0)
 
   // 공통 핸들러

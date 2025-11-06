@@ -6,7 +6,7 @@ import { usePropertyCreate, usePropertyGet } from '@/hooks/useProperty'
 import { BottomSheet, ListItem } from './components'
 import { PropertyCreatePayload, PropertyUpdatePayload } from '@/types/property'
 import { Button } from '@/components'
-import { FirstStep, SecondStep, ThirdStep } from './steps'
+import { BasicInfoStep, SpaceInfoStep, ImagesStep, CheckInoutStep, PriceStep } from './steps'
 
 interface CreateSheetProps {
   isOpen: boolean
@@ -194,15 +194,25 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               onClick={() => {
                 setDepth(4)
               }}
-              // value={form.check_in && form.check_out ? `${form.check_in} ~ ${form.check_out}` : ''}
-            />
+            >
+              {form.check_in && form.check_out && (
+                <div className='mt-2'>
+                  {form.check_in} ~ {form.check_out}
+                </div>
+              )}
+            </ListItem>
             <ListItem
               text='요금'
               onClick={() => {
                 setDepth(5)
               }}
-              // value={form.price_per_night > 0 ? `${form.price_per_night.toLocaleString()} ${form.currency}` : ''}
-            />
+            >
+              {form.price_per_night > 0 && (
+                <div className='mt-2'>
+                  {form.price_per_night.toLocaleString()} {form.currency}
+                </div>
+              )}
+            </ListItem>
           </div>
           <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div>
         </main>
@@ -212,7 +222,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           </Button>
         </div>
 
-        <FirstStep
+        <BasicInfoStep
           isOpen={depth === 1}
           onClose={() => {
             setDepth(0)
@@ -220,7 +230,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           form={form}
           setForm={setForm}
         />
-        <SecondStep
+        <SpaceInfoStep
           isOpen={depth === 2}
           onClose={() => {
             setDepth(0)
@@ -228,7 +238,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           form={form}
           setForm={setForm}
         />
-        <ThirdStep
+        <ImagesStep
           isOpen={depth === 3}
           onClose={() => {
             setDepth(0)
@@ -236,7 +246,22 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           form={form}
           setForm={setForm}
         />
-        {/* ThirdStep, FourthStep, FifthStep 컴포넌트도 동일한 패턴으로 추가 */}
+        <CheckInoutStep
+          isOpen={depth === 4}
+          onClose={() => {
+            setDepth(0)
+          }}
+          form={form}
+          setForm={setForm}
+        />
+        <PriceStep
+          isOpen={depth === 5}
+          onClose={() => {
+            setDepth(0)
+          }}
+          form={form}
+          setForm={setForm}
+        />
       </BottomSheet>
     </>
   )
