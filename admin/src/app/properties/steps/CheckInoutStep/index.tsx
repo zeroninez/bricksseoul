@@ -1,10 +1,12 @@
+//steps/CheckInoutStep/index.tsx
+
 'use client'
 
 import { Button } from '@/components'
 import { BottomSheet } from '../../components'
 import 'swiper/css'
 import { useVisualViewportHeightVar } from '@/hooks/useVisualViewportHeight'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 interface StepProps {
   isOpen: boolean
@@ -41,6 +43,12 @@ export const CheckInoutStep = ({ isOpen, onClose, form, setForm }: StepProps) =>
     }))
     handleClose()
   }, [checkIn, checkOut, handleClose, setForm])
+
+  useEffect(() => {
+    if (!isOpen) return
+    setCheckIn(form.check_in ?? '15:00')
+    setCheckOut(form.check_out ?? '11:00')
+  }, [isOpen, form.check_in, form.check_out])
 
   // Visual Viewport Height 적용
   useVisualViewportHeightVar('--viewport-height')

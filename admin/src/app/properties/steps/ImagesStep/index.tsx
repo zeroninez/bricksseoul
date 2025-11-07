@@ -2,7 +2,7 @@
 
 import { Button } from '@/components'
 import { BottomSheet } from '../../components'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { PropertyImage } from '@/types/property'
 import { uploadPropertyImage, deletePropertyImage } from '@/utils/images'
 import { ImageUploadSection } from './ImageUploadSection'
@@ -16,238 +16,168 @@ interface StepProps {
 
 export type ImageItem = {
   url: string
-  isNew: boolean // 새로 업로드한 것인지 여부
-  isUploading?: boolean // 업로드 중인지 여부
+  isNew: boolean
+  isUploading?: boolean
+  tempId?: string // ← #2: 업로딩 자리표시자 식별용
 }
 
 type CatBlock = {
   category: string
-  images: ImageItem[] // urls와 files를 통합
+  images: ImageItem[]
 }
 
 const INIT_CATEGORIES = ['Main', 'Living Room', 'Bathroom', 'Kitchen', 'Bedroom']
 
 export const ImagesStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
-  const [categories, setCategories] = useState<CatBlock[]>(
-    INIT_CATEGORIES.map((cat) => ({ category: cat, images: [] })),
-  )
+  const [categories, setCategories] = useState<CatBlock[]>([])
   const [saving, setSaving] = useState(false)
 
-  // 새로 업로드한 URL들을 추적 (저장하지 않고 나갈 때 삭제용)
+  // 새로 업로드된 URL 추적(저장 안 하고 닫을 때 정리)
   const newUploadedUrlsRef = useRef<Set<string>>(new Set())
 
-  // 열릴 때 form.images를 한 번만 반영
+  // #1 폼 기반으로 카테고리 구성: 폼의 카테고리가 하나라도 있으면 그것만 사용.
+  const initialCats = useMemo(() => {
+    const existing: PropertyImage[] = Array.isArray(form?.images) ? form.images : []
+    const catsInForm = Array.from(
+      new Set(existing.map((i) => (i.category ?? '').trim()).filter((c) => c && c.length > 0)),
+    )
+    if (catsInForm.length > 0) return catsInForm
+    return INIT_CATEGORIES
+  }, [form?.images])
+
+  // 열릴 때 1회 초기화
   useEffect(() => {
     if (!isOpen) return
 
-    setCategories((prev) => {
-      const alreadyLoaded = prev.some((c) => c.images.length > 0)
-      if (alreadyLoaded) return prev
+    const byCat = new Map<string, ImageItem[]>()
+    const existing: PropertyImage[] = Array.isArray(form?.images) ? form.images : []
 
-      const byCat = new Map<string, ImageItem[]>()
-      const existing: PropertyImage[] = Array.isArray(form?.images) ? form.images : []
+    for (const img of existing) {
+      const cat = (img.category ?? 'Extra').trim() || 'Extra'
+      if (!byCat.has(cat)) byCat.set(cat, [])
+      if (img.url) byCat.get(cat)!.push({ url: img.url, isNew: false })
+    }
 
-      for (const img of existing) {
-        const cat = (img.category ?? 'Extra').trim() || 'Extra'
-        if (!byCat.has(cat)) byCat.set(cat, [])
-        if (img.url) {
-          byCat.get(cat)!.push({
-            url: img.url,
-            isNew: false,
-          })
-        }
-      }
-
-      const allCats = Array.from(new Set([...INIT_CATEGORIES, ...Array.from(byCat.keys())]))
-
-      return allCats.map((cat) => ({
-        category: cat,
-        images: byCat.get(cat) ?? [],
-      }))
-    })
-
-    // 새 업로드 추적 초기화
+    setCategories(initialCats.map((cat) => ({ category: cat, images: byCat.get(cat) ?? [] })))
     newUploadedUrlsRef.current.clear()
-  }, [isOpen, form?.images])
+  }, [isOpen, form?.images, initialCats])
 
-  // 닫을 때 처리
   const handleClose = useCallback(
-    async (isSaving: boolean = false) => {
-      // 저장하지 않고 나가는 경우, 새로 업로드한 이미지들 삭제
+    async (isSaving = false) => {
       if (!isSaving && newUploadedUrlsRef.current.size > 0) {
-        const urlsToDelete = Array.from(newUploadedUrlsRef.current)
-
-        // 비동기로 삭제 (UI 블로킹 방지)
-        Promise.all(
-          urlsToDelete.map((url) =>
-            deletePropertyImage(url).catch((err) => console.error('Failed to delete image:', url, err)),
-          ),
-        ).then(() => {
-          console.log('Cleaned up unsaved images')
-        })
+        const urls = Array.from(newUploadedUrlsRef.current)
+        Promise.all(urls.map((u) => deletePropertyImage(u).catch(() => {}))).then(() => {})
       }
-
-      setCategories(INIT_CATEGORIES.map((cat) => ({ category: cat, images: [] })))
+      setCategories([])
       newUploadedUrlsRef.current.clear()
       onClose()
     },
     [onClose],
   )
 
-  // 카테고리 추가/삭제
+  // 카테고리 추가/삭제 (추가 시 중복 방지)
   const addCategory = useCallback((name: string) => {
     const n = name.trim()
     if (!n) return
-    setCategories((prev) => {
-      if (prev.some((c) => c.category === n)) return prev
-      return [...prev, { category: n, images: [] }]
-    })
+    setCategories((prev) => (prev.some((c) => c.category === n) ? prev : [...prev, { category: n, images: [] }]))
   }, [])
 
   const removeCategory = useCallback((name: string) => {
     setCategories((prev) => prev.filter((c) => c.category !== name))
   }, [])
 
-  // 이미지 즉시 업로드
+  // #2 즉시 업로드(자리표시자 tempId로 정확한 위치 치환)
   const handleImmediateUpload = useCallback(async (categoryName: string, files: File[]) => {
-    if (files.length === 0) return
+    if (!files.length) return
 
-    // 임시 업로딩 상태 추가
-    const tempImages: ImageItem[] = files.map(() => ({
-      url: '',
-      isNew: true,
-      isUploading: true,
-    }))
-
-    setCategories((prev) =>
-      prev.map((c) => (c.category === categoryName ? { ...c, images: [...c.images, ...tempImages] } : c)),
+    // 1) 자리표시자 추가
+    const placeholders = files.map(
+      () =>
+        ({
+          url: '',
+          isNew: true,
+          isUploading: true,
+          tempId: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
+        }) as ImageItem,
     )
 
-    // 각 파일 업로드
-    const uploadPromises = files.map(async (file, index) => {
-      try {
-        const { url } = await uploadPropertyImage(file)
+    setCategories((prev) =>
+      prev.map((c) => (c.category === categoryName ? { ...c, images: [...c.images, ...placeholders] } : c)),
+    )
 
-        // 새 업로드 URL 추적
-        newUploadedUrlsRef.current.add(url)
+    // 2) 업로드 & 치환
+    await Promise.all(
+      files.map(async (file, idx) => {
+        const myId = placeholders[idx].tempId!
+        try {
+          const { url } = await uploadPropertyImage(file)
+          newUploadedUrlsRef.current.add(url)
 
-        // 임시 이미지를 실제 URL로 교체
-        setCategories((prev) =>
-          prev.map((c) => {
-            if (c.category !== categoryName) return c
-
-            const newImages = [...c.images]
-            const uploadingIndex = newImages.findIndex((img) => img.isUploading)
-
-            if (uploadingIndex !== -1) {
-              newImages[uploadingIndex] = {
-                url,
-                isNew: true,
-                isUploading: false,
-              }
-            }
-
-            return { ...c, images: newImages }
-          }),
-        )
-
-        return url
-      } catch (error) {
-        console.error('Upload failed:', error)
-
-        // 실패한 임시 이미지 제거
-        setCategories((prev) =>
-          prev.map((c) => {
-            if (c.category !== categoryName) return c
-            return {
-              ...c,
-              images: c.images.filter((img) => !img.isUploading),
-            }
-          }),
-        )
-
-        throw error
-      }
-    })
-
-    try {
-      await Promise.all(uploadPromises)
-    } catch (error) {
-      alert('일부 이미지 업로드에 실패했습니다.')
-    }
+          setCategories((prev) =>
+            prev.map((c) => {
+              if (c.category !== categoryName) return c
+              const i = c.images.findIndex((img) => img.tempId === myId)
+              if (i === -1) return c
+              const next = [...c.images]
+              next[i] = { url, isNew: true, isUploading: false }
+              return { ...c, images: next }
+            }),
+          )
+        } catch {
+          // 실패 시 해당 자리표시자 제거
+          setCategories((prev) =>
+            prev.map((c) => {
+              if (c.category !== categoryName) return c
+              return { ...c, images: c.images.filter((img) => img.tempId !== myId) }
+            }),
+          )
+        }
+      }),
+    )
   }, [])
 
-  // 이미지 삭제 (서버에서도 삭제)
+  // 이미지 삭제 (서버 동기)
   const handleDeleteImage = useCallback(async (categoryName: string, url: string, isNew: boolean) => {
     if (!url) return
-
-    // UI에서 먼저 제거 (낙관적 업데이트)
+    // optimistic
     setCategories((prev) =>
-      prev.map((c) => (c.category === categoryName ? { ...c, images: c.images.filter((img) => img.url !== url) } : c)),
+      prev.map((c) => (c.category === categoryName ? { ...c, images: c.images.filter((i) => i.url !== url) } : c)),
     )
-
-    // 새로 업로드한 이미지인 경우 추적에서 제거
-    if (isNew) {
-      newUploadedUrlsRef.current.delete(url)
-    }
-
-    // 서버에서 삭제
+    if (isNew) newUploadedUrlsRef.current.delete(url)
     try {
       await deletePropertyImage(url)
-    } catch (error) {
-      console.error('Failed to delete image from server:', error)
-      // 삭제 실패 시 다시 복구할 수도 있지만, 여기서는 무시
-    }
+    } catch {}
   }, [])
 
-  // 저장하기
+  // 저장
   const handleSave = useCallback(async () => {
     if (saving) return
-
     setSaving(true)
     try {
-      // 모든 이미지를 PropertyImage 형식으로 변환
-      const allImages: PropertyImage[] = []
-
+      const all: PropertyImage[] = []
       for (const cat of categories) {
         cat.images.forEach((img, i) => {
-          if (img.url && !img.isUploading) {
-            allImages.push({
-              url: img.url,
-              category: cat.category,
-              sort_order: i,
-              is_primary: false,
-            })
-          }
+          if (!img.url || img.isUploading) return
+          all.push({ url: img.url, category: cat.category, sort_order: i, is_primary: false })
         })
       }
-
-      // Main 카테고리의 첫 이미지를 대표 이미지로 설정
-      const firstMain = allImages.findIndex((m) => (m.category ?? '') === 'Main')
+      // 대표 이미지(Main 첫 장)
+      const firstMain = all.findIndex((m) => (m.category ?? '') === 'Main')
       if (firstMain >= 0) {
-        allImages.forEach((m) => (m.is_primary = false))
-        allImages[firstMain].is_primary = true
+        all.forEach((m) => (m.is_primary = false))
+        all[firstMain].is_primary = true
       }
 
-      // form 업데이트 (이미지가 없어도 빈 배열로 저장)
-      setForm((prev: any) => ({
-        ...prev,
-        images: allImages,
-      }))
-
-      // 저장 성공 시 새 업로드 추적 초기화 (삭제하지 않음)
+      setForm((prev: any) => ({ ...prev, images: all }))
       newUploadedUrlsRef.current.clear()
-
-      const message = allImages.length === 0 ? '모든 이미지가 삭제되었습니다.' : '이미지가 저장되었습니다.'
-
-      alert(message)
-      handleClose(true) // 저장 후 닫기
+      alert(all.length ? '이미지가 저장되었습니다.' : '모든 이미지가 삭제되었습니다.')
+      handleClose(true)
     } catch (e: any) {
       alert(e?.message ?? '저장 중 오류가 발생했습니다.')
     } finally {
       setSaving(false)
     }
-  }, [categories, setForm, handleClose, saving])
+  }, [categories, saving, setForm, handleClose])
 
   return (
     <BottomSheet
@@ -267,7 +197,6 @@ export const ImagesStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
             onHandleDelete={() => removeCategory(cat.category)}
           />
         ))}
-
         <AddCategoryRow onAdd={addCategory} />
       </div>
 
@@ -285,9 +214,7 @@ function AddCategoryRow({ onAdd }: { onAdd: (name: string) => void }) {
     <div className='w-full flex gap-2 items-center'>
       <button
         className='w-full px-3 h-12 bg-white text-blue-500 active:opacity-80 transition-all'
-        onClick={() => {
-          onAdd('Extra')
-        }}
+        onClick={() => onAdd('Extra')}
       >
         + 카테고리 추가
       </button>

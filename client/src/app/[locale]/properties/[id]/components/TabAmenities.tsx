@@ -16,7 +16,7 @@ export const TabAmenities = ({ id, ref, data }: TabContainerProps) => {
           <div className='w-full h-fit flex flex-col gap-4'>
             <span className='text-xl font-bold'>Amenities</span>
             {data.amenities && data.amenities.length > 0 ? (
-              <div className='w-full h-fit grid grid-cols-1 gap-4'>
+              <div className='w-full h-fit grid grid-cols-2 gap-4'>
                 {data.amenities.map((amenity: AmenityItem) => (
                   <AmenitiesItem key={amenity.code} amenity={amenity} />
                 ))}
@@ -32,8 +32,14 @@ export const TabAmenities = ({ id, ref, data }: TabContainerProps) => {
 }
 
 const AmenitiesItem = ({ amenity }: { amenity: AmenityItem }) => (
-  <div key={amenity.code} className='text-base flex items-center w-full h-fit flex-row gap-3 py-1'>
-    <div className='w-6 h-6 bg-stone-300 rounded-lg flex-shrink-0'></div>
-    {amenity.label}
+  <div key={amenity.code} className='text-base flex items-center justify-start w-full h-fit flex-row gap-3 py-1'>
+    <div className='aspect-square rounded-lg bg-stone-500 flex flex-col justify-between items-center gap-2 p-1 transition-all'>
+      <img
+        src={`/svgs/amenities/${amenity.code}.svg`}
+        alt={amenity.label}
+        className='w-6 h-6 object-contain filter invert opacity-90'
+      />
+    </div>
+    <span className='text-sm leading-none'>{amenity.label}</span>
   </div>
 )

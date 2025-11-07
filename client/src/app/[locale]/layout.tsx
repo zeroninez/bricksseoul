@@ -8,10 +8,10 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import Providers from './providers'
-import { IBM_Plex_Sans_KR } from 'next/font/google'
+import { Noto_Sans_KR } from 'next/font/google'
 
-const ibmPlexSansKR = IBM_Plex_Sans_KR({
-  variable: '--font-ibm-plex-sans-kr',
+const notoSansKR = Noto_Sans_KR({
+  variable: '--font-noto-sans-kr',
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
 })
@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased ${ibmPlexSansKR.variable}`}>
+      <body className={`antialiased ${notoSansKR.variable}`}>
         <Providers>
           <NextIntlClientProvider messages={messages}>
             <Layout>{children}</Layout>

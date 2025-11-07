@@ -29,7 +29,7 @@ export const TabLocation = ({ id, ref, data }: TabContainerProps) => {
                 style={{
                   border: 0,
                 }}
-                className='absolute top-0 left-0 w-full h-full z-10'
+                className='absolute top-0 left-0 w-full h-full z-0'
                 allowFullScreen={true}
                 loading='eager'
                 referrerPolicy='no-referrer-when-downgrade'
