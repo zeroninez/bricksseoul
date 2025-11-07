@@ -26,14 +26,6 @@
       "motion/*": ["public/motion/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "global.d.ts",
-    "../admin/src/components/Logo.tsx",
-    "../admin/src/components/Button.tsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "global.d.ts"],
   "exclude": ["node_modules"]
 }
