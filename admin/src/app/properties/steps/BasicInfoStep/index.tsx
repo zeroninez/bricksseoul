@@ -14,6 +14,7 @@ interface StepProps {
   onClose: () => void
   form: any
   setForm: React.Dispatch<React.SetStateAction<any>>
+  mode?: 'create' | 'edit'
 }
 
 export type JusoItem = {
@@ -22,7 +23,7 @@ export type JusoItem = {
 }
 
 const DEBOUNCE_DELAY = 300
-export const BasicInfoStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const BasicInfoStep = ({ isOpen, onClose, form, setForm, mode = 'create' }: StepProps) => {
   const [depth, setDepth] = useState(0)
   const [iframePreview, setIframePreview] = useState(false)
 

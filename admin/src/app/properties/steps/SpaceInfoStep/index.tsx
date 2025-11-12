@@ -15,9 +15,10 @@ interface StepProps {
   onClose: () => void
   form: any
   setForm: React.Dispatch<React.SetStateAction<any>>
+  mode: 'create' | 'edit'
 }
 
-export const SpaceInfoStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const SpaceInfoStep = ({ isOpen, onClose, form, setForm, mode = 'create' }: StepProps) => {
   const [depth, setDepth] = useState(0)
 
   // 공통 핸들러

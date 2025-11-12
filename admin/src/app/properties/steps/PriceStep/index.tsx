@@ -12,9 +12,10 @@ interface StepProps {
   onClose: () => void
   form: any
   setForm: React.Dispatch<React.SetStateAction<any>>
+  mode: 'create' | 'edit'
 }
 
-export const PriceStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const PriceStep = ({ isOpen, onClose, form, setForm, mode = 'create' }: StepProps) => {
   const handleClose = useCallback(() => onClose(), [onClose])
   const handleBack = useCallback(() => {
     initialize()

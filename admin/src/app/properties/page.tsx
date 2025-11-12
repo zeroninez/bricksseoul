@@ -9,7 +9,7 @@ import { CreateSheet } from './CreateSheet'
 import { EditSheet } from './EditSheet'
 
 export default function Properties() {
-  const { data: properties, isLoading, error } = usePropertyList()
+  const { data: properties, isLoading, error, refetch } = usePropertyList()
   const [isClickedAdd, setIsClickedAdd] = useState(false)
   const [modalState, setModalState] = useState<{ state: 'none' | 'create' | 'edit'; propertyId?: string }>({
     state: 'none',
@@ -29,6 +29,10 @@ export default function Properties() {
                 {...p}
                 onClick={(propertyId) => {
                   setModalState({ state: 'edit', propertyId })
+                }}
+                onDeleted={() => {
+                  // ✅ 삭제 후 목록 다시 불러오기
+                  refetch()
                 }}
               />
             ))
@@ -73,7 +77,8 @@ export default function Properties() {
         isOpen={modalState.state === 'create'}
         onClose={() => {
           setModalState({ state: 'none' })
-          setIsClickedAdd(true)
+          setIsClickedAdd(false)
+          refetch() // ✅ 생성 후 리스트 갱신
         }}
       />
       <EditSheet
@@ -81,6 +86,7 @@ export default function Properties() {
         propertyId={modalState.propertyId!}
         onClose={() => {
           setModalState({ state: 'none' })
+          refetch() // ✅ 수정 후 리스트 갱신
         }}
       />
     </>

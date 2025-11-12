@@ -129,6 +129,24 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
                   {form.address.address1}
                 </div>
               )}
+              {form.address.address2 && (
+                <div className=''>
+                  <span className='text-stone-400 font-medium mr-1.5'>상세주소</span>
+                  {form.address.address2}
+                </div>
+              )}
+              {form.address.guide && (
+                <div className=''>
+                  <span className='text-stone-400 font-medium mr-1.5'>길 안내</span>
+                  {form.address.guide}
+                </div>
+              )}
+              {form.description && (
+                <div className=''>
+                  <span className='text-stone-400 font-medium mr-1.5'>설명</span>
+                  {form.description}
+                </div>
+              )}
             </ListItem>
             <ListItem
               text='공간 정보/어메니티/규율'
@@ -136,7 +154,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
                 setDepth(2)
               }}
             >
-              {form.space_info.available_people && (
+              {form.space_info.living_rooms && form.space_info.living_rooms > 0 && (
                 <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
                   <span className='mr-1.5'>수용 인원</span>
                   {form.space_info.available_people}명 / <span className='mr-1.5'>거실</span>
@@ -214,7 +232,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
               )}
             </ListItem>
           </div>
-          <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div>
+          {/* <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div> */}
         </main>
         <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
           <Button onClick={handleSave} disabled={creating || !form.name || form.price_per_night <= 0}>
@@ -223,6 +241,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
         </div>
 
         <BasicInfoStep
+          mode='create'
           isOpen={depth === 1}
           onClose={() => {
             setDepth(0)
@@ -231,6 +250,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           setForm={setForm}
         />
         <SpaceInfoStep
+          mode='create'
           isOpen={depth === 2}
           onClose={() => {
             setDepth(0)
@@ -239,6 +259,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           setForm={setForm}
         />
         <ImagesStep
+          mode='create'
           isOpen={depth === 3}
           onClose={() => {
             setDepth(0)
@@ -247,6 +268,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           setForm={setForm}
         />
         <CheckInoutStep
+          mode='create'
           isOpen={depth === 4}
           onClose={() => {
             setDepth(0)
@@ -255,6 +277,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
           setForm={setForm}
         />
         <PriceStep
+          mode='create'
           isOpen={depth === 5}
           onClose={() => {
             setDepth(0)

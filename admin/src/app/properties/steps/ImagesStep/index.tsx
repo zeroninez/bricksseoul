@@ -12,6 +12,7 @@ interface StepProps {
   onClose: () => void
   form: any
   setForm: React.Dispatch<React.SetStateAction<any>>
+  mode: 'create' | 'edit'
 }
 
 export type ImageItem = {
@@ -28,7 +29,7 @@ type CatBlock = {
 
 const INIT_CATEGORIES = ['Main', 'Living Room', 'Bathroom', 'Kitchen', 'Bedroom']
 
-export const ImagesStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const ImagesStep = ({ isOpen, onClose, form, setForm, mode }: StepProps) => {
   const [categories, setCategories] = useState<CatBlock[]>([])
   const [saving, setSaving] = useState(false)
 

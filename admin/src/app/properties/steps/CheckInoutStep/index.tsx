@@ -13,9 +13,10 @@ interface StepProps {
   onClose: () => void
   form: any
   setForm: React.Dispatch<React.SetStateAction<any>>
+  mode: 'create' | 'edit'
 }
 
-export const CheckInoutStep = ({ isOpen, onClose, form, setForm }: StepProps) => {
+export const CheckInoutStep = ({ isOpen, onClose, form, setForm, mode = 'create' }: StepProps) => {
   const [checkIn, setCheckIn] = useState(form.check_in ?? '15:00')
   const [checkOut, setCheckOut] = useState(form.check_out ?? '11:00')
 

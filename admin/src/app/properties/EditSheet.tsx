@@ -1,9 +1,14 @@
 'use client'
-import { Sheet } from 'react-modal-sheet'
-import { useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
-import { usePropertyGet } from '@/hooks/useProperty'
+
+import { useEffect, useState } from 'react'
 import { BottomSheet, ListItem } from './components'
+import { Button } from '@/components'
+import {
+  usePropertyGet,
+  usePropertyUpdate, // ✅ 업데이트 훅 있다고 가정
+} from '@/hooks/useProperty'
+import { PropertyUpdatePayload } from '@/types/property'
+import { BasicInfoStep, SpaceInfoStep, ImagesStep, CheckInoutStep, PriceStep } from './steps'
 
 interface EditSheetProps {
   isOpen: boolean
@@ -11,53 +16,322 @@ interface EditSheetProps {
   propertyId: string
 }
 
+type StepKey = 1 | 2 | 3 | 4 | 5
+
+// ✅ 초기 폼 상태 공통 정의 (CreateSheet랑 공유해도 좋음)
+const emptyForm = {
+  name: '',
+  description: '',
+  address: { address1: null, address2: null, guide: null, iframe_src: null },
+  space_info: { available_people: null, living_rooms: 0, bedrooms: 0, bathrooms: 0 },
+  check_in: null as string | null,
+  check_out: null as string | null,
+  price_per_night: 0,
+  currency: 'KRW',
+  rules: [] as string[],
+  amenities: [] as string[],
+  images: [] as { url: string; is_primary?: boolean; sort_order?: number; category?: string | null }[],
+}
+
 export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
-  const [depth, setDepth] = useState(0)
+  const [depth, setDepth] = useState<StepKey | 0>(0)
 
-  const DEPTH_LIST = ['주소/숙소명', '공간 정보/어메니티/규율', '객실 사진', '체크인/아웃 시간', '요금']
+  // ✅ 수정용 폼 상태
+  const [form, setForm] = useState<{
+    name: string
+    description?: string
+    address: {
+      address1?: string | null
+      address2?: string | null
+      guide?: string | null
+      iframe_src?: string | null
+    }
+    space_info: {
+      available_people?: number | null
+      living_rooms?: number
+      bedrooms?: number
+      bathrooms?: number
+    }
+    check_in?: string | null
+    check_out?: string | null
+    price_per_night: number
+    currency?: string
+    rules: string[]
+    amenities: string[]
+    images: { url: string; is_primary?: boolean; sort_order?: number; category?: string | null }[]
+  }>(emptyForm)
 
-  //mode가 edit이고 propertyId가 있을 때만 호출
-  const { data: propertyData } = usePropertyGet(propertyId)
+  // ✅ 기존 숙소 정보 가져오기
+  const { data: property, isLoading } = usePropertyGet(propertyId)
+
+  // ✅ 업데이트 훅
+  const { mutate: updateMutate, isPending: updating } = usePropertyUpdate()
+
+  // ✅ 모달이 열리고 property 데이터가 들어오면 form에 세팅
+  useEffect(() => {
+    if (!isOpen) return
+    if (!property) return
+
+    setForm({
+      name: property.name ?? '',
+      description: property.description ?? '',
+      address: {
+        address1: property.address?.address1 ?? null,
+        address2: property.address?.address2 ?? null,
+        guide: property.address?.guide ?? null,
+        iframe_src: property.address?.iframe_src ?? null,
+      },
+      space_info: {
+        available_people: property.space_info?.available_people ?? null,
+        living_rooms: property.space_info?.living_rooms ?? 0,
+        bedrooms: property.space_info?.bedrooms ?? 0,
+        bathrooms: property.space_info?.bathrooms ?? 0,
+      },
+      check_in: property.check_in ?? null,
+      check_out: property.check_out ?? null,
+      price_per_night: property.price_per_night ?? 0,
+      currency: property.currency ?? 'KRW',
+      rules: property.rules ?? [],
+      amenities: property.amenities
+        ? property.amenities.map((a: any) => (typeof a === 'string' ? a : (a.name ?? String(a))))
+        : [],
+      images: property.images ?? [],
+    })
+  }, [isOpen, property])
+
+  // ✅ 저장 핸들러 (업데이트)
+  const handleSave = () => {
+    if (!propertyId) return
+
+    const payload: PropertyUpdatePayload = {
+      id: propertyId,
+      name: form.name,
+      description: form.description,
+      check_in: form.check_in ?? undefined,
+      check_out: form.check_out ?? undefined,
+      price_per_night: form.price_per_night,
+      currency: form.currency,
+      address: form.address,
+      space_info: form.space_info,
+      rules: form.rules,
+      amenities: form.amenities,
+      images: form.images,
+    }
+
+    updateMutate(payload, {
+      onSuccess: () => {
+        setDepth(0)
+        onClose()
+      },
+    })
+  }
+
+  const onExit = () => {
+    setForm(emptyForm)
+    setDepth(0)
+    onClose()
+  }
+
+  const isSaving = updating || isLoading
+  const saveDisabled = isSaving || !form.name || form.price_per_night <= 0
 
   return (
-    <>
-      <BottomSheet
-        isOpen={isOpen}
-        onClose={onClose}
-        title='숙소'
-        leftAction={{
-          onClick: onClose,
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onExit}
+      title='숙소 수정'
+      leftAction={{
+        onClick: onExit,
+      }}
+    >
+      <main className='w-full h-full overflow-y-scroll flex flex-col justify-start items-start gap-6 p-5 pb-32'>
+        <div className='w-full h-fit flex flex-col justify-start items-start gap-4'>
+          {/* 주소 / 숙소명 */}
+          <ListItem
+            text='주소/숙소명'
+            onClick={() => {
+              setDepth(1)
+            }}
+          >
+            {form.name && (
+              <div className='mt-2'>
+                <span className='text-stone-400 font-medium mr-1.5'>숙소명</span>
+                {form.name}
+              </div>
+            )}
+            {form.address.address1 && (
+              <div className=''>
+                <span className='text-stone-400 font-medium mr-1.5'>주소</span>
+                {form.address.address1}
+              </div>
+            )}
+            {form.address.address2 && (
+              <div className=''>
+                <span className='text-stone-400 font-medium mr-1.5'>상세주소</span>
+                {form.address.address2}
+              </div>
+            )}
+            {form.address.guide && (
+              <div className=''>
+                <span className='text-stone-400 font-medium mr-1.5'>길 안내</span>
+                {form.address.guide}
+              </div>
+            )}
+            {form.description && (
+              <div className=''>
+                <span className='text-stone-400 font-medium mr-1.5'>설명</span>
+                {form.description}
+              </div>
+            )}
+          </ListItem>
+
+          {/* 공간 정보 / 어메니티 / 규율 */}
+          <ListItem
+            text='공간 정보/어메니티/규율'
+            onClick={() => {
+              setDepth(2)
+            }}
+          >
+            {form.space_info.living_rooms && form.space_info.living_rooms > 0 && (
+              <div className='mt-2 w-full flex flex-row flex-wrap h-fit justify-start items-center'>
+                <span className='mr-1.5'>수용 인원</span>
+                {form.space_info.available_people}명 / <span className='mr-1.5'>거실</span>
+                {form.space_info.living_rooms}개 / <span className='mr-1.5'>침실</span>
+                {form.space_info.bedrooms}개 / <span className='mr-1.5'>욕실</span>
+                {form.space_info.bathrooms}개
+              </div>
+            )}
+            {form.amenities.length > 0 && (
+              <div className='mt-2 w-full flex flex-row flex-wrap gap-2 h-fit justify-start items-center'>
+                {form.amenities.map((amenity, index) => (
+                  <span key={index} className='p-1 bg-stone-200 text-stone-500 text-xxs rounded-md'>
+                    {amenity}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {form.rules.length > 0 && (
+              <div className='mt-2 w-full flex flex-col flex-wrap h-fit justify-start items-start'>
+                {form.rules.map((rule, index) => (
+                  <span key={index} className='text-xxs mr-2 mb-1'>
+                    {rule}
+                  </span>
+                ))}
+              </div>
+            )}
+          </ListItem>
+
+          {/* 객실 사진 */}
+          <ListItem
+            text='객실 사진'
+            onClick={() => {
+              setDepth(3)
+            }}
+          >
+            {form.images.length > 0 && (
+              <div className='mt-4 w-full flex flex-row flex-wrap gap-2 h-fit justify-start items-center'>
+                {form.images.map((image, index) => (
+                  <div key={index} className='relative flex flex-col justify-center items-center'>
+                    <img
+                      key={index}
+                      src={image.url}
+                      alt={`숙소 이미지 ${index + 1}`}
+                      className='w-16 h-16 object-cover rounded-t-md'
+                    />
+                    <span className='bg-white text-black text-[8px] leading-none py-1 px-1 w-full rounded-b '>
+                      {image.category}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </ListItem>
+
+          {/* 체크인/아웃 */}
+          <ListItem
+            text='체크인/아웃 시간'
+            onClick={() => {
+              setDepth(4)
+            }}
+          >
+            {form.check_in && form.check_out && (
+              <div className='mt-2'>
+                {form.check_in} ~ {form.check_out}
+              </div>
+            )}
+          </ListItem>
+
+          {/* 요금 */}
+          <ListItem
+            text='요금'
+            onClick={() => {
+              setDepth(5)
+            }}
+          >
+            {form.price_per_night > 0 && (
+              <div className='mt-2'>
+                {form.price_per_night.toLocaleString()} {form.currency}
+              </div>
+            )}
+          </ListItem>
+        </div>
+
+        {/* <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div> */}
+      </main>
+
+      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
+        <Button onClick={handleSave} disabled={saveDisabled}>
+          {isSaving ? '저장 중...' : '수정하기'}
+        </Button>
+      </div>
+
+      {/* steps 그대로 재사용 */}
+      <BasicInfoStep
+        mode='edit'
+        isOpen={depth === 1}
+        onClose={() => {
+          setDepth(0)
         }}
-      >
-        <main className='w-full h-fit flex flex-col justify-start items-start gap-6 p-5'>
-          <div className='w-full h-fit flex flex-col justify-start items-start gap-4'>
-            {DEPTH_LIST.map((title, index) => (
-              <ListItem
-                key={index}
-                text={title}
-                onClick={() => {
-                  setDepth(index + 1)
-                }}
-              />
-            ))}
-          </div>
-          <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div>
-        </main>
-        <AnimatePresence>
-          {depth > 0 && (
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ duration: 0.2 }}
-              className='fixed top-0 left-0 w-full h-full bg-white z-50 shadow-lg flex flex-col'
-            >
-              {/* content */}
-              <div className='w-full h-full flex flex-col justify-start items-start p-5 gap-4'></div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </BottomSheet>
-    </>
+        form={form}
+        setForm={setForm}
+      />
+      <SpaceInfoStep
+        mode='edit'
+        isOpen={depth === 2}
+        onClose={() => {
+          setDepth(0)
+        }}
+        form={form}
+        setForm={setForm}
+      />
+      <ImagesStep
+        mode='edit'
+        isOpen={depth === 3}
+        onClose={() => {
+          setDepth(0)
+        }}
+        form={form}
+        setForm={setForm}
+      />
+      <CheckInoutStep
+        mode='edit'
+        isOpen={depth === 4}
+        onClose={() => {
+          setDepth(0)
+        }}
+        form={form}
+        setForm={setForm}
+      />
+      <PriceStep
+        mode='edit'
+        isOpen={depth === 5}
+        onClose={() => {
+          setDepth(0)
+        }}
+        form={form}
+        setForm={setForm}
+      />
+    </BottomSheet>
   )
 }
