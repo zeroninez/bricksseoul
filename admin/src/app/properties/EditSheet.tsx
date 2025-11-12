@@ -92,9 +92,7 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
       price_per_night: property.price_per_night ?? 0,
       currency: property.currency ?? 'KRW',
       rules: property.rules ?? [],
-      amenities: property.amenities
-        ? property.amenities.map((a: any) => (typeof a === 'string' ? a : (a.name ?? String(a))))
-        : [],
+      amenities: property.amenities.map((a) => a.code) ?? [],
       images: property.images ?? [],
     })
   }, [isOpen, property])
