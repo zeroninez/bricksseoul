@@ -46,7 +46,7 @@ export const SpaceInfoStep = ({ isOpen, onClose, form, setForm, mode = 'create' 
       {depth === 2 && <Rules form={form} setForm={setForm} />}
 
       {/* 하단 버튼 */}
-      <div className='fixed bottom-0 w-full h-fit px-5 pb-5 z-10'>
+      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
         <Button onClick={handleNext}>{depth < 2 ? '다음으로' : '완료'}</Button>
       </div>
     </BottomSheet>

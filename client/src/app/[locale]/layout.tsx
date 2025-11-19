@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`antialiased ${notoSansKR.variable}`}>
+      <body className={`antialiased ${notoSansKR.variable} bg-background`}>
         <Providers>
           <NextIntlClientProvider messages={messages}>
             <Layout>{children}</Layout>

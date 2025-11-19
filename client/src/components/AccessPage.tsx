@@ -80,9 +80,9 @@ export const AccessPage = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
-      className='w-screen h-dvh flex flex-col items-center justify-between'
+      className='max-w-md mx-auto shadow-xl w-screen h-dvh flex flex-col items-center justify-between'
     >
-      <div className='absolute inset-0 bg-black/30 z-0' />
+      <div className='absolute max-w-md mx-auto inset-0 bg-black/30 z-0' />
 
       <section className='w-full h-1/2 flex flex-col justify-between items-center z-10 px-6 py-6'>
         <div className='w-full flex flex-col justify-start items-start gap-1 text-white'>

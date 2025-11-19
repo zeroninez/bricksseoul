@@ -201,7 +201,7 @@ export const ImagesStep = ({ isOpen, onClose, form, setForm, mode }: StepProps) 
         <AddCategoryRow onAdd={addCategory} />
       </div>
 
-      <div className='fixed bottom-0 w-full h-fit px-5 pb-5 z-10'>
+      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
         <Button onClick={handleSave} disabled={saving}>
           {saving ? '저장 중...' : '저장하기'}
         </Button>

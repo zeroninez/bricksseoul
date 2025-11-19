@@ -106,7 +106,7 @@ export const PriceStep = ({ isOpen, onClose, form, setForm, mode = 'create' }: S
         </div>
       </div>
 
-      <div className='fixed bottom-0 w-full h-fit px-5 pb-5 z-10'>
+      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
         <Button onClick={handleSubmit} disabled={form.price_per_night <= 0}>
           저장하기
         </Button>

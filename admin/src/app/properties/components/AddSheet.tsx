@@ -29,7 +29,7 @@ export const AddSheet = (props: AddSheetProps) => {
 
   return (
     <>
-      <Sheet detent='content' isOpen={isClickedAdd} onClose={() => setIsClickedAdd(false)}>
+      <Sheet detent='content' className='max-w-md mx-auto' isOpen={isClickedAdd} onClose={() => setIsClickedAdd(false)}>
         <Sheet.Container className='!rounded-t-2xl'>
           <Sheet.Header>
             <div className=' flex flex-row justify-end items-center p-4'>

@@ -24,11 +24,17 @@ export const Cover = ({ data }: CoverProps) => {
         className='w-full sticky -top-[120px] flex z-10 bg-black'
       >
         <div className='w-full h-full relative bg-black'>
-          <img
-            src={data?.images?.find((img) => img.is_primary)?.url || data?.images?.[0].url}
-            alt={data.name}
-            className='w-full h-full object-cover'
-          />
+          {data?.images && data?.images.length > 0 ? (
+            <img
+              src={data?.images?.find((img) => img.is_primary)?.url || data?.images?.[0].url}
+              alt={data.name}
+              className='w-full h-full object-cover'
+            />
+          ) : (
+            <div className='w-full h-full bg-background flex items-center justify-center text-black'>
+              No Image Available
+            </div>
+          )}
           <div className='absolute inset-0 bg-gradient-to-t from-black/90 to-transparent' />
         </div>
         <div className='absolute bottom-0 p-5 '>

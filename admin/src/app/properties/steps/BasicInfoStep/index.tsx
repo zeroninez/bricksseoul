@@ -296,7 +296,7 @@ export const BasicInfoStep = ({ isOpen, onClose, form, setForm, mode = 'create' 
         />
       )}
 
-      <div className='fixed bottom-0 w-full h-fit px-5 pb-5 z-10'>
+      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
         <Button onClick={handleNext} disabled={depth < 1 ? !step1ValidCheck : !step2ValidCheck}>
           {depth < 1 ? '다음으로' : '완료'}
         </Button>

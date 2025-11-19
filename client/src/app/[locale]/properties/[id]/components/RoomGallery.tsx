@@ -110,9 +110,9 @@ export const RoomGallery = ({ images = [] }: RoomGalleryProps) => {
     <>
       <section className='w-full h-fit flex flex-col gap-4 py-5 '>
         {/* 카테고리 탭 */}
-        <div className='w-full h-fit snap-x px-5 scroll-px-5 flex overflow-x-scroll scrollbar-hide flex-row gap-2.5'>
-          {sortedCategories.length ? (
-            sortedCategories.map((cat) => (
+        {sortedCategories.length ? (
+          <div className='w-full h-fit snap-x px-5 scroll-px-5 flex overflow-x-scroll scrollbar-hide flex-row gap-2.5'>
+            {sortedCategories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => handleCategoryClick(cat)}
@@ -125,37 +125,45 @@ export const RoomGallery = ({ images = [] }: RoomGalleryProps) => {
               >
                 {cat}
               </button>
-            ))
-          ) : (
-            <div className='text-zinc-500'>No images</div>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className='text-black px-6 text-center'>No Categories Available</div>
+        )}
 
         {/* 이미지 슬라이더: 정렬된 이미지 사용 */}
-        <Swiper
-          onSwiper={(s) => {
-            swiperRef.current = s
-            setActiveIndex(s.activeIndex ?? 0)
-          }}
-          slidesPerView={1.2}
-          slidesOffsetBefore={20}
-          slidesOffsetAfter={20}
-          spaceBetween={10}
-          onSlideChange={(s) => setActiveIndex(s.activeIndex ?? 0)}
-          className='w-full aspect-landscape relative'
-        >
-          {sortedImages.map((img, idx) => (
-            <SwiperSlide key={`${img.category}-${idx}`}>
-              <motion.div
-                whileTap={{ opacity: 0.8 }}
-                onClick={() => handleSlideImageClick(img.url)}
-                className='relative w-full h-full bg-primary rounded-lg overflow-hidden cursor-pointer'
-              >
-                <img src={img.url} alt={img.category} className='w-full h-full object-cover' />
-              </motion.div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        {sortedCategories.length ? (
+          <Swiper
+            onSwiper={(s) => {
+              swiperRef.current = s
+              setActiveIndex(s.activeIndex ?? 0)
+            }}
+            slidesPerView={1.2}
+            slidesOffsetBefore={20}
+            slidesOffsetAfter={20}
+            spaceBetween={10}
+            onSlideChange={(s) => setActiveIndex(s.activeIndex ?? 0)}
+            className='w-full aspect-landscape relative'
+          >
+            {sortedImages.map((img, idx) => (
+              <SwiperSlide key={`${img.category}-${idx}`}>
+                <motion.div
+                  whileTap={{ opacity: 0.8 }}
+                  onClick={() => handleSlideImageClick(img.url)}
+                  className='relative w-full h-full bg-primary rounded-lg overflow-hidden cursor-pointer'
+                >
+                  <img src={img.url} alt={img.category} className='w-full h-full object-cover' />
+                </motion.div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <div className='w-full aspect-landscape relative px-4'>
+            <div className='w-full h-full flex items-center bg-black/30 rounded-lg overflow-hidden justify-center text-black text-base'>
+              No images available
+            </div>
+          </div>
+        )}
       </section>
 
       {maximizedImg && (

@@ -39,7 +39,15 @@ export const BottomSheet = ({
 
   return (
     <>
-      <Sheet ref={root} detent='full' disableDrag isOpen={isOpen} onClose={onClose} avoidKeyboard>
+      <Sheet
+        ref={root}
+        detent='full'
+        className='max-w-md mx-auto relative'
+        disableDrag
+        isOpen={isOpen}
+        onClose={onClose}
+        avoidKeyboard
+      >
         <Sheet.Container className='!rounded-t-none'>
           <Sheet.Header>
             <div className='w-full h-fit flex bg-white flex-row justify-center items-center p-4'>

@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
         exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
         transition={{ duration: 0.3 }}
         className={classNames(
-          'fixed top-0 inset-x-0 w-full z-50',
+          'fixed max-w-md  mx-auto top-0 inset-x-0 w-full z-50',
           isPropertyDetail && !isMobileOpen ? 'bg-transparent' : 'bg-background',
         )}
       >
