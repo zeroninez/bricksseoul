@@ -1,20 +1,78 @@
-//app/[locale]/properties/page.tsx
+// app/[locale]/properties/page.tsx
 
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Input, PageStart } from '@/components'
-import { HEADER_HEIGHT } from '@/theme/constants'
 import { usePropertyList } from '@/hooks/useProperty'
-import { PropertyCard } from './components'
+import { PropertyCard } from './components/PropertyCard'
 
 export default function PropertiesPage() {
-  const [moveInDate, setMoveInDate] = useState(new Date().toISOString().split('T')[0])
-  const [moveOutDate, setMoveOutDate] = useState(new Date().toISOString().split('T')[0])
-  const [sortOption, setSortOption] = useState('')
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  // 👇 숙소 목록 호출
+  // 🔹 기본값: 오늘 / 내일
+  const today = new Date()
+  const todayStr = today.toISOString().split('T')[0]
+
+  const tomorrowDate = new Date()
+  tomorrowDate.setDate(today.getDate() + 1)
+  const tomorrowStr = tomorrowDate.toISOString().split('T')[0]
+
+  // 🔹 URL에서 moveIn/moveOut 가져오기 (없으면 기본값)
+  const initialMoveIn = searchParams.get('moveIn') ?? todayStr
+  const initialMoveOut = searchParams.get('moveOut') ?? tomorrowStr
+
+  const [moveInDate, setMoveInDate] = useState(initialMoveIn)
+  const [moveOutDate, setMoveOutDate] = useState(initialMoveOut)
+  const [sortOption, setSortOption] = useState('')
+  const [dateError, setDateError] = useState<string | null>(null)
+
   const { data: properties, isLoading, error } = usePropertyList()
+
+  const validateDates = (): boolean => {
+    if (!moveInDate || !moveOutDate) {
+      setDateError('Select both move-in and move-out dates.')
+      return false
+    }
+
+    const inDate = new Date(moveInDate)
+    const outDate = new Date(moveOutDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    if (inDate < today) {
+      setDateError('Move-in date must be today or later.')
+      return false
+    }
+
+    if (outDate <= inDate) {
+      setDateError('Move-out date must be after move-in date.')
+      return false
+    }
+
+    setDateError(null)
+    return true
+  }
+
+  // 🔹 날짜 바뀔 때마다 검증
+  useEffect(() => {
+    validateDates()
+  }, [moveInDate, moveOutDate])
+
+  // 🔹 날짜 유효할 때 URL 쿼리에도 반영 (뒤로가기 해도 날짜 유지)
+  useEffect(() => {
+    if (dateError) return
+
+    const params = new URLSearchParams(window.location.search)
+
+    params.set('moveIn', moveInDate)
+    params.set('moveOut', moveOutDate)
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }, [moveInDate, moveOutDate, dateError, pathname, router])
 
   return (
     <>
@@ -35,15 +93,14 @@ export default function PropertiesPage() {
             <div className='w-fit h-fit flex flex-row justify-center items-center gap-1'>
               <span className='text-2xl font-bold'>Find option</span>
             </div>
-            <button className='w-fit h-8 bg-primary active:bg-disabled font-medium rounded-xl text-white py-2 px-4 flex items-center justify-center transition-all'>
-              Filter
-            </button>
           </div>
 
-          {/* date picker */}
-          <div className='w-full h-fit flex flex-row items-center justify-center gap-4'>
-            <Input type='date' label='Move-in' placeholder='select' value={moveInDate} setValue={setMoveInDate} />
-            <Input type='date' label='Move-out' placeholder='select' value={moveOutDate} setValue={setMoveOutDate} />
+          <div className='w-full h-fit flex flex-col gap-2'>
+            <div className='w-full h-fit flex flex-row items-center justify-center gap-4'>
+              <Input type='date' label='Move-in' placeholder='select' value={moveInDate} setValue={setMoveInDate} />
+              <Input type='date' label='Move-out' placeholder='select' value={moveOutDate} setValue={setMoveOutDate} />
+            </div>
+            {dateError && <p className='text-sm text-red-500 px-1'>{dateError}</p>}
           </div>
         </div>
 
@@ -67,37 +124,53 @@ export default function PropertiesPage() {
             />
           </div>
 
-          {/* cards */}
           <div className='w-full h-fit flex flex-col items-center justify-center gap-4 pb-32'>
-            {/* 로딩 */}
             {isLoading && (
               <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
                 Loading properties...
               </div>
             )}
 
-            {/* 에러 */}
             {error && (
               <div className='text-red-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
                 {(error as Error).message || 'Failed to load properties.'}
               </div>
             )}
 
-            {/* 데이터 있음 */}
-            {properties && properties.length > 0
-              ? properties.map((p) => <PropertyCard key={p.id} {...p} />)
-              : // 데이터 없음
-                !isLoading &&
-                !error && (
-                  <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
-                    <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
-                      <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
-                      <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
-                        Sorry, we couldn’t find <br />a match with those filters.
-                      </div>
+            {properties && properties.length > 0 ? (
+              !dateError ? (
+                properties.map((p) => (
+                  <PropertyCard
+                    key={p.id}
+                    {...p}
+                    moveInDate={moveInDate}
+                    moveOutDate={moveOutDate}
+                    onValidateDates={validateDates}
+                  />
+                ))
+              ) : (
+                <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
+                  <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
+                    <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
+                    <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
+                      Sorry, we couldn’t find <br />a match with those filters.
                     </div>
                   </div>
-                )}
+                </div>
+              )
+            ) : (
+              !isLoading &&
+              !error && (
+                <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
+                  <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
+                    <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
+                    <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
+                      Sorry, we couldn’t find <br />a match with those filters.
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>

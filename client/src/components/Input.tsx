@@ -16,6 +16,7 @@ interface InputProps {
   error?: string
   labelClassName?: string
   inputClassName?: string
+  containerClassName?: string
   onFocus?: boolean
   action?: {
     icon: React.ReactNode
@@ -37,6 +38,7 @@ export const Input = ({
   error,
   labelClassName,
   inputClassName,
+  containerClassName,
   onFocus,
   action,
   options,
@@ -116,7 +118,12 @@ export const Input = ({
           {required && <span className='ml-0.5 text-primary align-middle'>*</span>}
         </label>
       )}
-      <div className='w-full flex flex-row gap-1 text-base bg-white rounded-lg border border-stone-200 focus-within:bg-stone-200 transition-all'>
+      <div
+        className={classNames(
+          'w-full flex flex-row gap-1 text-base bg-white rounded-lg border border-stone-200 focus-within:bg-stone-200 transition-all',
+          containerClassName,
+        )}
+      >
         <input
           ref={inputRef}
           type={type}

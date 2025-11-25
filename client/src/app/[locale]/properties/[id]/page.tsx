@@ -1,9 +1,18 @@
 // app/[locale]/properties/[id]/page.tsx
+// app/[locale]/properties/[id]/page.tsx
 import DetailClient from './DetailClient'
 
-export const revalidate = 60 // 1분마다 최신화
+export const revalidate = 60
 
-export default async function Page({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; id: string }>
+  searchParams: Promise<{ moveIn?: string; moveOut?: string }>
+}) {
   const { id } = await params
-  return <DetailClient id={id} />
+  const { moveIn, moveOut } = await searchParams
+
+  return <DetailClient id={id} moveInDate={moveIn} moveOutDate={moveOut} />
 }
