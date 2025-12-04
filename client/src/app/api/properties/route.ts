@@ -23,6 +23,7 @@ export async function GET() {
       )
     `,
     )
+    .eq('is_visible', true) //is_visible에서 필터링 제거하여 전체 목록 가져오기
     .order('created_at', { ascending: false })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

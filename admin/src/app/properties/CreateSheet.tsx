@@ -41,6 +41,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
     rules: string[]
     amenities: string[]
     images: { url: string; is_primary?: boolean; sort_order?: number; category?: string | null }[]
+    is_visible: boolean // ✅ 추가
   }>({
     name: '',
     description: '',
@@ -53,6 +54,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
     rules: [],
     amenities: [],
     images: [],
+    is_visible: true, // ✅ 기본값 true
   })
 
   // 생성/수정 훅
@@ -94,6 +96,7 @@ export const CreateSheet = ({ isOpen, onClose }: CreateSheetProps) => {
       rules: [],
       amenities: [],
       images: [],
+      is_visible: true, // ✅ 추가
     })
     setDepth(0)
     onClose()

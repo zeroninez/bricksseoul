@@ -24,6 +24,7 @@ export async function POST(req: Request) {
       p_rules: b.rules ?? [],
       p_amenities: b.amenities ?? [],
       p_images: b.images ?? [],
+      p_is_visible: b.is_visible ?? true,
     } as any)
 
     if (error) throw error

@@ -22,7 +22,8 @@ export async function GET() {
       property_address!left (
         address1,
         address2
-      )
+      ),
+      is_visible
     `,
     )
     .order('created_at', { ascending: false })
@@ -46,6 +47,7 @@ export async function GET() {
       images: imgs.map((i) => ({ url: i.url })),
       address1: p.property_address?.address1 ?? null, // ← 분리해서 그대로
       address2: p.property_address?.address2 ?? null,
+      is_visible: p.is_visible, // ← 추가
     }
   })
 

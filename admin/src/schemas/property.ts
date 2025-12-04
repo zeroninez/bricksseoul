@@ -36,9 +36,10 @@ export const createSchema = z.object({
   currency: z.string().min(1).optional(),
   address: addressSchema.optional().nullable(),
   space_info: spaceSchema.optional().nullable(),
-  rules: z.array(z.string()).optional(),
+  rules: z.array(z.string()).optional().nullable(),
   amenities: z.array(z.string()).optional(),
   images: z.array(imageSchema).optional(),
+  is_visible: z.boolean().optional().nullable(),
 })
 
 export const updateSchema = createSchema.partial().extend({

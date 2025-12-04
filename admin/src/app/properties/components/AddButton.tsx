@@ -6,7 +6,7 @@ export const AddButton = (props: AddButtonProps) => {
   const { onClick } = props
   return (
     <button
-      className='absolute bottom-5 right-5 w-fit h-fit p-3 rounded-xl bg-black active:opacity-75 active:scale-90 transition-all'
+      className='fixed bottom-5 z-10 right-5 w-fit h-fit p-3 rounded-xl bg-black active:opacity-75 active:scale-90 transition-all'
       onClick={onClick}
     >
       <svg

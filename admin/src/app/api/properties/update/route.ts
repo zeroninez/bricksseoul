@@ -28,6 +28,7 @@ export async function PUT(req: Request) {
       p_rules: b.rules ?? null, // 전달되면 치환, null이면 유지
       p_amenities: b.amenities ?? null, // 전달되면 치환, null이면 유지
       p_images: b.images ?? null, // 전달되면 치환, null이면 유지
+      p_is_visible: b.is_visible ?? null,
     } as any)
 
     if (error) throw error

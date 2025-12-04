@@ -19,7 +19,7 @@ export default function Properties() {
     <>
       <AddButton onClick={() => setIsClickedAdd(true)} />
       {/* cards */}
-      <div className='w-full h-fit flex flex-col items-center justify-center gap-4 p-4'>
+      <div className='w-full h-fit flex flex-col items-center justify-center gap-4 p-4 pb-16'>
         {/* 숙소 생성 */}
         {/* 데이터 있음 */}
         {properties && properties.length > 0
@@ -30,8 +30,7 @@ export default function Properties() {
                 onClick={(propertyId) => {
                   setModalState({ state: 'edit', propertyId })
                 }}
-                onDeleted={() => {
-                  // ✅ 삭제 후 목록 다시 불러오기
+                onRefresh={() => {
                   refetch()
                 }}
               />

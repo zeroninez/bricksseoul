@@ -18,6 +18,8 @@ export type PropertyGetResponse = {
   currency: string
   created_at: string
   updated_at: string
+  is_visible: boolean // ✅ DB 컬럼 추가했으니까 여기서도 필수로 가져오기
+
   images: { url: string; sort_order?: number; is_primary?: boolean; category?: string | null }[]
   rules: string[]
   amenities: AmenityItem[]
@@ -47,6 +49,7 @@ export type PropertyCreatePayload = {
   rules?: string[]
   amenities?: AmenityCode[]
   images?: PropertyImage[]
+  is_visible?: boolean // ✅ 생성 시 true/false 지정 (안 보내면 DB default true)
 }
 
 export type PropertyUpdatePayload = Partial<Omit<PropertyCreatePayload, 'name' | 'price_per_night'>> & {
@@ -68,4 +71,5 @@ export type PropertyListItem = {
   images: { url: string }[]
   address1: string | null
   address2: string | null
+  is_visible: boolean // ✅ 리스트 카드에도 비노출 뱃지 띄울 수 있도록 추가
 }

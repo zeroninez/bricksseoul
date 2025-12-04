@@ -31,6 +31,7 @@ const emptyForm = {
   rules: [] as string[],
   amenities: [] as string[],
   images: [] as { url: string; is_primary?: boolean; sort_order?: number; category?: string | null }[],
+  is_visible: true, // ✅
 }
 
 export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
@@ -59,6 +60,7 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
     rules: string[]
     amenities: string[]
     images: { url: string; is_primary?: boolean; sort_order?: number; category?: string | null }[]
+    is_visible: boolean
   }>(emptyForm)
 
   // ✅ 기존 숙소 정보 가져오기
@@ -94,6 +96,7 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
       rules: property.rules ?? [],
       amenities: property.amenities.map((a) => a.code) ?? [],
       images: property.images ?? [],
+      is_visible: property.is_visible ?? true, // ✅
     })
   }, [isOpen, property])
 
