@@ -22,7 +22,7 @@
     "ipify": "^6.0.0",
     "lottie-react": "^2.4.1",
     "motion": "^12.23.9",
-    "next": "15.4.4",
+    "next": "15.4.8",
     "next-intl": "^4.3.9",
     "react": "19.1.0",
     "react-date-range": "^2.0.1",
