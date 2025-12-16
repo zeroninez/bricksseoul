@@ -40,6 +40,7 @@ export const ToggleSwitch: React.FC<ToggleSwitchProps> = ({
       className={classNames(
         'inline focus:outline-none',
         'w-fit',
+        'active:scale-95 transition-all duration-150 ease-in-out',
         disabled && 'opacity-60 cursor-not-allowed',
         !disabled && 'cursor-pointer',
         className,

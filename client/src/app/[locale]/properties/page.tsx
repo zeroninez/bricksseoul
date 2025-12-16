@@ -1,12 +1,11 @@
 // app/[locale]/properties/page.tsx
-
 'use client'
 
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Input, PageStart } from '@/components'
-import { usePropertyList } from '@/hooks/useProperty'
-import { PropertyCard } from './components/PropertyCard'
+import { Footer, Input, PageStart } from '@/components'
+import { useAvailableProperties } from '@/hooks/useProperty' // 변경
+import { PropertyCard } from './components'
 
 export default function PropertiesPage() {
   const router = useRouter()
@@ -22,15 +21,20 @@ export default function PropertiesPage() {
   const tomorrowStr = tomorrowDate.toISOString().split('T')[0]
 
   // 🔹 URL에서 moveIn/moveOut 가져오기 (없으면 기본값)
-  const initialMoveIn = searchParams.get('moveIn') ?? todayStr
-  const initialMoveOut = searchParams.get('moveOut') ?? tomorrowStr
+  const initialMoveIn = searchParams.get('in') ?? todayStr
+  const initialMoveOut = searchParams.get('out') ?? tomorrowStr
 
   const [moveInDate, setMoveInDate] = useState(initialMoveIn)
   const [moveOutDate, setMoveOutDate] = useState(initialMoveOut)
   const [sortOption, setSortOption] = useState('')
   const [dateError, setDateError] = useState<string | null>(null)
 
-  const { data: properties, isLoading, error } = usePropertyList()
+  // 🔹 예약 가능한 숙소만 가져오기
+  const {
+    data: properties,
+    isLoading,
+    error,
+  } = useAvailableProperties(dateError ? '' : moveInDate, dateError ? '' : moveOutDate)
 
   const validateDates = (): boolean => {
     if (!moveInDate || !moveOutDate) {
@@ -68,11 +72,23 @@ export default function PropertiesPage() {
 
     const params = new URLSearchParams(window.location.search)
 
-    params.set('moveIn', moveInDate)
-    params.set('moveOut', moveOutDate)
+    params.set('in', moveInDate)
+    params.set('out', moveOutDate)
 
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
   }, [moveInDate, moveOutDate, dateError, pathname, router])
+
+  // 🔹 정렬 로직
+  const sortedProperties = properties
+    ? [...properties].sort((a, b) => {
+        if (sortOption === 'lowest') {
+          return a.price_per_night - b.price_per_night
+        } else if (sortOption === 'highest') {
+          return b.price_per_night - a.price_per_night
+        }
+        return 0 // recommended는 기본 순서 유지
+      })
+    : []
 
   return (
     <>
@@ -109,6 +125,9 @@ export default function PropertiesPage() {
           <div className='w-full h-fit flex flex-row items-center justify-between gap-4'>
             <div className='w-fit h-fit flex flex-row justify-center items-center gap-1'>
               <span className='text-2xl font-bold'>Places</span>
+              {!dateError && properties && (
+                <span className='text-base text-stone-500'>({properties.length} available)</span>
+              )}
             </div>
             <Input
               type='select'
@@ -127,7 +146,7 @@ export default function PropertiesPage() {
           <div className='w-full h-fit flex flex-col items-center justify-center gap-4 pb-32'>
             {isLoading && (
               <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
-                Loading properties...
+                Finding available properties...
               </div>
             )}
 
@@ -137,9 +156,9 @@ export default function PropertiesPage() {
               </div>
             )}
 
-            {properties && properties.length > 0 ? (
+            {sortedProperties && sortedProperties.length > 0 ? (
               !dateError ? (
-                properties.map((p) => (
+                sortedProperties.map((p) => (
                   <PropertyCard
                     key={p.id}
                     {...p}
@@ -153,7 +172,7 @@ export default function PropertiesPage() {
                   <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
                     <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
                     <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
-                      Sorry, we couldn’t find <br />a match with those filters.
+                      Please select valid dates
                     </div>
                   </div>
                 </div>
@@ -163,9 +182,10 @@ export default function PropertiesPage() {
               !error && (
                 <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
                   <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
-                    <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
+                    <div className='text-center text-stone-400 text-base font-medium'>No properties available</div>
                     <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
-                      Sorry, we couldn’t find <br />a match with those filters.
+                      Sorry, all properties are booked <br />
+                      for the selected dates.
                     </div>
                   </div>
                 </div>
@@ -174,6 +194,7 @@ export default function PropertiesPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   )
 }

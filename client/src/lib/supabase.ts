@@ -8,3 +8,5 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 
 export type AccessCodeRow = Database['public']['Tables']['access_codes']['Row']
+export type ReservationRow = Database['public']['Tables']['reservations']['Row']
+export type ReservationInsert = Database['public']['Tables']['reservations']['Insert']

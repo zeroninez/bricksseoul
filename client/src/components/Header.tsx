@@ -37,6 +37,7 @@ export const Header: React.FC = () => {
   const [isAuthOpen, setAuthOpen] = useState(false)
 
   const isPropertyDetail = pathname?.includes('/properties/') && pathname !== '/properties'
+  const isReservationPage = pathname?.includes('/reservation')
 
   const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), [])
   const toggleAuth = useCallback(() => setAuthOpen((prev) => !prev), [])
@@ -50,6 +51,20 @@ export const Header: React.FC = () => {
     router.push('/')
   }
 
+  const backgroundColor = (() => {
+    if (isPropertyDetail && !isMobileOpen) {
+      return isReservationPage ? 'bg-background' : 'bg-transparent'
+    }
+    return 'bg-background'
+  })()
+
+  const textColor = (() => {
+    if (isPropertyDetail && !isMobileOpen) {
+      return isReservationPage ? 'text-black' : 'text-white'
+    }
+    return 'text-black'
+  })()
+
   return (
     <>
       {/* Toggle Button */}
@@ -62,10 +77,7 @@ export const Header: React.FC = () => {
         }}
         exit={{ opacity: 0, y: -HEADER_HEIGHT, height: HEADER_HEIGHT }}
         transition={{ duration: 0.3 }}
-        className={classNames(
-          'fixed max-w-md  mx-auto top-0 inset-x-0 w-full z-50',
-          isPropertyDetail && !isMobileOpen ? 'bg-transparent' : 'bg-background',
-        )}
+        className={classNames('fixed max-w-md  mx-auto top-0 inset-x-0 w-full z-50', backgroundColor)}
       >
         <div
           style={{
@@ -75,9 +87,9 @@ export const Header: React.FC = () => {
         >
           {/* logo */}
           {isPropertyDetail && !isMobileOpen ? (
-            <GoArrowLeft className='text-xl cursor-pointer text-white' onClick={router.back} />
+            <GoArrowLeft className={`text-xl cursor-pointer ${textColor}`} onClick={router.back} />
           ) : (
-            <Logo className='text-[18px] cursor-pointer text-black' onClick={goHome} />
+            <Logo className={`text-[18px] cursor-pointer ${textColor}`} onClick={goHome} />
           )}
 
           {isPropertyDetail && !isMobileOpen && (
@@ -85,9 +97,12 @@ export const Header: React.FC = () => {
               style={{
                 height: HEADER_HEIGHT,
               }}
-              className='absolute top-0 flex justify-center items-center left-1/2 -translate-x-1/2 text-[18px] text-white'
+              className={classNames(
+                'absolute top-0 flex justify-center items-center left-1/2 -translate-x-1/2 text-[18px] ',
+                textColor,
+              )}
             >
-              Details
+              {!isReservationPage ? 'Details' : 'Reservation'}
             </span>
           )}
 
@@ -117,7 +132,7 @@ export const Header: React.FC = () => {
                 />
               ) : (
                 <motion.path
-                  className={classNames('text-black', isPropertyDetail && 'text-white')}
+                  className={classNames('text-black', textColor)}
                   strokeLinecap='round'
                   strokeLinejoin='round'
                   strokeWidth={2}

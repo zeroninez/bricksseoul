@@ -21,8 +21,8 @@ export const PropertyCard = (props: PropertyCardProps) => {
       href={{
         pathname: `/properties/${property.id}`,
         query: {
-          moveIn: moveInDate,
-          moveOut: moveOutDate,
+          in: moveInDate,
+          out: moveOutDate,
         },
       }}
       scroll={true}

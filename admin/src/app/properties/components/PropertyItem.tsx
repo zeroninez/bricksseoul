@@ -76,15 +76,9 @@ export const PropertyItem = (
         }}
       >
         {/* 노출 여부 토글 버튼 */}
-        <div
-          onClick={(e) => {
-            e.stopPropagation()
-            toggleVisibility()
-          }}
-          className='absolute top-3 right-3 w-fit h-fit flex flex-row gap-1 justify-center items-center'
-        >
+        <div className='absolute top-3 right-3 w-fit h-fit flex flex-row gap-1 justify-center items-center'>
           <span className='text-sm text-stone-600 leading-none'>{property.is_visible ? '게시' : '숨김'}</span>
-          <ToggleSwitch checked={property.is_visible} />
+          <ToggleSwitch checked={property.is_visible} onChange={toggleVisibility} />
         </div>
 
         {/* <div className='text-sm leading-snug text-stone-500 pr-12'>{property.address1}</div> */}

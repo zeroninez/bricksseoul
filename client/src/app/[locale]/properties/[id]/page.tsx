@@ -9,10 +9,10 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ locale: string; id: string }>
-  searchParams: Promise<{ moveIn?: string; moveOut?: string }>
+  searchParams: Promise<{ in?: string; out?: string }>
 }) {
   const { id } = await params
-  const { moveIn, moveOut } = await searchParams
+  const { in: moveIn, out: moveOut } = await searchParams
 
   return <DetailClient id={id} moveInDate={moveIn} moveOutDate={moveOut} />
 }

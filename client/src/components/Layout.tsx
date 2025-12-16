@@ -36,10 +36,9 @@ export const Layout = ({ children }: LayoutProps) => {
       <ProtectedRoute>
         <div className={classNames('max-w-md shadow-xl m-auto min-h-svh relative h-fit flex flex-col bg-background')}>
           <Header />
-          <div style={{ minHeight: `calc(100dvh - ${FOOTER_HEIGHT})` }} className='w-full h-fit flex flex-col'>
+          <div style={{ minHeight: `100dvh` }} className='w-full h-fit flex flex-col'>
             {children}
           </div>
-          <Footer />
         </div>
       </ProtectedRoute>
     </AuthProvider>

@@ -73,3 +73,21 @@ export function usePropertyDelete() {
     },
   })
 }
+
+/** 특정 날짜에 예약 가능한 숙소들 조회 */
+export const useAvailableProperties = (checkIn: string, checkOut: string) => {
+  return useQuery({
+    queryKey: ['properties', 'available', checkIn, checkOut],
+    queryFn: async () => {
+      const response = await fetch(`/api/properties/available?check_in=${checkIn}&check_out=${checkOut}`)
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch available properties')
+      }
+
+      const result = await response.json()
+      return result.data as PropertyListItem[]
+    },
+    enabled: !!checkIn && !!checkOut,
+  })
+}

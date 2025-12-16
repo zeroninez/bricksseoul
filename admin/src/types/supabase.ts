@@ -118,169 +118,6 @@ export type Database = {
         }
         Relationships: []
       }
-      bookings: {
-        Row: {
-          adults_count: number
-          booking_number: string
-          check_in: string
-          check_out: string
-          confirmation_code: string | null
-          confirmation_code_created_at: string | null
-          created_at: string | null
-          currency: string
-          guest_email: string
-          guest_message: string | null
-          id: string
-          minors_count: number
-          property_id: string | null
-          status: string
-          terms_agreed: boolean | null
-          terms_agreed_at: string | null
-          total_amount: number
-          updated_at: string | null
-        }
-        Insert: {
-          adults_count?: number
-          booking_number?: string
-          check_in: string
-          check_out: string
-          confirmation_code?: string | null
-          confirmation_code_created_at?: string | null
-          created_at?: string | null
-          currency?: string
-          guest_email: string
-          guest_message?: string | null
-          id?: string
-          minors_count?: number
-          property_id?: string | null
-          status?: string
-          terms_agreed?: boolean | null
-          terms_agreed_at?: string | null
-          total_amount: number
-          updated_at?: string | null
-        }
-        Update: {
-          adults_count?: number
-          booking_number?: string
-          check_in?: string
-          check_out?: string
-          confirmation_code?: string | null
-          confirmation_code_created_at?: string | null
-          created_at?: string | null
-          currency?: string
-          guest_email?: string
-          guest_message?: string | null
-          id?: string
-          minors_count?: number
-          property_id?: string | null
-          status?: string
-          terms_agreed?: boolean | null
-          terms_agreed_at?: string | null
-          total_amount?: number
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "bookings_property_id_fkey"
-            columns: ["property_id"]
-            isOneToOne: false
-            referencedRelation: "properties"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      manual_payments: {
-        Row: {
-          admin_note: string | null
-          amount: number
-          booking_id: string | null
-          created_at: string | null
-          currency: string
-          guest_email: string
-          guest_name: string | null
-          id: string
-          payment_status: string
-          updated_at: string | null
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          admin_note?: string | null
-          amount: number
-          booking_id?: string | null
-          created_at?: string | null
-          currency?: string
-          guest_email: string
-          guest_name?: string | null
-          id?: string
-          payment_status?: string
-          updated_at?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          admin_note?: string | null
-          amount?: number
-          booking_id?: string | null
-          created_at?: string | null
-          currency?: string
-          guest_email?: string
-          guest_name?: string | null
-          id?: string
-          payment_status?: string
-          updated_at?: string | null
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "manual_payments_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: false
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      payment_accounts: {
-        Row: {
-          account_name: string
-          account_number: string | null
-          account_type: string
-          created_at: string | null
-          display_name: string | null
-          id: string
-          instructions: string | null
-          is_active: boolean | null
-          payment_link: string | null
-          qr_code_url: string | null
-        }
-        Insert: {
-          account_name: string
-          account_number?: string | null
-          account_type: string
-          created_at?: string | null
-          display_name?: string | null
-          id?: string
-          instructions?: string | null
-          is_active?: boolean | null
-          payment_link?: string | null
-          qr_code_url?: string | null
-        }
-        Update: {
-          account_name?: string
-          account_number?: string | null
-          account_type?: string
-          created_at?: string | null
-          display_name?: string | null
-          id?: string
-          instructions?: string | null
-          is_active?: boolean | null
-          payment_link?: string | null
-          qr_code_url?: string | null
-        }
-        Relationships: []
-      }
       properties: {
         Row: {
           check_in: string | null
@@ -475,6 +312,71 @@ export type Database = {
           },
         ]
       }
+      reservations: {
+        Row: {
+          cancelled_at: string | null
+          check_in_date: string
+          check_out_date: string
+          confirmed_at: string | null
+          created_at: string | null
+          email: string
+          guest_count: number
+          id: string
+          invoice: string | null
+          options: Json | null
+          property_id: string
+          reservation_code: string
+          special_requests: string | null
+          status: string
+          total_price: number
+          updated_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          check_in_date: string
+          check_out_date: string
+          confirmed_at?: string | null
+          created_at?: string | null
+          email: string
+          guest_count: number
+          id?: string
+          invoice?: string | null
+          options?: Json | null
+          property_id: string
+          reservation_code?: string
+          special_requests?: string | null
+          status?: string
+          total_price: number
+          updated_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          check_in_date?: string
+          check_out_date?: string
+          confirmed_at?: string | null
+          created_at?: string | null
+          email?: string
+          guest_count?: number
+          id?: string
+          invoice?: string | null
+          options?: Json | null
+          property_id?: string
+          reservation_code?: string
+          special_requests?: string | null
+          status?: string
+          total_price?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -515,7 +417,8 @@ export type Database = {
         }
         Returns: undefined
       }
-      generate_confirmation_code: { Args: never; Returns: string }
+      generate_reservation_code: { Args: never; Returns: string }
+      get_unique_reservation_code: { Args: never; Returns: string }
     }
     Enums: {
       [_ in never]: never
