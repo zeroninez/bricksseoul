@@ -29,6 +29,13 @@
   --color-primary: #3E160C;
   --color-disabled: #513E39;
   --color-background: #EFECE7;
+
+  /* aspect-ratio */
+  --aspect-square: 1 / 1;
+  --aspect-video: 16 / 9;
+  --aspect-portrait: 9 / 16;
+  --aspect-landscape: 16 / 9;
+  --aspect-calendar: 40 / 64;
 }
 
 @layer base {
