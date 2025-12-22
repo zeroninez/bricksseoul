@@ -24,7 +24,7 @@ interface MenuItem {
 const MENU_ITEMS: MenuItem[] = [
   { href: '/contact', label: 'Contact us', icon: 'phone' },
   { href: '/business', label: 'For business', icon: 'briefcase' },
-  { href: '/check-bookings', label: 'My bookings', icon: 'mailsearch' },
+  { href: '/reservations', label: 'My reservations', icon: 'mailsearch' },
   { href: '/language', label: 'Language', icon: 'language' },
 ]
 
@@ -37,7 +37,8 @@ export const Header: React.FC = () => {
   const [isAuthOpen, setAuthOpen] = useState(false)
 
   const isPropertyDetail = pathname?.includes('/properties/') && pathname !== '/properties'
-  const isReservationPage = pathname?.includes('/reservation')
+  const isReservationPage = pathname?.includes('/reservation') && !pathname?.includes('/reservations')
+  const isReservationCheckPage = pathname?.includes('/reservations/') && pathname !== '/reservations'
 
   const toggleMobile = useCallback(() => setMobileOpen((prev) => !prev), [])
   const toggleAuth = useCallback(() => setAuthOpen((prev) => !prev), [])
@@ -86,13 +87,13 @@ export const Header: React.FC = () => {
           className='w-full flex items-center justify-between pl-5'
         >
           {/* logo */}
-          {isPropertyDetail && !isMobileOpen ? (
+          {isPropertyDetail || (isReservationCheckPage && !isMobileOpen) ? (
             <GoArrowLeft className={`text-xl cursor-pointer ${textColor}`} onClick={router.back} />
           ) : (
             <Logo className={`text-[18px] cursor-pointer ${textColor}`} onClick={goHome} />
           )}
 
-          {isPropertyDetail && !isMobileOpen && (
+          {(isPropertyDetail || isReservationCheckPage || isReservationPage) && !isMobileOpen && (
             <span
               style={{
                 height: HEADER_HEIGHT,

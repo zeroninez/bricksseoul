@@ -1,6 +1,6 @@
 'use client'
 
-import { Input, TextArea, PageStart, FormLabel } from '@/components'
+import { Input, TextArea, PageStart, FormLabel, Invoice, generateInvoiceHTML } from '@/components'
 import { usePropertyGet } from '@/hooks/useProperty'
 import { useRouter } from '@/i18n/routing'
 import { useParams, useSearchParams } from 'next/navigation'
@@ -37,14 +37,11 @@ export default function ReservationPage() {
     options: [],
   })
 
+  const dayCount = Math.ceil((new Date(moveOutDate).getTime() - new Date(moveInDate).getTime()) / (1000 * 3600 * 24))
+
   useEffect(() => {
     // Calculate total amount based on move-in and move-out dates
     if (!data) return
-
-    const inDate = new Date(moveInDate)
-    const outDate = new Date(moveOutDate)
-    const timeDiff = outDate.getTime() - inDate.getTime()
-    const dayCount = Math.ceil(timeDiff / (1000 * 3600 * 24))
 
     setBookingForm((prev) => ({
       ...prev,
@@ -52,32 +49,14 @@ export default function ReservationPage() {
       check_out_date: moveOutDate,
       total_price: dayCount * data.price_per_night,
     }))
-  }, [moveInDate, moveOutDate, data])
+  }, [moveInDate, moveOutDate, data, dayCount])
 
-  // invoice HTML을 useMemo로 생성 (필요할 때만 재계산)
-  const invoiceHTML = useMemo(() => {
-    if (!data) return ''
-
-    const dayCount = Math.ceil((new Date(moveOutDate).getTime() - new Date(moveInDate).getTime()) / (1000 * 3600 * 24))
-
-    return `
-      <div class="w-full bg-primary/10 rounded-lg px-4 py-3 h-fit text-left flex flex-col gap-2">
-        <div class="w-full h-fit flex flex-col">
-          <span class="text-base text-stone-600">Room charge</span>
-          <span class="text-base font-medium text-black">
-            ${formatCurrency(data.price_per_night, data.currency)} x ${dayCount} nights
-          </span>
-        </div>
-        <div class="w-full h-px bg-stone-400"></div>
-        <div class="w-full h-fit flex flex-col">
-          <span class="text-base text-stone-600">Total</span>
-          <span class="text-lg font-semibold text-black">
-            ${formatCurrency(bookingForm.total_price, data.currency)}
-          </span>
-        </div>
-      </div>
-    `.trim()
-  }, [data, moveInDate, moveOutDate, bookingForm.total_price, bookingForm.options])
+  const invoiceHTML = generateInvoiceHTML({
+    pricePerNight: data?.price_per_night || 0,
+    currency: data?.currency || 'USD',
+    nights: dayCount,
+    totalPrice: bookingForm.total_price,
+  })
 
   const handleConfirmBooking = async () => {
     // 이메일 검증
@@ -198,23 +177,12 @@ export default function ReservationPage() {
 
         {/* Total Cost */}
         <FormLabel title='Total Cost' description='No refunds after booking is confirmed.'>
-          <div className='w-full bg-primary/10 rounded-lg px-4 py-3 h-fit text-left flex flex-col gap-2'>
-            <div className='w-full h-fit flex flex-col'>
-              <span className='text-base text-stone-600'>Room charge</span>
-              <span className='text-base font-medium text-black'>
-                {formatCurrency(data.price_per_night, data.currency)} x{' '}
-                {Math.ceil((new Date(moveOutDate).getTime() - new Date(moveInDate).getTime()) / (1000 * 3600 * 24))}{' '}
-                nights
-              </span>
-            </div>
-            <div className='w-full h-px bg-stone-400' />
-            <div className='w-full h-fit flex flex-col'>
-              <span className='text-base text-stone-600'>Total</span>
-              <span className='text-lg font-semibold text-black'>
-                {formatCurrency(bookingForm.total_price, data.currency)}
-              </span>
-            </div>
-          </div>
+          <Invoice
+            pricePerNight={data.price_per_night}
+            currency={data.currency}
+            nights={dayCount}
+            totalPrice={bookingForm.total_price}
+          />
         </FormLabel>
         <ReservationButton
           data={data}

@@ -16,12 +16,14 @@ export default function ReservationSuccessPage() {
   }
 
   return (
-    <main className='w-full h-dvh absolute z-50 bg-background inset-0 flex flex-col items-center gap-10'>
+    <main className='w-full h-dvh absolute z-50 bg-stone-100 inset-0 flex flex-col items-center gap-10'>
       <motion.div
         {...animationProps}
-        className='flex-4 w-full px-7 inline-flex flex-col justify-end items-center gap-4'
+        className='flex-4 w-full px-7 inline-flex flex-col justify-end items-center gap-6'
       >
-        <div className='w-fit h-fit flex text-center justify-center text-zinc-800 text-3xl font-bold'>WELLSTAYN</div>
+        <div className='w-fit h-fit flex text-center justify-center text-zinc-800 text-3xl font-serif font-bold'>
+          WELLSTAYN
+        </div>
         <div className='w-fit h-fit flex flex-col text-center justify-center gap-2'>
           <div className='text-stone-700 text-xl font-bold'>Reservation Submitted</div>
           <div className='text-stone-700 text-base font-normal'>
@@ -30,7 +32,17 @@ export default function ReservationSuccessPage() {
         </div>
       </motion.div>
       <motion.div {...animationProps} className='flex-4 w-full px-12 flex flex-col justify-start items-center gap-3'>
-        <div className='w-full border border-stone-300 rounded-xl flex flex-col justify-center items-center gap-3 p-2'>
+        <div className='w-full bg-stone-200 rounded-lg inline-flex justify-center items-center gap-4 p-4'>
+          <svg xmlns='http://www.w3.org/2000/svg' className='w-6 h-6 flex-shrink-0' viewBox='0 0 20 20' fill='#D99B48'>
+            <path d='M11 11H9V5H11M11 15H9V13H11M10 0C8.68678 0 7.38642 0.258658 6.17317 0.761205C4.95991 1.26375 3.85752 2.00035 2.92893 2.92893C1.05357 4.8043 0 7.34784 0 10C0 12.6522 1.05357 15.1957 2.92893 17.0711C3.85752 17.9997 4.95991 18.7362 6.17317 19.2388C7.38642 19.7413 8.68678 20 10 20C12.6522 20 15.1957 18.9464 17.0711 17.0711C18.9464 15.1957 20 12.6522 20 10C20 8.68678 19.7413 7.38642 19.2388 6.17317C18.7362 4.95991 17.9997 3.85752 17.0711 2.92893C16.1425 2.00035 15.0401 1.26375 13.8268 0.761205C12.6136 0.258658 11.3132 0 10 0Z' />
+          </svg>
+          <div className='w-full flex '>
+            <span className='text-stone-700 text-base font-normal'>
+              Please copy your <b>personal confirm code</b> to view your booking details
+            </span>
+          </div>
+        </div>
+        <div className='w-full border border-stone-300 rounded-lg flex flex-col justify-center items-center gap-3.5 p-3'>
           <div className='w-fit flex flex-col justify-center text-center items-center gap-1.5'>
             <span className='text-stone-700 text-sm font-normal'>Personal confirm code</span>
             <span className='text-2xl font-bold text-stone-700 tracking-wider'>{reservationCode}</span>
@@ -40,9 +52,9 @@ export default function ReservationSuccessPage() {
               navigator.clipboard.writeText(reservationCode || '')
               alert('Reservation code copied!')
             }}
-            className='w-full h-fit bg-[#D99B48] rounded-lg inline-flex justify-center items-center gap-2 p-3 active:scale-95 transition-all duration-150 ease-in-out cursor-pointer'
+            className='w-full h-11 bg-[#D99B48] rounded-lg inline-flex justify-center items-center gap-2 p-3 active:scale-95 transition-all duration-150 ease-in-out cursor-pointer'
           >
-            <svg xmlns='http://www.w3.org/2000/svg' className='w-5' viewBox='0 0 18 18' fill='none'>
+            <svg xmlns='http://www.w3.org/2000/svg' className='w-5 mt-1' viewBox='0 0 18 18' fill='none'>
               <path
                 d='M10.1875 6.5625C10.4636 6.5625 10.6875 6.78636 10.6875 7.0625V9.6875H13.3125C13.5886 9.6875 13.8125 9.91136 13.8125 10.1875C13.8125 10.4636 13.5886 10.6875 13.3125 10.6875H10.6875V13.3125C10.6875 13.5886 10.4636 13.8125 10.1875 13.8125C9.91136 13.8125 9.6875 13.5886 9.6875 13.3125V10.6875H7.0625C6.78636 10.6875 6.5625 10.4636 6.5625 10.1875C6.5625 9.91136 6.78636 9.6875 7.0625 9.6875H9.6875V7.0625C9.6875 6.78636 9.91136 6.5625 10.1875 6.5625Z'
                 fill='white'
@@ -54,23 +66,13 @@ export default function ReservationSuccessPage() {
                 fill='white'
               />
             </svg>
-            <span className='text-white text-sm font-medium'>Copy Code</span>
+            <span className='text-white text-base font-medium leading-none'>Copy Code</span>
           </button>
-        </div>
-        <div className='w-full bg-stone-200 rounded-xl inline-flex justify-center items-center gap-4 p-4'>
-          <svg xmlns='http://www.w3.org/2000/svg' className='w-6 h-6 flex-shrink-0' viewBox='0 0 20 20' fill='#D99B48'>
-            <path d='M11 11H9V5H11M11 15H9V13H11M10 0C8.68678 0 7.38642 0.258658 6.17317 0.761205C4.95991 1.26375 3.85752 2.00035 2.92893 2.92893C1.05357 4.8043 0 7.34784 0 10C0 12.6522 1.05357 15.1957 2.92893 17.0711C3.85752 17.9997 4.95991 18.7362 6.17317 19.2388C7.38642 19.7413 8.68678 20 10 20C12.6522 20 15.1957 18.9464 17.0711 17.0711C18.9464 15.1957 20 12.6522 20 10C20 8.68678 19.7413 7.38642 19.2388 6.17317C18.7362 4.95991 17.9997 3.85752 17.0711 2.92893C16.1425 2.00035 15.0401 1.26375 13.8268 0.761205C12.6136 0.258658 11.3132 0 10 0Z' />
-          </svg>
-          <div className='w-full flex '>
-            <span className='text-stone-700 text-base font-normal'>
-              Please copy your <b>personal confirm code</b> to view your booking details
-            </span>
-          </div>
         </div>
       </motion.div>
       <motion.div
         {...animationProps}
-        className='flex-2 w-full px-8 flex flex-col justify-start items-center gap-3 font-medium text-stone-600'
+        className='flex-2 w-full px-8 flex flex-col justify-start items-center gap-3 text-base font-normal text-black'
       >
         <span>Thank you for your visiting.</span>
         <button
@@ -79,7 +81,7 @@ export default function ReservationSuccessPage() {
           }}
           className='text-stone-800 underline underline-offset-2 active:scale-95 transition-all duration-150 ease-in-out cursor-pointer'
         >
-          Go to Home
+          Go to home
         </button>
       </motion.div>
     </main>
