@@ -26,7 +26,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   // 인증된 사용자에게 관리자 페이지 표시
   return (
-    <div className={classNames('max-w-md shadow-md m-auto min-h-svh relative h-fit flex flex-col bg-white')}>
+    <div className={classNames('max-w-md shadow-md m-auto min-h-svh relative h-fit flex flex-col')}>
       <Header />
       <main className='flex w-full h-fit flex-col'>{children}</main>
     </div>

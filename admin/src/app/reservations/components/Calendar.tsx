@@ -1,4 +1,3 @@
-// components/Calendar.tsx (Simplified)
 'use client'
 
 import classNames from 'classnames'
@@ -9,6 +8,19 @@ interface DayData {
   stayingCount: number
   hasConfirmed: boolean
   totalRequested: number
+  availableCount: number // 추가
+  allReservations: Array<{
+    id: string
+    reservation_code: string
+    check_in_date: string
+    check_out_date: string
+    status: 'requested' | 'confirmed' | 'cancelled'
+    guest_count: number
+    properties: {
+      id: string
+      name: string
+    }
+  }>
 }
 
 interface CalendarProps {
@@ -74,6 +86,8 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
       stayingCount: 0,
       hasConfirmed: false,
       totalRequested: 0,
+      availableCount: 0,
+      allReservations: [],
     }
 
     calendarDays.push(
@@ -82,7 +96,8 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
         onClick={() => onDateClick?.(dateStr)}
         className={classNames(
           isToday && 'border border-primary',
-          dayData.hasConfirmed && 'bg-[#ECE7E4]',
+          dayData.hasConfirmed && viewMode === 'reservation' && 'bg-[#ECE7E4]',
+          dayData.availableCount > 0 && viewMode === 'vacancy' && 'bg-[#E8F5E9]', // 빈방이 있으면 연한 초록색
           'cursor-pointer active:bg-stone-100 transition-colors',
           commonDateClassName,
         )}
@@ -92,24 +107,44 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
         {viewMode === 'reservation' && dayData.hasConfirmed && (
           <div className='w-full h-full flex flex-col justify-start items-center gap-0.5 mt-1.5'>
             <div
-              className={classNames(commonDayDataClassName, 'bg-[#6DA9FF]')}
+              className={classNames(
+                commonDayDataClassName,
+                'bg-[#6DA9FF]',
+                dayData.checkInCount === 0 ? 'opacity-0' : 'opacity-100',
+              )}
               title={`${dayData.checkInCount} check-in(s)`}
             >
               <span className={commonDayDataNumberClassName}>{dayData.checkInCount}</span>
             </div>
 
             <div
-              className={classNames(commonDayDataClassName, 'bg-[#868585]')}
+              className={classNames(
+                commonDayDataClassName,
+                'bg-[#868585]',
+                dayData.stayingCount === 0 ? 'opacity-0' : 'opacity-100',
+              )}
               title={`${dayData.stayingCount} staying`}
             >
               <span className={commonDayDataNumberClassName}>{dayData.stayingCount}</span>
             </div>
 
             <div
-              className={classNames(commonDayDataClassName, 'bg-[#FF7D7D]')}
+              className={classNames(
+                commonDayDataClassName,
+                'bg-[#FF7D7D]',
+                dayData.checkOutCount === 0 ? 'opacity-0' : 'opacity-100',
+              )}
               title={`${dayData.checkOutCount} check-out(s)`}
             >
               <span className={commonDayDataNumberClassName}>{dayData.checkOutCount}</span>
+            </div>
+          </div>
+        )}
+
+        {viewMode === 'vacancy' && (
+          <div className='w-full h-full flex flex-col justify-center items-center mt-1'>
+            <div className='w-full h-fit flex items-center justify-center' title={`${dayData.availableCount}개 빈방`}>
+              <span className='text-base font-bold text-[#4CAF50]'>{dayData.availableCount}</span>
             </div>
           </div>
         )}

@@ -5,20 +5,22 @@ interface AddButtonProps {
 export const AddButton = (props: AddButtonProps) => {
   const { onClick } = props
   return (
-    <button
-      className='fixed bottom-5 z-10 right-5 w-fit h-fit p-3 rounded-xl bg-black active:opacity-75 active:scale-90 transition-all'
-      onClick={onClick}
-    >
-      <svg
-        xmlns='http://www.w3.org/2000/svg'
-        fill='none'
-        viewBox='0 0 24 24'
-        strokeWidth={1.5}
-        stroke='white'
-        className='w-8 h-8 m-auto'
+    <>
+      <button
+        className='w-fit h-7 pl-1.5 pr-2.5 py-1 rounded bg-[#5E4646] text-white gap-1 inline-flex justify-center items-center  active:opacity-75 active:scale-90 transition-all'
+        onClick={onClick}
       >
-        <path strokeLinejoin='round' d='M12 4.5v15m7.5-7.5h-15' />
-      </svg>
-    </button>
+        <svg xmlns='http://www.w3.org/2000/svg' className='w-5 h-5' viewBox='0 0 20 20' fill='none'>
+          <path
+            d='M15 10H10M10 10H5M10 10V5M10 10V15'
+            stroke='currentColor'
+            stroke-width='1.5'
+            stroke-linecap='round'
+            stroke-linejoin='round'
+          />
+        </svg>
+        <span className='text-xs font-medium'>공간 추가하기</span>
+      </button>
+    </>
   )
 }

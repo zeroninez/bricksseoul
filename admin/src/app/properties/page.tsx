@@ -16,51 +16,53 @@ export default function Properties() {
   })
 
   return (
-    <>
-      <AddButton onClick={() => setIsClickedAdd(true)} />
-      {/* cards */}
-      <div className='w-full h-fit flex flex-col items-center justify-center gap-4 p-4 pb-16'>
-        {/* 숙소 생성 */}
-        {/* 데이터 있음 */}
-        {properties && properties.length > 0
-          ? properties.map((p, index) => (
-              <PropertyItem
-                key={p.id}
-                {...p}
-                onClick={(propertyId) => {
-                  setModalState({ state: 'edit', propertyId })
-                }}
-                onRefresh={() => {
-                  refetch()
-                }}
-              />
-            ))
-          : // 데이터 없음
-            !isLoading &&
-            !error && (
-              <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
-                <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
-                  <div className='text-center text-stone-400 text-base font-medium'>다시 시도해 주세요</div>
-                  <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
-                    등록된 숙소가 없습니다
-                  </div>
+    <div className='w-full min-h-dvh mt-14 px-4 pb-32'>
+      <div className='flex items-center justify-between gap-2 mb-3'>
+        <div className='inline-flex h-7 items-center justify-center gap-2 text-[#3C2F2F] text-sm font-medium'>
+          <span className='leading-none'>등록된 공간</span> <div className='w-[1.5px] h-3 bg-[#3C2F2F]' />
+          <span className='leading-none'>{properties ? properties.length : 0}</span>
+        </div>
+        <AddButton onClick={() => setIsClickedAdd(true)} />
+      </div>
+      {/* 데이터 있음 */}
+      {properties && properties.length > 0
+        ? properties.map((p, index) => (
+            <PropertyItem
+              key={p.id}
+              {...p}
+              onClick={(propertyId) => {
+                setModalState({ state: 'edit', propertyId })
+              }}
+              onRefresh={() => {
+                refetch()
+              }}
+            />
+          ))
+        : // 데이터 없음
+          !isLoading &&
+          !error && (
+            <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
+              <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
+                <div className='text-center text-stone-400 text-base font-medium'>다시 시도해 주세요</div>
+                <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
+                  등록된 숙소가 없습니다
                 </div>
               </div>
-            )}
-        {/* 로딩 */}
-        {isLoading && (
-          <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
-            불러오는 중...
-          </div>
-        )}
+            </div>
+          )}
+      {/* 로딩 */}
+      {isLoading && (
+        <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
+          불러오는 중...
+        </div>
+      )}
 
-        {/* 에러 */}
-        {error && (
-          <div className='text-red-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
-            {(error as Error).message || 'Failed to load properties.'}
-          </div>
-        )}
-      </div>
+      {/* 에러 */}
+      {error && (
+        <div className='text-red-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
+          {(error as Error).message || 'Failed to load properties.'}
+        </div>
+      )}
       <AddSheet
         isClickedAdd={isClickedAdd}
         setIsClickedAdd={setIsClickedAdd}
@@ -88,6 +90,6 @@ export default function Properties() {
           refetch() // ✅ 수정 후 리스트 갱신
         }}
       />
-    </>
+    </div>
   )
 }

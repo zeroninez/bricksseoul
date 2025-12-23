@@ -1,8 +1,8 @@
-// app/page.tsx
 'use client'
 
 import { useState, useMemo } from 'react'
 import { useReservationsCalendar } from '@/hooks/useReservation'
+import { usePropertyList } from '@/hooks/useProperty' // 추가
 import { CalendarHeader, Calendar } from './components'
 import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
@@ -13,6 +13,7 @@ interface DayData {
   stayingCount: number
   hasConfirmed: boolean
   totalRequested: number
+  availableCount: number // 추가: 빈방 수
   allReservations: Array<{
     id: string
     reservation_code: string
@@ -20,6 +21,7 @@ interface DayData {
     check_out_date: string
     status: 'requested' | 'confirmed' | 'cancelled'
     guest_count: number
+    property_id: string // 추가
     properties: {
       id: string
       name: string
@@ -35,12 +37,14 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState<'reservation' | 'vacancy'>('reservation')
 
   const { data: reservations, isLoading, error } = useReservationsCalendar(currentYear, currentMonth)
+  const { data: properties } = usePropertyList() // 전체 숙소 목록 가져오기
 
-  // 📊 데이터 전처리: 날짜별로 예약 정보 미리 계산
+  // 📊 데이터 전처리: 날짜별로 예약 정보 및 빈방 계산
   const calendarData = useMemo(() => {
-    if (!reservations) return {}
+    if (!reservations || !properties) return {}
 
     const dataMap: Record<string, DayData> = {}
+    const totalProperties = properties.filter((p) => p.is_visible).length // 노출된 숙소만 카운트
 
     reservations.forEach((reservation) => {
       const checkInDate = new Date(reservation.check_in_date)
@@ -57,6 +61,7 @@ export default function HomePage() {
             stayingCount: 0,
             hasConfirmed: false,
             totalRequested: 0,
+            availableCount: 0,
             allReservations: [],
           }
         }
@@ -81,8 +86,42 @@ export default function HomePage() {
       }
     })
 
+    // 각 날짜별로 예약된 숙소 ID를 추적하여 빈방 계산
+    Object.keys(dataMap).forEach((dateStr) => {
+      const reservedPropertyIds = new Set<string>()
+
+      dataMap[dateStr].allReservations.forEach((reservation) => {
+        // 해당 날짜에 체크인/체크아웃/숙박 중인 경우 모두 예약된 것으로 간주
+        if (reservation.status === 'confirmed' || reservation.status === 'requested') {
+          reservedPropertyIds.add(reservation.property_id)
+        }
+      })
+
+      // 빈방 = 전체 숙소 - 예약된 숙소
+      dataMap[dateStr].availableCount = totalProperties - reservedPropertyIds.size
+    })
+
+    // 예약이 없는 날짜도 빈방 정보 추가
+    const firstDay = new Date(currentYear, currentMonth - 1, 1)
+    const lastDay = new Date(currentYear, currentMonth, 0)
+
+    for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0]
+      if (!dataMap[dateStr]) {
+        dataMap[dateStr] = {
+          checkInCount: 0,
+          checkOutCount: 0,
+          stayingCount: 0,
+          hasConfirmed: false,
+          totalRequested: 0,
+          availableCount: totalProperties, // 예약이 없으면 모든 숙소가 비어있음
+          allReservations: [],
+        }
+      }
+    }
+
     return dataMap
-  }, [reservations])
+  }, [reservations, properties, currentYear, currentMonth])
 
   // 📈 월간 통계 계산
   const monthStats = useMemo(() => {
@@ -93,6 +132,7 @@ export default function HomePage() {
       todayCheckIn: todayData?.checkInCount || 0,
       todayCheckOut: todayData?.checkOutCount || 0,
       todayRequested: todayData?.totalRequested || 0,
+      todayAvailable: todayData?.availableCount || 0, // 추가
     }
   }, [calendarData])
 
@@ -108,23 +148,23 @@ export default function HomePage() {
   return (
     <div className='w-full min-h-dvh mt-14 px-4 pb-32'>
       {error ? (
-        <div className='bg-white p-8 rounded-lg shadow-sm border border-red-200 text-center'>
+        <div className='p-8 rounded-lg shadow-sm border border-red-200 text-center'>
           <div className='text-red-500'>Failed to load calendar</div>
         </div>
       ) : (
         <div className='relative'>
           {isLoading && (
-            <div className='absolute inset-0 bg-white/50 flex items-center justify-center z-10 rounded-lg'>
+            <div className='absolute inset-0 flex items-center justify-center z-10 rounded-lg'>
               <div className='animate-spin w-8 h-8 border-4 border-primary/20 border-t-primary rounded-full' />
             </div>
           )}
 
           <div className='w-full h-fit'>
             {/* Today & New Section */}
-            <div className='flex items-center justify-between gap- mb-3'>
+            <div className='flex items-center justify-between gap-2 mb-3'>
               {/* Today */}
               <div className='w-fit flex-shrink-0 h-fit flex flex-col gap-2 justify-end items-start'>
-                <span className='text-[#3C2F2F] text-sm'>Today{"'"}s</span>
+                <span className='text-[#3C2F2F] text-sm'>Today{"'s"}</span>
                 <div className='w-fit h-10 bg-[#EFECEC] border border-[#CFC7C7] flex flex-row gap-3 px-3.5 py-2.5 rounded-md'>
                   <div className='w-fit flex flex-shrink-0 flex-row justify-start items-center gap-2'>
                     <div className='w-1.5 h-1.5 rounded-full bg-[#6DA9FF]' />

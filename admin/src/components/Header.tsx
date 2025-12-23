@@ -76,7 +76,7 @@ export const Header = () => {
   return (
     <>
       <motion.header
-        className='fixed top-0 z-50 bg-white w-full h-fit flex flex-col'
+        className='fixed top-0 z-50 bg-background w-full h-fit flex flex-col'
         animate={{
           y: isHeaderVisible ? 0 : -100,
         }}

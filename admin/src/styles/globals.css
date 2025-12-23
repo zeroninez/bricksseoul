@@ -28,7 +28,7 @@
   /* color */
   --color-primary: #3E160C;
   --color-disabled: #513E39;
-  --color-background: #EFECE7;
+  --color-background: #F4F3F1;
 
   /* aspect-ratio */
   --aspect-square: 1 / 1;
@@ -104,6 +104,7 @@
       sans-serif;
     /* 16px */
     font-size: 100%;
+    background-color: #F4F3F1;
   }
 
   /* ( 크롬, 사파리, 오페라, 엣지 ) 동작 */
