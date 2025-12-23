@@ -15,6 +15,8 @@ export const Header = () => {
   const router = useRouter()
   const pathname = usePathname()
   const [currentTab, setCurrentTab] = useState<string>('reservations')
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   const handleLogout = () => {
     if (confirm('정말로 로그아웃 하시겠습니까?')) {
@@ -31,10 +33,59 @@ export const Header = () => {
     setCurrentTab(pathSegment || 'reservations')
   }, [pathname])
 
+  // 스크롤 방향 감지 및 헤더 표시/숨김 처리
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      const scrollHeight = document.documentElement.scrollHeight
+      const clientHeight = document.documentElement.clientHeight
+
+      // 최상단이면 항상 보이기
+      if (currentScrollY <= 0) {
+        setIsHeaderVisible(true)
+        setLastScrollY(currentScrollY)
+        return
+      }
+
+      // 최하단이면 항상 보이기
+      if (currentScrollY + clientHeight >= scrollHeight - 10) {
+        setIsHeaderVisible(true)
+        setLastScrollY(currentScrollY)
+        return
+      }
+
+      // 스크롤 방향 감지
+      if (currentScrollY > lastScrollY && currentScrollY > 80) {
+        // 아래로 스크롤 중 - 헤더 숨기기
+        setIsHeaderVisible(false)
+      } else if (currentScrollY < lastScrollY) {
+        // 위로 스크롤 중 - 헤더 보이기
+        setIsHeaderVisible(true)
+      }
+
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [lastScrollY])
+
   return (
     <>
-      <header className='sticky top-0 z-50 bg-white w-full h-fit flex flex-col'>
-        <div className='relative flex justify-between items-center h-14 px-5'>
+      <motion.header
+        className='fixed top-0 z-50 bg-white w-full h-fit flex flex-col'
+        animate={{
+          y: isHeaderVisible ? 0 : -100,
+        }}
+        transition={{
+          duration: 0.3,
+          ease: 'easeInOut',
+        }}
+      >
+        <div className='relative flex justify-between items-center h-14 px-4'>
           {/* Logo */}
           <motion.div
             onClick={() => router.push('/')}
@@ -87,7 +138,7 @@ export const Header = () => {
             </button>
           </motion.div>
         </div>
-      </header>
+      </motion.header>
       {/* 하단 토글 탭 네비게이션 */}
       {/* reservations 또는 properties 경로에서만 표시 */}
       <AnimatePresence>
@@ -97,7 +148,7 @@ export const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 100 }}
             transition={{ duration: 0.3 }}
-            className='fixed left-1/2 -translate-x-1/2 bottom-6 rounded-full z-50 bg-[#3C2F2F] text-white w-fit h-fit flex flex-row justify-center items-center p-2 gap-1 shadow-lg'
+            className='fixed left-1/2 -translate-x-1/2 bottom-4 rounded-full z-50 bg-[#3C2F2F] text-white w-fit h-fit flex flex-row justify-center items-center p-2 gap-1 shadow-lg'
           >
             {/* 슬라이딩 배경 */}
             <motion.div
@@ -107,10 +158,10 @@ export const Header = () => {
                     ? '8px'
                     : currentTab === 'properties'
                       ? 'calc(50% - 0px)'
-                      : 'calc(100% - 8px - 64px)',
+                      : 'calc(100% - 8px - 60px)',
               }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className='absolute w-16 h-12 rounded-full bg-white'
+              className='absolute w-15 h-10 rounded-full bg-white'
             ></motion.div>
             {/* 예약 관리 탭 */}
             <motion.button
@@ -120,7 +171,7 @@ export const Header = () => {
                 router.push('/reservations')
               }}
               whileTap={{ scale: 0.95 }}
-              className='w-16 h-12 z-10 rounded-full flex justify-center items-center cursor-pointer transition-colors'
+              className='w-15 h-10 z-10 rounded-full flex justify-center items-center cursor-pointer transition-colors'
               aria-label='예약 관리'
             >
               <svg
@@ -163,7 +214,7 @@ export const Header = () => {
                 router.push('/properties')
               }}
               whileTap={{ scale: 0.95 }}
-              className='w-16 h-12 z-10 rounded-full flex justify-center items-center cursor-pointer transition-colors'
+              className='w-15 h-10 z-10 rounded-full flex justify-center items-center cursor-pointer transition-colors'
               aria-label='숙소 관리'
             >
               <svg

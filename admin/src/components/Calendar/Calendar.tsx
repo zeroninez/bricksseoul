@@ -47,6 +47,11 @@ interface DayData {
 export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange }: CalendarProps) => {
   const [viewMode, setViewMode] = useState<'reservation' | 'vacancy'>('reservation')
 
+  const commonDateClassName =
+    'aspect-calendar overflow-hidden px-2 pt-1 pb-2 flex flex-col justify-start items-center w-full relative rounded-md '
+  const commonDateNumberClassName =
+    'w-full flex items-center justify-center text-center text-sm font-medium leading-none'
+
   // 📊 데이터 전처리: 날짜별로 예약 정보 미리 계산
   const calendarData = useMemo(() => {
     const dataMap: Record<string, DayData> = {}
@@ -148,9 +153,9 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
       <div
         key={`prev-${day}`}
         onClick={() => onDateClick?.(dateStr)}
-        className='opacity-40 aspect-calendar overflow-hidden p-2 flex flex-col justify-start items-center w-full h-full relative rounded-md cursor-pointer'
+        className={classNames('opacity-40', commonDateClassName)}
       >
-        <div className='text-sm font-medium text-stone-600'>{day}</div>
+        <div className={classNames('text-stone-600', commonDateNumberClassName)}>{day}</div>
       </div>,
     )
   }
@@ -169,60 +174,55 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
       allReservations: [],
     }
 
+    const commonDayDataClassName = 'w-full h-full  flex-1 overflow-hidden px-1 rounded flex items-center justify-center'
+    const commonDayDataNumberClassName = 'text-xxs text-white text-center font-bold leading-0 -translate-y-[1px]'
+
     calendarDays.push(
       <div
         key={day}
         onClick={() => onDateClick?.(dateStr)}
         className={classNames(
+          isToday && 'border border-primary',
           dayData.hasConfirmed && 'bg-[#ECE7E4]',
           'cursor-pointer active:bg-stone-100 transition-colors',
-          'aspect-calendar overflow-hidden p-2 flex flex-col justify-start items-center w-full relative rounded-md',
+          commonDateClassName,
         )}
-        style={{ height: '100%' }}
       >
-        <div
-          className='w-full flex items-center justify-center text-center text-sm font-medium text-stone-900 relative'
-          style={{ height: '20px' }}
-        >
-          {isToday && (
-            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 border border-black rounded-full w-6 h-auto aspect-square' />
-          )}
-          {day}
-        </div>
+        <div className={classNames('text-stone-900', commonDateNumberClassName)}>{day}</div>
 
         {dayData.hasConfirmed && (
-          <div
-            className='w-full flex flex-col justify-start items-center gap-1 mt-2'
-            style={{ height: 'calc(100% - 28px)' }}
-          >
+          <div className='w-full h-full  flex flex-col justify-start items-center gap-0.5 mt-1.5'>
             <div
               className={classNames(
-                'w-full flex-1 overflow-hidden text-xxs px-1 leading-none rounded bg-[#6DA9FF] text-white text-center font-semibold flex items-center justify-center',
-                dayData.checkInCount === 0 && 'invisible',
+                commonDayDataClassName,
+                'bg-[#6DA9FF]',
+                // dayData.checkInCount === 0 && 'invisible',
               )}
               title={`${dayData.checkInCount} check-in(s)`}
             >
-              {dayData.checkInCount}
+              <span className={commonDayDataNumberClassName}>{dayData.checkInCount}</span>
             </div>
 
             <div
               className={classNames(
-                'w-full flex-1 overflow-hidden text-xxs px-1 leading-none rounded bg-[#868585] text-white text-center font-semibold flex items-center justify-center',
-                dayData.stayingCount === 0 && 'invisible',
+                commonDayDataClassName,
+                'bg-[#868585]',
+                // dayData.stayingCount === 0 && 'invisible',
               )}
               title={`${dayData.stayingCount} staying`}
             >
-              {dayData.stayingCount}
+              <span className={commonDayDataNumberClassName}>{dayData.stayingCount}</span>
             </div>
 
             <div
               className={classNames(
-                'w-full flex-1 overflow-hidden text-xxs px-1 leading-none rounded bg-[#FF7D7D] text-white text-center font-semibold flex items-center justify-center',
-                dayData.checkOutCount === 0 && 'invisible',
+                commonDayDataClassName,
+                'bg-[#FF7D7D]',
+                // dayData.checkOutCount === 0 && 'invisible',
               )}
               title={`${dayData.checkOutCount} check-out(s)`}
             >
-              {dayData.checkOutCount}
+              <span className={commonDayDataNumberClassName}>{dayData.checkOutCount}</span>
             </div>
           </div>
         )}
@@ -243,9 +243,9 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
       <div
         key={`next-${day}`}
         onClick={() => onDateClick?.(dateStr)}
-        className='opacity-40 aspect-calendar overflow-hidden p-2 flex flex-col justify-start items-center w-full h-full relative rounded-md cursor-pointer'
+        className={classNames('opacity-40', commonDateClassName)}
       >
-        <div className='text-sm font-medium text-stone-600'>{day}</div>
+        <div className={classNames('text-stone-600', commonDateNumberClassName)}>{day}</div>
       </div>,
     )
   }
@@ -253,42 +253,45 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
   const weekDays = ['일', '월', '화', '수', '목', '금', '토']
 
   return (
-    <div className='w-full h-fit'>
-      <div className='flex items-center justify-between gap-4 mb-5 pr-2'>
+    <div className='w-full h-fit '>
+      <div className='flex items-center justify-between gap- mb-3'>
         {/* Today */}
         <div className='w-fit flex-shrink-0 h-fit flex flex-col gap-2 justify-end items-start'>
-          <span className='text-[#3C2F2F] text-base'>Today{"'"}s</span>
-          <div className='w-fit h-11 bg-[#EFECEC] border border-[#CFC7C7] flex flex-row gap-3  px-3.5 py-2.5 rounded-md'>
-            <div className='flex flex-row justify-start items-center gap-2 pr-1'>
+          <span className='text-[#3C2F2F] text-sm'>Today{"'"}s</span>
+
+          <div className='w-fit h-10 bg-[#EFECEC] border border-[#CFC7C7] flex flex-row gap-3  px-3.5 py-2.5 rounded-md'>
+            <div className='w-fit flex flex-shrink-0 flex-row justify-start items-center gap-2'>
               <div className={classNames('w-1.5 h-1.5 rounded-full', 'bg-[#6DA9FF]')} />
-              <span className='text-sm text-[#3C2F2F] font-medium'>
+              <span className='text-[13px] text-[#3C2F2F] font-medium'>
                 Check in{'  '}
-                {monthStats.todayCheckIn}
+                {/* {monthStats.todayCheckIn} */}
+                22
               </span>
             </div>
-            <div className='w-px h-full bg-[#CFC7C7]' />
-            <div className='flex flex-row justify-start items-center gap-2 pr-1'>
+            <div className='w-[1px] h-full bg-[#CFC7C7]' />
+            <div className='w-fit flex flex-shrink-0 flex-row justify-start items-center gap-2'>
               <div className={classNames('w-1.5 h-1.5 rounded-full', 'bg-[#FF7D7D]')} />
-              <span className='text-sm text-[#3C2F2F] font-medium'>
+              <span className='text-[13px] text-[#3C2F2F] font-medium'>
                 Check out{'  '}
-                {monthStats.todayCheckOut}
+                {/* {monthStats.todayCheckOut} */}
+                22
               </span>
             </div>
           </div>
         </div>
 
         {/* New */}
-        <div className='w-fit h-fit flex flex-col gap-2 justify-end items-start'>
-          <span className='text-[#3C2F2F] text-base'>New</span>
+        <div className='w-fit flex-shrink-0 h-fit flex flex-col gap-2 justify-end items-start'>
+          <span className='text-[#3C2F2F] text-sm'>New</span>
           <div
             className={classNames(
-              'w-fit h-11 flex flex-row gap-2.5 pl-4 pr-3 py-2.5 rounded-md items-center justify-center',
+              'w-fit h-10 flex flex-row gap-2.5 pl-4 pr-3 py-2.5 rounded-md items-center justify-center',
               monthStats.todayRequested > 0 ? 'bg-[#5E4646]' : 'bg-[#DFDADA]',
             )}
           >
             <span
               className={classNames(
-                'text-sm font-medium leading-none',
+                'text-[13px] font-medium leading-none',
                 monthStats.todayRequested > 0 ? 'text-white' : 'text-[#3C2F2F]',
               )}
             >
@@ -307,23 +310,23 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
       </div>
 
       {/* header */}
-      <div className='flex items-center justify-between mb-4 pr-2'>
+      <div className='flex items-center justify-between mb-2'>
         {/* month navigation */}
-        <div className='flex gap-1 items-center justify-center'>
-          <button onClick={handlePrevMonth} className='w-fit h-fit p-2 opacity-50 transition-colors'>
+        <div className='w-fit h-full flex gap-1  items-center justify-center'>
+          <button onClick={handlePrevMonth} className='w-fit h-fit p-1 opacity-50 transition-colors'>
             <FaCaretLeft className='text-lg text-[#5E4646]' />
           </button>
           <h2 className='text-[17px] font-medium text-[#3C2F2F] w-fit h-6 text-center flex items-center leading-[26px]'>
             {year}년 {month}월
           </h2>
-          <button onClick={handleNextMonth} className='w-fit h-fit p-2 opacity-50 transition-colors'>
+          <button onClick={handleNextMonth} className='w-fit h-fit p-1 opacity-50 transition-colors'>
             <FaCaretRight className='text-lg text-[#5E4646]' />
           </button>
         </div>
 
         {/* mode toggle */}
         <motion.div
-          className='rounded-full w-fit p-1 h-full bg-[#ECE7E4] flex flex-row relative cursor-pointer'
+          className='rounded-full  w-fit p-1 h-full bg-[#ECE7E4] flex flex-row relative cursor-pointer'
           onClick={() => {
             setViewMode(viewMode === 'reservation' ? 'vacancy' : 'reservation')
           }}
@@ -355,9 +358,9 @@ export const Calendar = ({ year, month, reservations, onDateClick, onMonthChange
       </div>
 
       {/* 요일 헤더 */}
-      <div className='grid grid-cols-7 gap-0 mb-2'>
+      <div className='grid grid-cols-7 gap-2 mb-2 '>
         {weekDays.map((day) => (
-          <div key={day} className='text-center text-sm font-medium text-stone-400 py-2'>
+          <div key={day} className='text-center  text-sm font-medium text-stone-400 py-1'>
             {day}
           </div>
         ))}
