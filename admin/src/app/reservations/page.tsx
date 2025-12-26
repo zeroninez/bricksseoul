@@ -181,11 +181,14 @@ export default function HomePage() {
               {/* New */}
               <div className='w-fit flex-shrink-0 h-fit flex flex-col gap-2 justify-end items-start'>
                 <span className='text-[#3C2F2F] text-sm'>New</span>
-                <div
+                <button
                   className={classNames(
-                    'w-fit h-10 flex flex-row gap-2.5 pl-4 pr-3 py-2.5 rounded-md items-center justify-center',
+                    'w-fit h-10 flex flex-row gap-2.5 pl-4 pr-3 py-2.5 rounded-md items-center justify-center cursor-pointer active:scale-95 transition-all',
                     monthStats.todayRequested > 0 ? 'bg-[#5E4646]' : 'bg-[#DFDADA]',
                   )}
+                  onClick={() => {
+                    router.push('/reservations/request')
+                  }}
                 >
                   <span
                     className={classNames(
@@ -203,7 +206,7 @@ export default function HomePage() {
                   >
                     <span className='text-sm font-bold leading-none text-white'>{monthStats.todayRequested}</span>
                   </div>
-                </div>
+                </button>
               </div>
             </div>
 

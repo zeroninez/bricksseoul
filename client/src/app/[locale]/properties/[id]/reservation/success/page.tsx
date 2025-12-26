@@ -3,6 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from '@/i18n/routing'
 import { motion } from 'motion/react'
+import { Logo } from '@/components'
 
 export default function ReservationSuccessPage() {
   const router = useRouter()
@@ -21,9 +22,7 @@ export default function ReservationSuccessPage() {
         {...animationProps}
         className='flex-4 w-full px-7 inline-flex flex-col justify-end items-center gap-6'
       >
-        <div className='w-fit h-fit flex text-center justify-center text-zinc-800 text-3xl font-serif font-bold'>
-          WELLSTAYN
-        </div>
+        <Logo height={40} />
         <div className='w-fit h-fit flex flex-col text-center justify-center gap-2'>
           <div className='text-stone-700 text-xl font-bold'>Reservation Submitted</div>
           <div className='text-stone-700 text-base font-normal'>

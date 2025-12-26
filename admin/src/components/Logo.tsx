@@ -1,9 +1,23 @@
 import classNames from 'classnames'
+import MainLogo from 'svgs/logo.svg'
 
-export const Logo = ({ className, onClick }: { className?: string; onClick?: () => void }) => {
+interface LogoProps {
+  cursor?: 'pointer' | 'default'
+  height?: number
+  className?: string
+  onClick?: () => void
+}
+
+export const Logo = ({ className, onClick, height = 24, cursor = 'default' }: LogoProps) => {
   return (
-    <div className={classNames('font-semibold leading-none font-serif tracking-[7%]', className)} onClick={onClick}>
-      WELLSTAYN
-    </div>
+    <MainLogo
+      style={{
+        cursor: cursor || (onClick ? 'pointer' : 'default'),
+        width: 'auto',
+        height: height ? `${height}px` : undefined,
+      }}
+      className={classNames('', className)}
+      onClick={onClick}
+    />
   )
 }

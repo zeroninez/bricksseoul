@@ -6,8 +6,6 @@ import { use, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Logo } from './Logo'
 import { useAdminAuth } from '@/contexts/AdminAuthContext'
-import { PasswordChangeModal } from './PasswordChangeModal'
-import { LiaAngleLeftSolid } from 'react-icons/lia'
 
 export const Header = () => {
   const { logout } = useAdminAuth()
@@ -76,7 +74,7 @@ export const Header = () => {
   return (
     <>
       <motion.header
-        className='fixed top-0 z-50 bg-background w-full h-fit flex flex-col'
+        className='max-w-md m-auto fixed top-0 z-50 bg-background w-full h-fit flex flex-col'
         animate={{
           y: isHeaderVisible ? 0 : -100,
         }}
@@ -90,12 +88,12 @@ export const Header = () => {
           <motion.div
             onClick={() => router.push('/')}
             whileTap={{ scale: 0.95 }}
-            className='flex w-fit h-full justify-start items-center flex-row gap-0 cursor-pointer'
+            className='flex w-fit h-fit justify-start items-center flex-row gap-0 cursor-pointer'
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
-            <Logo className='text-lg' />
+            <Logo className='text-black' />
           </motion.div>
 
           {/* 관리자 메뉴 */}

@@ -1,6 +1,4 @@
-// api/admin/reservations/route.ts
-
-// (GET - 전체 조회, POST - 생성)
+// admin/src/app/api/reservations/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
@@ -12,17 +10,17 @@ export async function GET(request: NextRequest) {
     // 필터 파라미터
     const status = searchParams.get('status') // requested, confirmed, cancelled
     const propertyId = searchParams.get('property_id')
-    const startDate = searchParams.get('start_date') // 기간 필터 시작
-    const endDate = searchParams.get('end_date') // 기간 필터 끝
-    const email = searchParams.get('email') // 이메일 검색
-    const code = searchParams.get('code') // 예약 코드 검색
+    const startDate = searchParams.get('start_date')
+    const endDate = searchParams.get('end_date')
+    const email = searchParams.get('email')
+    const code = searchParams.get('code')
 
     // 페이지네이션
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = (page - 1) * limit
 
-    // 쿼리 시작
+    // 쿼리 시작 - property_address 추가
     let query = supabase.from('reservations').select(
       `
         *,
@@ -33,6 +31,10 @@ export async function GET(request: NextRequest) {
             url,
             is_primary,
             sort_order
+          ),
+          property_address!left (
+            address1,
+            address2
           )
         )
       `,
@@ -76,7 +78,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch reservations' }, { status: 500 })
     }
 
-    // 데이터 가공
+    // 데이터 가공 - address 정보 포함
     const formattedReservations = reservations?.map((reservation: any) => {
       const property = reservation.properties
       const imgs = (property.property_images ?? []) as Array<{
@@ -106,6 +108,10 @@ export async function GET(request: NextRequest) {
           id: property.id,
           name: property.name,
           thumbnail,
+          address: {
+            address1: property.property_address?.address1 || null,
+            address2: property.property_address?.address2 || null,
+          },
         },
       }
     })

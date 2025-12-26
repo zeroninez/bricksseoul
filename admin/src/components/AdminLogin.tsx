@@ -57,10 +57,10 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
       >
         <div className='bg-white rounded-lg shadow-xl p-8'>
           {/* 로고 및 제목 */}
-          <div className='text-center mb-8 gap-10'>
-            <Logo className='text-lg mb-4' />
-            <h1 className='text-lg font-bold text-gray-900 mb-2'>관리자 로그인</h1>
-            <p className='text-gray-600 text-sm'>
+          <div className='flex flex-col justify-start items-center mb-8'>
+            <Logo className='' />
+            <h1 className='text-lg font-bold text-center text-gray-900 mb-2'>관리자 로그인</h1>
+            <p className='text-gray-600 text-sm text-center'>
               관리자 페이지에 접속하려면
               <br />
               비밀번호를 입력해주세요.

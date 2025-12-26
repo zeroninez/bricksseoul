@@ -90,7 +90,7 @@ export const Header: React.FC = () => {
           {isPropertyDetail || (isReservationCheckPage && !isMobileOpen) ? (
             <GoArrowLeft className={`text-xl cursor-pointer ${textColor}`} onClick={router.back} />
           ) : (
-            <Logo className={`text-[18px] cursor-pointer ${textColor}`} onClick={goHome} />
+            <Logo className={`cursor-pointer ${textColor}`} onClick={goHome} />
           )}
 
           {(isPropertyDetail || isReservationCheckPage || isReservationPage) && !isMobileOpen && (

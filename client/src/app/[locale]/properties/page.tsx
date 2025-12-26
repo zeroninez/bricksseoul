@@ -94,8 +94,8 @@ export default function PropertiesPage() {
     <>
       <PageStart />
 
-      <div className='space-y-10'>
-        <div className='w-full h-fit flex flex-col items-center justify-center gap-2 px-5 pt-6 pb-6'>
+      <div className='space-y-10 px-4'>
+        <div className='w-full h-fit flex flex-col items-center justify-center gap-2 pt-6 pb-6'>
           <div className='w-full h-fit text-left text-black text-3xl leading-[1.15] font-bold'>
             Find your <br />
             Place to relax
@@ -104,7 +104,7 @@ export default function PropertiesPage() {
         </div>
 
         {/* date & filter */}
-        <div className='w-full h-fit px-5 flex flex-col items-center justify-center gap-4'>
+        <div className='w-full h-fit flex flex-col items-center justify-center gap-4'>
           <div className='w-full h-fit flex flex-row items-center justify-between gap-4'>
             <div className='w-fit h-fit flex flex-row justify-center items-center gap-1'>
               <span className='text-2xl font-bold'>Find option</span>
@@ -112,7 +112,7 @@ export default function PropertiesPage() {
           </div>
 
           <div className='w-full h-fit flex flex-col gap-2'>
-            <div className='w-full h-fit flex flex-row items-center justify-center gap-4'>
+            <div className='w-full h-fit flex flex-row items-center justify-between'>
               <Input type='date' label='Move-in' placeholder='select' value={moveInDate} setValue={setMoveInDate} />
               <Input type='date' label='Move-out' placeholder='select' value={moveOutDate} setValue={setMoveOutDate} />
             </div>
@@ -121,9 +121,9 @@ export default function PropertiesPage() {
         </div>
 
         {/* results */}
-        <div className='w-full h-fit flex flex-col items-center justify-center gap-4 px-5'>
+        <div className='w-full h-fit flex flex-col items-center justify-center gap-4'>
           <div className='w-full h-fit flex flex-row items-center justify-between gap-4'>
-            <div className='w-fit h-fit flex flex-row justify-center items-center gap-1'>
+            <div className='w-fit h-fit flex flex-row justify-center items-end gap-1'>
               <span className='text-2xl font-bold'>Places</span>
               {!dateError && properties && (
                 <span className='text-base text-stone-500'>({properties.length} available)</span>
@@ -171,7 +171,7 @@ export default function PropertiesPage() {
                 <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
                   <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
                     <div className='text-center text-stone-400 text-base font-medium'>Give it try again</div>
-                    <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
+                    <div className='font-semibold text-stone-600 text-base text-center leading-tight'>
                       Please select valid dates
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default function PropertiesPage() {
                 <div className='w-full h-80 px-3 pt-3 pb-6 gap-7 flex flex-col justify-center items-center'>
                   <div className='w-full h-fit flex flex-col justify-center items-center gap-2'>
                     <div className='text-center text-stone-400 text-base font-medium'>No properties available</div>
-                    <div className='font-semibold text-stone-600 text-[22px] text-center leading-tight'>
+                    <div className='font-semibold text-stone-600 text-base text-center leading-tight'>
                       Sorry, all properties are booked <br />
                       for the selected dates.
                     </div>

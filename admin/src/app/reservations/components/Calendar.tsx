@@ -95,7 +95,7 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
         key={day}
         onClick={() => onDateClick?.(dateStr)}
         className={classNames(
-          isToday && 'border border-primary',
+          isToday && 'border border-[#3C2F2F]',
           dayData.hasConfirmed && viewMode === 'reservation' && 'bg-[#ECE7E4]',
           dayData.availableCount > 0 && viewMode === 'vacancy' && 'bg-[#E8F5E9]', // 빈방이 있으면 연한 초록색
           'cursor-pointer active:bg-stone-100 transition-colors',

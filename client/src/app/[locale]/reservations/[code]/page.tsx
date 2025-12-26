@@ -6,6 +6,7 @@ import { PageStart } from '@/components'
 import { formatCurrency, formatDate } from '@/utils'
 import { FiCalendar, FiUsers, FiMapPin, FiMail, FiCheckCircle, FiXCircle, FiClock } from 'react-icons/fi'
 import { useEffect } from 'react'
+import classNames from 'classnames'
 
 export default function ReservationDetailPage() {
   const router = useRouter()
@@ -48,30 +49,30 @@ export default function ReservationDetailPage() {
     )
   }
 
-  const getStatusBadge = () => {
-    switch (reservation.status) {
-      case 'confirmed':
-        return (
-          <div className='flex items-center gap-2 bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium'>
-            <FiCheckCircle className='w-4 h-4' />
-            <span>Confirmed</span>
-          </div>
-        )
-      case 'cancelled':
-        return (
-          <div className='flex items-center gap-2 bg-red-100 text-red-800 px-4 py-2 rounded-full text-sm font-medium'>
-            <FiXCircle className='w-4 h-4' />
-            <span>Cancelled</span>
-          </div>
-        )
-      case 'requested':
-        return (
-          <div className='flex items-center gap-2 bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-medium'>
-            <FiClock className='w-4 h-4' />
-            <span>Pending</span>
-          </div>
-        )
+  const StatusBadge = ({ status }: { status: 'confirmed' | 'cancelled' | 'requested' }) => {
+    const Bagde = ({ className }: { className: string }) => {
+      switch (reservation.status) {
+        case 'confirmed':
+          return <FiCheckCircle className={className} />
+        case 'cancelled':
+          return <FiXCircle className={className} />
+        case 'requested':
+          return <FiClock className={className} />
+      }
     }
+
+    return (
+      <div
+        className={classNames('flex items-center gap-2 bg-red-100 px-4 py-2 rounded-xl text-sm font-medium', {
+          'bg-green-50 text-green-800': status === 'confirmed',
+          'bg-red-50 text-red-800': status === 'cancelled',
+          'bg-yellow-50 text-yellow-800': status === 'requested',
+        })}
+      >
+        <Bagde className='w-4 h-4' />
+        <span>{status.charAt(0).toUpperCase() + status.slice(1)}</span>
+      </div>
+    )
   }
 
   const dayCount = Math.ceil(
@@ -85,10 +86,7 @@ export default function ReservationDetailPage() {
       <div className='w-full h-fit p-5 pb-20 flex flex-col gap-6'>
         {/* Header */}
         <div className='w-full flex flex-col gap-4'>
-          <div className='flex items-center justify-between'>
-            <h1 className='text-2xl font-bold text-stone-900'>Reservation Details</h1>
-            {getStatusBadge()}
-          </div>
+          <StatusBadge status={reservation.status} />
           <div className='text-sm text-stone-500'>
             Code: <span className='font-mono font-bold text-stone-900'>{reservation.reservation_code}</span>
           </div>
