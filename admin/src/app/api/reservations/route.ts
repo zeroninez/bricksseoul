@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
 
     // 필터 파라미터
-    const status = searchParams.get('status') // requested, confirmed, cancelled
+    const status = searchParams.get('status')
     const propertyId = searchParams.get('property_id')
     const startDate = searchParams.get('start_date')
     const endDate = searchParams.get('end_date')
@@ -20,13 +20,15 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = (page - 1) * limit
 
-    // 쿼리 시작 - property_address 추가
+    // ✅ 모든 필드 조회
     let query = supabase.from('reservations').select(
       `
         *,
         properties!inner (
           id,
           name,
+          check_in,
+          check_out,
           property_images!left (
             url,
             is_primary,
@@ -78,7 +80,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch reservations' }, { status: 500 })
     }
 
-    // 데이터 가공 - address 정보 포함
+    // ✅ 모든 필드 포함
     const formattedReservations = reservations?.map((reservation: any) => {
       const property = reservation.properties
       const imgs = (property.property_images ?? []) as Array<{
@@ -104,10 +106,15 @@ export async function GET(request: NextRequest) {
         confirmed_at: reservation.confirmed_at,
         cancelled_at: reservation.cancelled_at,
         created_at: reservation.created_at,
+        updated_at: reservation.updated_at,
+        options: reservation.options,
+        invoice: reservation.invoice,
         property: {
           id: property.id,
           name: property.name,
           thumbnail,
+          check_in_time: property.check_in || null,
+          check_out_time: property.check_out || null,
           address: {
             address1: property.property_address?.address1 || null,
             address2: property.property_address?.address2 || null,

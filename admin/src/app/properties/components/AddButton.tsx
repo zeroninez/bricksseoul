@@ -14,9 +14,9 @@ export const AddButton = (props: AddButtonProps) => {
           <path
             d='M15 10H10M10 10H5M10 10V5M10 10V15'
             stroke='currentColor'
-            stroke-width='1.5'
-            stroke-linecap='round'
-            stroke-linejoin='round'
+            strokeWidth='1.5'
+            strokeLinecap='round'
+            strokeLinejoin='round'
           />
         </svg>
         <span className='text-xs font-medium'>공간 추가하기</span>

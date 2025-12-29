@@ -1,6 +1,8 @@
+// admin/src/app/reservations/components/Calendar.tsx
 'use client'
 
 import classNames from 'classnames'
+import { getTodayString } from '@/utils'
 
 interface DayData {
   checkInCount: number
@@ -8,7 +10,7 @@ interface DayData {
   stayingCount: number
   hasConfirmed: boolean
   totalRequested: number
-  availableCount: number // 추가
+  availableCount: number
   allReservations: Array<{
     id: string
     reservation_code: string
@@ -40,6 +42,8 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
     'w-full flex items-center justify-center text-center text-sm font-medium leading-none'
   const commonDayDataClassName = 'w-full h-full flex-1 overflow-hidden px-1 rounded flex items-center justify-center'
   const commonDayDataNumberClassName = 'text-xxs text-white text-center font-bold leading-0 -translate-y-[1px]'
+
+  const todayString = getTodayString()
 
   // 해당 월의 첫날과 마지막날
   const firstDay = new Date(year, month - 1, 1)
@@ -78,7 +82,7 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
   // 현재 달의 날짜들
   for (let day = 1; day <= daysInMonth; day++) {
     const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    const isToday = new Date().toISOString().split('T')[0] === dateStr
+    const isToday = todayString === dateStr // ✅ 수정됨
 
     const dayData = calendarData[dateStr] || {
       checkInCount: 0,
@@ -97,7 +101,7 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
         className={classNames(
           isToday && 'border border-[#3C2F2F]',
           dayData.hasConfirmed && viewMode === 'reservation' && 'bg-[#ECE7E4]',
-          dayData.availableCount > 0 && viewMode === 'vacancy' && 'bg-[#E8F5E9]', // 빈방이 있으면 연한 초록색
+          dayData.availableCount > 0 && viewMode === 'vacancy' && 'bg-[#E8F5E9]',
           'cursor-pointer active:bg-stone-100 transition-colors',
           commonDateClassName,
         )}

@@ -2,10 +2,11 @@
 
 import { useState, useMemo } from 'react'
 import { useReservationsCalendar } from '@/hooks/useReservation'
-import { usePropertyList } from '@/hooks/useProperty' // 추가
+import { usePropertyList } from '@/hooks/useProperty'
 import { CalendarHeader, Calendar } from './components'
 import { useRouter } from 'next/navigation'
 import classNames from 'classnames'
+import { getTodayString } from '@/utils'
 
 interface DayData {
   checkInCount: number
@@ -13,7 +14,7 @@ interface DayData {
   stayingCount: number
   hasConfirmed: boolean
   totalRequested: number
-  availableCount: number // 추가: 빈방 수
+  availableCount: number
   allReservations: Array<{
     id: string
     reservation_code: string
@@ -21,7 +22,7 @@ interface DayData {
     check_out_date: string
     status: 'requested' | 'confirmed' | 'cancelled'
     guest_count: number
-    property_id: string // 추가
+    property_id: string
     properties: {
       id: string
       name: string
@@ -37,14 +38,14 @@ export default function HomePage() {
   const [viewMode, setViewMode] = useState<'reservation' | 'vacancy'>('reservation')
 
   const { data: reservations, isLoading, error } = useReservationsCalendar(currentYear, currentMonth)
-  const { data: properties } = usePropertyList() // 전체 숙소 목록 가져오기
+  const { data: properties } = usePropertyList()
 
   // 📊 데이터 전처리: 날짜별로 예약 정보 및 빈방 계산
   const calendarData = useMemo(() => {
     if (!reservations || !properties) return {}
 
     const dataMap: Record<string, DayData> = {}
-    const totalProperties = properties.filter((p) => p.is_visible).length // 노출된 숙소만 카운트
+    const totalProperties = properties.filter((p) => p.is_visible).length
 
     reservations.forEach((reservation) => {
       const checkInDate = new Date(reservation.check_in_date)
@@ -91,13 +92,11 @@ export default function HomePage() {
       const reservedPropertyIds = new Set<string>()
 
       dataMap[dateStr].allReservations.forEach((reservation) => {
-        // 해당 날짜에 체크인/체크아웃/숙박 중인 경우 모두 예약된 것으로 간주
         if (reservation.status === 'confirmed' || reservation.status === 'requested') {
           reservedPropertyIds.add(reservation.property_id)
         }
       })
 
-      // 빈방 = 전체 숙소 - 예약된 숙소
       dataMap[dateStr].availableCount = totalProperties - reservedPropertyIds.size
     })
 
@@ -114,7 +113,7 @@ export default function HomePage() {
           stayingCount: 0,
           hasConfirmed: false,
           totalRequested: 0,
-          availableCount: totalProperties, // 예약이 없으면 모든 숙소가 비어있음
+          availableCount: totalProperties,
           allReservations: [],
         }
       }
@@ -125,16 +124,19 @@ export default function HomePage() {
 
   // 📈 월간 통계 계산
   const monthStats = useMemo(() => {
-    const today = new Date().toISOString().split('T')[0]
+    const today = getTodayString() // ✅ 로컬 시간 사용
     const todayData = calendarData[today]
+
+    // ✅ 변경: 전체 예약 요청 개수 계산 (중복 제거)
+    const totalRequested = reservations?.filter((r) => r.status === 'requested').length || 0
 
     return {
       todayCheckIn: todayData?.checkInCount || 0,
       todayCheckOut: todayData?.checkOutCount || 0,
-      todayRequested: todayData?.totalRequested || 0,
-      todayAvailable: todayData?.availableCount || 0, // 추가
+      totalRequested: totalRequested, // ✅ 변경: 오늘이 아닌 전체 예약 요청
+      todayAvailable: todayData?.availableCount || 0,
     }
-  }, [calendarData])
+  }, [calendarData, reservations]) // ✅ reservations 의존성 추가
 
   const handleDateClick = (date: string) => {
     router.push(`/reservations?date=${date}`)
@@ -178,13 +180,13 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* New */}
+              {/* New - 전체 예약 요청 표시 */}
               <div className='w-fit flex-shrink-0 h-fit flex flex-col gap-2 justify-end items-start'>
                 <span className='text-[#3C2F2F] text-sm'>New</span>
                 <button
                   className={classNames(
                     'w-fit h-10 flex flex-row gap-2.5 pl-4 pr-3 py-2.5 rounded-md items-center justify-center cursor-pointer active:scale-95 transition-all',
-                    monthStats.todayRequested > 0 ? 'bg-[#5E4646]' : 'bg-[#DFDADA]',
+                    monthStats.totalRequested > 0 ? 'bg-[#5E4646]' : 'bg-[#DFDADA]',
                   )}
                   onClick={() => {
                     router.push('/reservations/request')
@@ -193,7 +195,7 @@ export default function HomePage() {
                   <span
                     className={classNames(
                       'text-[13px] font-medium leading-none',
-                      monthStats.todayRequested > 0 ? 'text-white' : 'text-[#3C2F2F]',
+                      monthStats.totalRequested > 0 ? 'text-white' : 'text-[#3C2F2F]',
                     )}
                   >
                     Request
@@ -201,10 +203,10 @@ export default function HomePage() {
                   <div
                     className={classNames(
                       'w-6 h-6 p-2 aspect-square rounded-full flex justify-center items-center',
-                      monthStats.todayRequested > 0 ? 'bg-[#D99B48]' : 'bg-[#BFB5B5]',
+                      monthStats.totalRequested > 0 ? 'bg-[#D99B48]' : 'bg-[#BFB5B5]',
                     )}
                   >
-                    <span className='text-sm font-bold leading-none text-white'>{monthStats.todayRequested}</span>
+                    <span className='text-sm font-bold leading-none text-white'>{monthStats.totalRequested}</span>
                   </div>
                 </button>
               </div>
