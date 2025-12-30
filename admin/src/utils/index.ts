@@ -6,12 +6,21 @@ export const formatCurrency = (value: number, currency: string = 'KRW', locale: 
   }).format(value)
 }
 
-export const formatDate = (dateStr: string) => {
+export const formatDate = (dateStr: string, mode: string | null = 'default') => {
   const date = new Date(dateStr)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
   const day = String(date.getDate()).padStart(2, '0')
 
+  const weekDays = ['일', '월', '화', '수', '목', '금', '토']
+  const dayOfWeek = weekDays[date.getDay()]
+
+  if (mode === 'ko') {
+    return `${month}월 ${day}일 ${dayOfWeek}요일`
+  } else if (mode === 'short') {
+    //25.10.10
+    return `${String(year).slice(2)}.${month}.${day}`
+  }
   return `${year}.${month}.${day}`
 }
 

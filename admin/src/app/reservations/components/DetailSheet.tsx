@@ -140,7 +140,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
         if (checkInStatus.isPast) {
           return (
             <div className='w-full space-y-2'>
-              <div className='w-full px-4 py-2 bg-orange-50 border border-orange-200 text-orange-700 text-center rounded-md text-xs'>
+              <div className='w-full px-4 py-2 bg-orange-50 text-orange-400 text-center rounded-md text-xs'>
                 ⚠️ 체크인 날짜가 지난 예약입니다. 취소 처리해 주세요.
               </div>
               <button
@@ -226,16 +226,16 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
         style={{
           left: '16px',
           right: '16px',
-          top: '5vh',
+          top: '5dvh',
           width: 'calc(100% - 32px)',
           height: 'auto',
-          maxHeight: '90vh',
+          maxHeight: '90dvh',
           borderRadius: '12px',
           overflow: 'hidden',
         }}
       >
         <Sheet.Header>
-          <div className='w-full h-fit p-3 inline-flex items-center justify-between'>
+          <div className='w-full h-fit p-5 inline-flex items-center justify-between'>
             {/* 상태 뱃지 */}
             <div className='flex items-center gap-2 flex-wrap'>
               {reservation && (
@@ -281,7 +281,10 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
                 </>
               )}
             </div>
-            <button onClick={onClose} className='w-fit h-fit text-gray-500 active:text-gray-700 transition-all'>
+            <button
+              onClick={onClose}
+              className='w-fit h-fit text-gray-500 active:scale-90 active:opacity-70 transition-all'
+            >
               <svg xmlns='http://www.w3.org/2000/svg' className='w-6 h-6' viewBox='0 0 24 24' fill='none'>
                 <path
                   d='M7 7L17 17M7 17L17 7'
@@ -303,7 +306,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
                   {reservation.reservation_code}
                   <button
                     onClick={() => copyToClipboard(reservation.reservation_code)}
-                    className='absolute top-1/2 -translate-y-1/2 right-5 z-10 text-sm opacity-50 active:opacity-80 transition-all'
+                    className='absolute top-1/2 -translate-y-1/2 right-4 z-10 text-sm opacity-50 active:opacity-80 transition-all'
                   >
                     복사
                   </button>
@@ -326,7 +329,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
                   {reservation.email}
                   <button
                     onClick={() => copyToClipboard(reservation.email)}
-                    className='absolute top-1/2 -translate-y-1/2 right-5 z-10 text-sm opacity-50 active:opacity-80 transition-all'
+                    className='absolute top-1/2 -translate-y-1/2 right-4 z-10 text-sm opacity-50 active:opacity-80 transition-all'
                   >
                     복사
                   </button>
@@ -334,7 +337,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
                 <div className='w-full h-px bg-stone-200' />
                 <div className='bg-[#F5F4F4] text-black px-5 py-3 text-sm relative'>
                   인원
-                  <span className='absolute top-1/2 -translate-y-1/2 right-5 z-10 text-sm'>
+                  <span className='absolute top-1/2 -translate-y-1/2 right-4 text-end z-10 text-sm'>
                     {reservation.guest_count}명
                   </span>
                 </div>
@@ -374,7 +377,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
               </LabelItem>
 
               <LabelItem label='결제금액'>
-                <div className='bg-[#F5F4F4] text-black px-5 py-3 text-sm relative font-bold'>
+                <div className='bg-[#F5F4F4] text-black px-5 py-3 text-sm relative'>
                   ₩{reservation.total_price.toLocaleString()}
                 </div>
               </LabelItem>
@@ -397,7 +400,7 @@ export const DetailSheet = ({ reservation, onClose, onUpdate }: DetailSheetProps
               )}
 
               {/* 액션 버튼 */}
-              <div className='w-full px-5 pb-5 pt-24 pointer-events-none absolute bottom-0 bg-gradient-to-t from-white via-white/90 to-transparent inset-x-0 h-fit flex flex-col gap-2.5'>
+              <div className='w-full px-5 pb-5 pt-24 pointer-events-none absolute bottom-0 bg-gradient-to-t from-white via-white/90 to-transparent inset-x-0 h-fit flex flex-row gap-2.5'>
                 {renderActionButtons()}
               </div>
             </div>

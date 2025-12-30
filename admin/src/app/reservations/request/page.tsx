@@ -4,14 +4,17 @@
 import { TabPageLayout } from '@/components'
 import { Fragment, useState, useMemo } from 'react'
 import { useReservationsList } from '@/hooks/useReservation'
-import { Item, DetailSheet } from './components'
+import { ReservationItem, DetailSheet } from '../components'
 import type { Reservation } from '@/types/reservation'
+import { useQueryState } from '@/hooks/useQueryState'
 
 type SortOption = 'latest' | 'oldest' | 'check_in_asc' | 'check_in_desc'
 
 export default function RequestList() {
   const tabs = ['신규예약', '지난예약']
-  const [activeTab, setActiveTab] = useState(tabs[0])
+  const [tab, setTab] = useQueryState('tab', tabs[0], {
+    allowed: tabs,
+  })
   const [selectedReservation, setSelectedReservation] = useState<any>(null)
 
   // ✅ 검색 및 정렬 상태
@@ -80,11 +83,11 @@ export default function RequestList() {
     return sorted
   }, [allReservations, searchQuery, sortBy])
 
-  const isLoading = activeTab === '신규예약' ? isLoadingNew : isLoadingPast
-  const error = activeTab === '신규예약' ? errorNew : errorPast
+  const isLoading = tab === '신규예약' ? isLoadingNew : isLoadingPast
+  const error = tab === '신규예약' ? errorNew : errorPast
 
   const handleRefresh = () => {
-    if (activeTab === '신규예약') {
+    if (tab === '신규예약') {
       refetchNew()
     } else {
       refetchPast()
@@ -97,8 +100,8 @@ export default function RequestList() {
   }
 
   // ✅ 탭 변경 시 검색어 초기화
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab)
+  const handleTabChange = (tab: (typeof tabs)[number]) => {
+    setTab(tab)
     if (tab === '신규예약') {
       setSearchQuery('')
     }
@@ -107,8 +110,11 @@ export default function RequestList() {
   return (
     <TabPageLayout
       tabs={tabs}
-      activeTab={activeTab}
+      activeTab={tab}
       setActiveTab={handleTabChange}
+      backButton={{
+        href: '/reservations',
+      }}
       refreshHandler={{
         isLoading: isLoading,
         error: error,
@@ -135,19 +141,24 @@ export default function RequestList() {
       )}
 
       {/* 신규 예약 리스트 */}
-      {!isLoading && !error && activeTab === '신규예약' && (
+      {!isLoading && !error && tab === '신규예약' && (
         <div className='space-y-4 px-4 py-4'>
           {newReservations && newReservations.length > 0 ? (
             newReservations.map((reservation, index) => (
               <Fragment key={reservation.id}>
-                <Item
+                <ReservationItem
+                  statusType='request'
                   key={reservation.id}
                   reservation={reservation}
-                  onClick={() => {
-                    setSelectedReservation(reservation)
+                  action={{
+                    label: '상세보기',
+                    type: 'button',
+                    onClick: () => {
+                      setSelectedReservation(reservation)
+                    },
                   }}
                 />
-                {index < newReservations.length - 1 && <div key={index} className='w-full h-px bg-gray-200' />}
+                {index < newReservations.length - 1 && <div key={index} className='w-full h-px bg-[#EFECEC]' />}
               </Fragment>
             ))
           ) : (
@@ -157,7 +168,7 @@ export default function RequestList() {
       )}
 
       {/* 지난 예약 리스트 */}
-      {!isLoading && !error && activeTab === '지난예약' && (
+      {!isLoading && !error && tab === '지난예약' && (
         <div className='flex flex-col'>
           {/* ✅ 검색 및 정렬 UI */}
           <div className='sticky top-0 z-10 p-4 space-y-3'>
@@ -200,7 +211,7 @@ export default function RequestList() {
 
             {/* 정렬 드롭다운 */}
             <div className='flex items-center justify-between'>
-              <span className='text-xs text-gray-500'>
+              <span className='text-xs text-gray-500 px-0.5'>
                 {pastReservations.length}개의 예약
                 {searchQuery && ` (검색됨)`}
               </span>
@@ -236,14 +247,19 @@ export default function RequestList() {
             {pastReservations.length > 0 ? (
               pastReservations.map((reservation, index) => (
                 <Fragment key={reservation.id}>
-                  <Item
+                  <ReservationItem
+                    statusType='request'
                     key={reservation.id}
                     reservation={reservation}
-                    onClick={() => {
-                      setSelectedReservation(reservation)
+                    action={{
+                      label: '상세보기',
+                      type: 'button',
+                      onClick: () => {
+                        setSelectedReservation(reservation)
+                      },
                     }}
                   />
-                  {index < pastReservations.length - 1 && <div key={index} className='w-full h-px bg-gray-200' />}
+                  {index < pastReservations.length - 1 && <div key={index} className='w-full h-px bg-[#EFECEC]' />}
                 </Fragment>
               ))
             ) : (

@@ -87,8 +87,7 @@ export const Header = () => {
           {/* Logo */}
           <motion.div
             onClick={() => router.push('/')}
-            whileTap={{ scale: 0.95 }}
-            className='flex w-fit h-fit justify-start items-center flex-row gap-0 cursor-pointer'
+            className='flex w-fit h-fit justify-start items-center flex-row gap-0 active:scale-90 hover:opacity-70 transition-all cursor-pointer'
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}

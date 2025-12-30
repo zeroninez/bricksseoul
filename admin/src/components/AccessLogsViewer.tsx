@@ -148,7 +148,7 @@ export const AccessLogsViewer = () => {
   }
 
   return (
-    <div className='space-y-6 p-6'>
+    <div className='space-y-6 p-4'>
       {/* 헤더 */}
       <div className='flex justify-between items-center'>
         <div className='flex gap-2'>

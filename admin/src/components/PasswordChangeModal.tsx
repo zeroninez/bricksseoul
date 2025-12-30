@@ -86,17 +86,17 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className='fixed inset-0 max-w-md mx-auto bg-black bg-opacity-50 flex items-center justify-center p-4 z-50'
+          className='fixed inset-0 max-w-md mx-auto bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50'
           onClick={handleClose}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className='bg-white p-6 w-full max-w-md'
+            className='bg-white p-6 w-full max-w-md rounded-xl shadow-lg'
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className='text-xl font-bold mb-4'>관리자 비밀번호 변경</h2>
+            <h2 className='text-lg mb-4'>관리자 비밀번호 변경</h2>
 
             {success ? (
               <div className='text-center py-8'>
@@ -115,7 +115,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
@@ -126,7 +126,7 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
@@ -137,27 +137,27 @@ export const PasswordChangeModal = ({ isOpen, onClose }: PasswordChangeModalProp
                     type='password'
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className='w-full px-3 py-2 border border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
+                    className='w-full px-3 py-2 border rounded-lg border-gray-300 focus:ring-2 focus:ring-black focus:border-transparent'
                     disabled={isLoading}
                   />
                 </div>
 
                 {error && (
-                  <div className='p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm'>{error}</div>
+                  <div className='p-3 bg-red-50 border rounded-lg border-red-200 text-red-700 text-sm'>{error}</div>
                 )}
 
                 <div className='flex gap-3 pt-4'>
                   <button
                     type='button'
                     onClick={handleClose}
-                    className='flex-1 px-4 py-2 bg-gray-300 text-gray-700 hover:bg-gray-400 transition-colors'
+                    className='flex-1 px-4 py-3 rounded-lg border border-[#CFC7C7] bg-[#EFECEC] text-[#3C2F2F] hover:bg-gray-400 transition-colors'
                     disabled={isLoading}
                   >
                     취소
                   </button>
                   <button
                     type='submit'
-                    className='flex-1 px-4 py-2 bg-black text-white hover:bg-black/90 transition-colors disabled:opacity-50'
+                    className='flex-1 px-4 py-3 rounded-lg bg-[#3C2F2F] text-white hover:opacity-90 transition-colors disabled:opacity-50'
                     disabled={isLoading}
                   >
                     {isLoading ? '변경 중...' : '변경'}

@@ -9,6 +9,9 @@ interface TabPageLayoutProps {
   activeTab: string
   setActiveTab: (tab: string) => void
   children: React.ReactNode
+  backButton?: {
+    href?: string
+  }
   refreshHandler?: {
     isLoading: boolean
     error: unknown
@@ -16,7 +19,14 @@ interface TabPageLayoutProps {
   }
 }
 
-export const TabPageLayout = ({ tabs, activeTab, setActiveTab, children, refreshHandler }: TabPageLayoutProps) => {
+export const TabPageLayout = ({
+  tabs,
+  activeTab,
+  setActiveTab,
+  children,
+  refreshHandler,
+  backButton,
+}: TabPageLayoutProps) => {
   const router = useRouter()
   return (
     <>
@@ -26,6 +36,10 @@ export const TabPageLayout = ({ tabs, activeTab, setActiveTab, children, refresh
             <button
               className='w-fit pr-1 h-8 z-10 active:scale-90 active:opacity-70 transition-all text-black flex justify-center items-center'
               onClick={() => {
+                if (backButton?.href) {
+                  router.push(backButton.href)
+                  return
+                }
                 router.back()
               }}
             >

@@ -16,13 +16,13 @@ export default function Settings() {
   return (
     <>
       {/* 페이지 리스트 */}
-      <div className='flex flex-col justify-start items-start'>
+      <div className='min-h-dvh mt-14 flex flex-col justify-start items-start'>
         {navigationItems.map((item) =>
           item.key === 'password' ? (
             <button
               key={item.key}
               onClick={() => setIsPasswordModalOpen(true)}
-              className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-white border-b border-gray-200 active:bg-gray-50 transition-colors'
+              className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-background border-b border-gray-200 active:bg-gray-50 transition-colors'
             >
               <span className='font-medium'>{item.name}</span>
               <span className='text-xs text-gray-500 mt-1'>{item.description}</span>
@@ -31,7 +31,7 @@ export default function Settings() {
             <Link
               key={item.key}
               href={`/${item.key}`}
-              className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-white border-b border-gray-200 active:bg-gray-50 transition-colors'
+              className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-background border-b border-gray-200 active:bg-gray-50 transition-colors'
             >
               <span className='font-medium'>{item.name}</span>
               <span className='text-xs text-gray-500 mt-1'>{item.description}</span>

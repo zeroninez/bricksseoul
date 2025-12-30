@@ -138,8 +138,9 @@ export default function HomePage() {
     }
   }, [calendarData, reservations]) // ✅ reservations 의존성 추가
 
-  const handleDateClick = (date: string) => {
-    router.push(`/reservations?date=${date}`)
+  const handleDayClick = (dateStr: string) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return
+    router.push(`/reservations/${dateStr}`)
   }
 
   const handleMonthChange = (year: number, month: number) => {
@@ -227,7 +228,7 @@ export default function HomePage() {
               month={currentMonth}
               calendarData={calendarData}
               viewMode={viewMode}
-              onDateClick={handleDateClick}
+              onDateClick={handleDayClick}
             />
           </div>
         </div>

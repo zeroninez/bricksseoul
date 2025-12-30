@@ -97,7 +97,7 @@ export const Calendar = ({ year, month, calendarData, viewMode, onDateClick }: C
     calendarDays.push(
       <div
         key={day}
-        onClick={() => onDateClick?.(dateStr)}
+        onClick={() => dayData.hasConfirmed && viewMode === 'reservation' && onDateClick?.(dateStr)}
         className={classNames(
           isToday && 'border border-[#3C2F2F]',
           dayData.hasConfirmed && viewMode === 'reservation' && 'bg-[#ECE7E4]',

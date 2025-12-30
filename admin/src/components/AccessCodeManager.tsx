@@ -132,12 +132,12 @@ export const AccessCodeManager = () => {
   }
 
   return (
-    <div className='space-y-6 p-6'>
+    <div className='space-y-6 p-4 pb-16'>
       {/* 헤더 */}
       <div className='flex justify-between items-center'>
         <motion.button
           onClick={() => setIsAddingNew(true)}
-          className='px-3 py-2 text-sm bg-black text-white rounded-lg hover:bg-black/90 transition-colors'
+          className='px-3 py-2 text-sm bg-[#3C2F2F] text-white rounded-lg hover:opacity-90 active:scale-90 transition-all'
           whileTap={{ scale: 0.95 }}
         >
           새 코드 추가
@@ -146,7 +146,7 @@ export const AccessCodeManager = () => {
         {/* 새로고침 버튼 */}
         <button
           onClick={fetchAccessCodes}
-          className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors'
+          className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-[#EFECEC] hover:bg-gray-200 text-gray-700 rounded-lg transition-colors'
         >
           <TbRefresh className='w-4 h-4' />
           새로고침
@@ -228,7 +228,7 @@ export const AccessCodeManager = () => {
 
       {/* 페이지네이션 정보 */}
       {accessCodes.length > 0 && (
-        <div className='flex justify-between items-center text-sm text-gray-600'>
+        <div className='flex justify-between items-center px-1 text-sm text-gray-600'>
           <span>
             총 {accessCodes.length}개 중 {startIndex + 1}-{Math.min(endIndex, accessCodes.length)}개 표시
           </span>
@@ -353,27 +353,25 @@ export const AccessCodeManager = () => {
       )}
 
       {/* 통계 */}
-      <div className='mt-8 p-4 bg-gray-50 rounded-lg'>
-        <h3 className='font-semibold mb-2'>통계</h3>
-        <div className='grid grid-cols-2 md:grid-cols-4 gap-4 text-center'>
+      <div className='mt-8 p-4 bg-[#EFECEC] rounded-lg'>
+        <h3 className='font-semibold mb-4'>통계</h3>
+        <div className='grid grid-cols-4 gap-4 text-center'>
           <div>
-            <div className='text-2xl font-bold text-black'>{accessCodes.length}</div>
+            <div className='text-lg font-bold text-black'>{accessCodes.length}</div>
             <div className='text-sm text-gray-600'>총 코드</div>
           </div>
           <div>
-            <div className='text-2xl font-bold text-green-600'>
+            <div className='text-lg font-bold text-green-600'>
               {accessCodes.filter((code) => code.is_active).length}
             </div>
             <div className='text-sm text-gray-600'>활성 코드</div>
           </div>
           <div>
-            <div className='text-2xl font-bold text-red-600'>
-              {accessCodes.filter((code) => !code.is_active).length}
-            </div>
+            <div className='text-lg font-bold text-red-600'>{accessCodes.filter((code) => !code.is_active).length}</div>
             <div className='text-sm text-gray-600'>비활성 코드</div>
           </div>
           <div>
-            <div className='text-2xl font-bold text-gray-600'>
+            <div className='text-lg font-bold text-gray-600'>
               {Math.round((accessCodes.filter((code) => code.is_active).length / (accessCodes.length || 1)) * 100)}%
             </div>
             <div className='text-sm text-gray-600'>활성 비율</div>
