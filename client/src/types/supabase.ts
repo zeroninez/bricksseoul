@@ -118,6 +118,74 @@ export type Database = {
         }
         Relationships: []
       }
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          password_hash: string | null
+          reservation_code: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          password_hash?: string | null
+          reservation_code?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          password_hash?: string | null
+          reservation_code?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      inquiry_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          inquiry_id: string
+          sender_name: string | null
+          sender_type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          inquiry_id: string
+          sender_name?: string | null
+          sender_type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          inquiry_id?: string
+          sender_name?: string | null
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inquiry_messages_inquiry_id_fkey"
+            columns: ["inquiry_id"]
+            isOneToOne: false
+            referencedRelation: "inquiries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       properties: {
         Row: {
           check_in: string | null
@@ -382,41 +450,78 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      fn_property_create: {
-        Args: {
-          p_address?: Json
-          p_amenities?: string[]
-          p_check_in: string
-          p_check_out: string
-          p_currency?: string
-          p_description: string
-          p_images?: Json
-          p_name: string
-          p_price_per_night: number
-          p_rules?: string[]
-          p_space?: Json
-        }
-        Returns: string
-      }
+      fn_property_create:
+        | {
+            Args: {
+              p_address?: Json
+              p_amenities?: string[]
+              p_check_in: string
+              p_check_out: string
+              p_currency?: string
+              p_description: string
+              p_images?: Json
+              p_name: string
+              p_price_per_night: number
+              p_rules?: string[]
+              p_space?: Json
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_address?: Json
+              p_amenities?: string[]
+              p_check_in: string
+              p_check_out: string
+              p_currency?: string
+              p_description: string
+              p_images?: Json
+              p_is_visible?: boolean
+              p_name: string
+              p_price_per_night: number
+              p_rules?: string[]
+              p_space?: Json
+            }
+            Returns: string
+          }
       fn_property_delete: { Args: { p_id: string }; Returns: undefined }
       fn_property_get: { Args: { p_id: string }; Returns: Json }
-      fn_property_update: {
-        Args: {
-          p_address?: Json
-          p_amenities?: string[]
-          p_check_in?: string
-          p_check_out?: string
-          p_currency?: string
-          p_description?: string
-          p_id: string
-          p_images?: Json
-          p_name?: string
-          p_price_per_night?: number
-          p_rules?: string[]
-          p_space?: Json
-        }
-        Returns: undefined
-      }
+      fn_property_update:
+        | {
+            Args: {
+              p_address?: Json
+              p_amenities?: string[]
+              p_check_in?: string
+              p_check_out?: string
+              p_currency?: string
+              p_description?: string
+              p_id: string
+              p_images?: Json
+              p_name?: string
+              p_price_per_night?: number
+              p_rules?: string[]
+              p_space?: Json
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              p_address?: Json
+              p_amenities?: string[]
+              p_check_in?: string
+              p_check_out?: string
+              p_currency?: string
+              p_description?: string
+              p_id: string
+              p_images?: Json
+              p_is_visible?: boolean
+              p_name?: string
+              p_price_per_night?: number
+              p_rules?: string[]
+              p_space?: Json
+            }
+            Returns: undefined
+          }
       generate_reservation_code: { Args: never; Returns: string }
       get_unique_reservation_code: { Args: never; Returns: string }
     }

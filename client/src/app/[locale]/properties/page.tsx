@@ -4,21 +4,22 @@
 import { useEffect, useState } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Footer, Input, PageStart } from '@/components'
-import { useAvailableProperties } from '@/hooks/useProperty' // 변경
+import { useAvailableProperties } from '@/hooks/useProperty'
 import { PropertyCard } from './components'
+import { getLocalDateString } from '@/utils'
 
 export default function PropertiesPage() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  // 🔹 기본값: 오늘 / 내일
+  // 🔹 기본값: 오늘 / 내일 (로컬 시간 기준)
   const today = new Date()
-  const todayStr = today.toISOString().split('T')[0]
+  const todayStr = getLocalDateString(today) // ✅ 변경
 
-  const tomorrowDate = new Date()
-  tomorrowDate.setDate(today.getDate() + 1)
-  const tomorrowStr = tomorrowDate.toISOString().split('T')[0]
+  const tomorrow = new Date()
+  tomorrow.setDate(today.getDate() + 1)
+  const tomorrowStr = getLocalDateString(tomorrow) // ✅ 변경
 
   // 🔹 URL에서 moveIn/moveOut 가져오기 (없으면 기본값)
   const initialMoveIn = searchParams.get('in') ?? todayStr
@@ -66,12 +67,11 @@ export default function PropertiesPage() {
     validateDates()
   }, [moveInDate, moveOutDate])
 
-  // 🔹 날짜 유효할 때 URL 쿼리에도 반영 (뒤로가기 해도 날짜 유지)
+  // 🔹 날짜 유효할 때 URL 쿼리에도 반영
   useEffect(() => {
     if (dateError) return
 
     const params = new URLSearchParams(window.location.search)
-
     params.set('in', moveInDate)
     params.set('out', moveOutDate)
 
@@ -86,7 +86,7 @@ export default function PropertiesPage() {
         } else if (sortOption === 'highest') {
           return b.price_per_night - a.price_per_night
         }
-        return 0 // recommended는 기본 순서 유지
+        return 0
       })
     : []
 

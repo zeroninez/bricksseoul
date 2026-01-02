@@ -22,7 +22,8 @@ interface MenuItem {
 }
 
 const MENU_ITEMS: MenuItem[] = [
-  { href: '/contact', label: 'Contact us', icon: 'phone' },
+  // { href: '/contact', label: 'Contact us', icon: 'phone' },
+  { href: '/inquiry', label: 'Inquiries', icon: 'phone' },
   { href: '/business', label: 'For business', icon: 'briefcase' },
   { href: '/reservations', label: 'My reservations', icon: 'mailsearch' },
   { href: '/language', label: 'Language', icon: 'language' },
