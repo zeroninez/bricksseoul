@@ -1,11 +1,12 @@
 // src/components/AccessCodeManager.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Fragment } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { supabase, AccessCodeRow } from '@/lib/supabase'
 import { TbRefresh } from 'react-icons/tb'
 import { MdChevronLeft, MdChevronRight } from 'react-icons/md'
+import classNames from 'classnames'
 
 export const AccessCodeManager = () => {
   const [accessCodes, setAccessCodes] = useState<AccessCodeRow[]>([])
@@ -132,182 +133,193 @@ export const AccessCodeManager = () => {
   }
 
   return (
-    <div className='space-y-6 p-4 pb-16'>
-      {/* 헤더 */}
-      <div className='flex justify-between items-center'>
-        <motion.button
-          onClick={() => setIsAddingNew(true)}
-          className='px-3 py-2 text-sm bg-[#3C2F2F] text-white rounded-lg hover:opacity-90 active:scale-90 transition-all'
-          whileTap={{ scale: 0.95 }}
-        >
-          새 코드 추가
-        </motion.button>
-
-        {/* 새로고침 버튼 */}
-        <button
-          onClick={fetchAccessCodes}
-          className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-[#EFECEC] hover:bg-gray-200 text-gray-700 rounded-lg transition-colors'
-        >
-          <TbRefresh className='w-4 h-4' />
-          새로고침
-        </button>
-      </div>
-
-      {/* 에러 메시지 */}
-      <AnimatePresence>
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className='p-4 bg-red-50 border border-red-200 rounded-lg text-red-700'
+    <>
+      <div className='space-y-5 px-4 pb-6'>
+        {/* 헤더 */}
+        <div className='flex justify-between items-center'>
+          <motion.button
+            onClick={() => setIsAddingNew(true)}
+            className={classNames(
+              'px-3 py-2 text-sm bg-[#3C2F2F] text-white rounded-lg hover:opacity-90 active:scale-90 transition-all',
+              isAddingNew && 'cursor-not-allowed',
+            )}
+            disabled={isAddingNew}
+            whileTap={{ scale: 0.95 }}
+            style={{
+              opacity: isAddingNew ? '0.5' : '1',
+            }}
           >
-            {error}
-            <button onClick={() => setError(null)} className='ml-2 text-red-500 hover:text-red-700'>
-              ✕
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            새 코드 추가
+          </motion.button>
 
-      {/* 새 코드 추가 폼 */}
-      <AnimatePresence>
-        {isAddingNew && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className='overflow-hidden'
+          {/* 새로고침 버튼 */}
+          <button
+            onClick={fetchAccessCodes}
+            className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-[#F4F3F1] hover:bg-gray-200 text-gray-700 rounded-lg transition-colors'
           >
-            <div className='p-4 border border-gray-200 rounded-lg bg-gray-50 space-y-4'>
-              <h3 className='text-lg font-semibold'>새 초대코드 추가</h3>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>초대코드</label>
-                  <input
-                    type='text'
-                    value={newCode.code}
-                    onChange={(e) => setNewCode((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent'
-                    placeholder='예: BRICKS2024'
-                  />
-                </div>
-                <div>
-                  <label className='block text-sm font-medium text-gray-700 mb-1'>코드 이름</label>
-                  <input
-                    type='text'
-                    value={newCode.name}
-                    onChange={(e) => setNewCode((prev) => ({ ...prev, name: e.target.value }))}
-                    className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent'
-                    placeholder='예: 2024년 1월 이벤트'
-                  />
-                </div>
-              </div>
-              <div className='flex gap-2'>
-                <button
-                  onClick={addAccessCode}
-                  className='px-4 py-2 bg-black text-white rounded-lg hover:bg-black/90 transition-colors'
-                >
-                  추가
-                </button>
-                <button
-                  onClick={() => {
-                    setIsAddingNew(false)
-                    setNewCode({ code: '', name: '' })
-                    setError(null)
-                  }}
-                  className='px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors'
-                >
-                  취소
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* 페이지네이션 정보 */}
-      {accessCodes.length > 0 && (
-        <div className='flex justify-between items-center px-1 text-sm text-gray-600'>
-          <span>
-            총 {accessCodes.length}개 중 {startIndex + 1}-{Math.min(endIndex, accessCodes.length)}개 표시
-          </span>
-          <span>
-            {currentPage} / {totalPages} 페이지
-          </span>
+            <TbRefresh className='w-4 h-4' />
+            새로고침
+          </button>
         </div>
-      )}
 
-      {/* 초대코드 목록 */}
-      <div className='space-y-3'>
-        {accessCodes.length === 0 ? (
-          <div className='text-center py-12 bg-white rounded-lg border border-gray-200'>
-            <div className='text-4xl mb-4'>📝</div>
-            <p className='text-gray-500 mb-4'>등록된 초대코드가 없습니다.</p>
-            <button
-              onClick={() => setIsAddingNew(true)}
-              className='px-4 py-2 bg-black text-white rounded-lg hover:bg-black/90 transition-colors'
-            >
-              첫 번째 코드 만들기
-            </button>
-          </div>
-        ) : (
-          currentCodes.map((code, index) => (
+        {/* 에러 메시지 */}
+        <AnimatePresence>
+          {error && (
             <motion.div
-              key={code.id}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className='p-4 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow'
+              exit={{ opacity: 0, y: -10 }}
+              className='p-4 bg-red-50 border border-red-200 rounded-lg text-red-700'
             >
-              <div className='flex items-center justify-between'>
-                <div className='flex-1'>
-                  <div className='flex items-center gap-3 mb-2'>
-                    <span className='font-mono font-bold text-black'>{code.code}</span>
-                    <span
-                      className={`px-2 py-1 rounded-lg text-xs font-medium ${
-                        code.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {code.is_active ? '활성' : '비활성'}
-                    </span>
+              {error}
+              <button onClick={() => setError(null)} className='ml-2 text-red-500 hover:text-red-700'>
+                ✕
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* 새 코드 추가 폼 */}
+        <AnimatePresence>
+          {isAddingNew && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className='overflow-hidden'
+            >
+              <div className='p-4 rounded-lg bg-[#F4F3F1] space-y-4'>
+                <h3 className='text-base'>새 초대코드 추가</h3>
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div>
+                    <label className='block text-sm text-black mb-1'>초대코드</label>
+                    <input
+                      type='text'
+                      value={newCode.code}
+                      onChange={(e) => setNewCode((prev) => ({ ...prev, code: e.target.value.toUpperCase() }))}
+                      className='w-full px-3 py-2 bg-white border border-[#CFC7C7] rounded-lg focus:bg-[#F4F3F1]'
+                      placeholder='예: BRICKS2024'
+                    />
                   </div>
-                  <p className='text-sm text-gray-700 mb-1'>{code.name}</p>
-                  <p className='text-sm text-gray-500'>
-                    생성일: {code.created_at ? new Date(code.created_at).toLocaleDateString('ko-KR') : '알 수 없음'}
-                  </p>
+                  <div>
+                    <label className='block text-sm text-black mb-1'>코드 이름</label>
+                    <input
+                      type='text'
+                      value={newCode.name}
+                      onChange={(e) => setNewCode((prev) => ({ ...prev, name: e.target.value }))}
+                      className='w-full px-3 py-2 bg-white border border-[#CFC7C7] rounded-lg focus:bg-[#F4F3F1]'
+                      placeholder='예: 2024년 1월 이벤트'
+                    />
+                  </div>
                 </div>
                 <div className='flex gap-2'>
                   <button
-                    onClick={() => toggleCodeStatus(code.id, !!code.is_active)}
-                    className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                      code.is_active
-                        ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                        : 'bg-green-100 text-green-700 hover:bg-green-200'
-                    }`}
+                    onClick={addAccessCode}
+                    className='px-4 py-2 flex-1 bg-[#5E4646] text-white rounded-lg hover:bg-black/90 transition-colors'
                   >
-                    {code.is_active ? '비활성화' : '활성화'}
+                    추가
                   </button>
                   <button
-                    onClick={() => deleteAccessCode(code.id)}
-                    className='px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors'
+                    onClick={() => {
+                      setIsAddingNew(false)
+                      setNewCode({ code: '', name: '' })
+                      setError(null)
+                    }}
+                    className='px-4 py-2 flex-1 bg-[#EFECEC] border border-[#CFC7C7] text-[#3C2F2F] rounded-lg hover:bg-gray-400 transition-colors'
                   >
-                    삭제
+                    취소
                   </button>
                 </div>
               </div>
             </motion.div>
-          ))
-        )}
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* 페이지네이션 */}
-      {totalPages > 1 && (
+      <div className='w-full  bg-white h-full space-y-6 px-4 pt-4 pb-6'>
+        {/* 페이지네이션 정보 */}
+        {accessCodes.length > 0 && (
+          <div className='flex justify-between items-center text-sm text-gray-600'>
+            <span>
+              총 {accessCodes.length}개 중 {startIndex + 1}-{Math.min(endIndex, accessCodes.length)}개 표시
+            </span>
+            <span>
+              {currentPage} / {totalPages} 페이지
+            </span>
+          </div>
+        )}
+        {/* 초대코드 목록 */}
+        <div className='space-y-3'>
+          {accessCodes.length === 0 ? (
+            <div className='text-center py-12 bg-white rounded-lg border border-gray-200'>
+              <div className='text-4xl mb-4'>📝</div>
+              <p className='text-gray-500 mb-4'>등록된 초대코드가 없습니다.</p>
+              <button
+                onClick={() => setIsAddingNew(true)}
+                className='px-4 py-2 bg-black text-white rounded-lg hover:bg-black/90 transition-colors'
+              >
+                첫 번째 코드 만들기
+              </button>
+            </div>
+          ) : (
+            currentCodes.map((code, index) => (
+              <div key={code.id} className=''>
+                <motion.div
+                  key={code.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className='py-4'
+                >
+                  <div className='flex items-center justify-between'>
+                    <div className='flex-1'>
+                      <div className='flex items-center gap-3 mb-2'>
+                        <span className='font-mono font-bold text-black'>{code.code}</span>
+                        <span
+                          className={`px-2 py-1 rounded-lg text-xs font-medium ${
+                            code.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {code.is_active ? '활성' : '비활성'}
+                        </span>
+                      </div>
+                      <p className='text-sm text-gray-700 mb-1'>{code.name}</p>
+                      <p className='text-sm text-gray-500'>
+                        생성일: {code.created_at ? new Date(code.created_at).toLocaleDateString('ko-KR') : '알 수 없음'}
+                      </p>
+                    </div>
+                    <div className='flex gap-2'>
+                      <button
+                        onClick={() => toggleCodeStatus(code.id, !!code.is_active)}
+                        className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                          code.is_active
+                            ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                            : 'bg-green-100 text-green-700 hover:bg-green-200'
+                        }`}
+                      >
+                        {code.is_active ? '비활성화' : '활성화'}
+                      </button>
+                      <button
+                        onClick={() => deleteAccessCode(code.id)}
+                        className='px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium transition-colors'
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+                {index < currentCodes.length - 1 && <hr className='my-2 border-gray-200' />}
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* 페이지네이션 */}
         <div className='flex justify-center items-center space-x-2'>
           <button
             onClick={goToPrevPage}
             disabled={currentPage === 1}
-            className='flex items-center px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+            className='flex items-center px-3 py-2 text-sm bg-[#EBE7E4] border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
           >
             <MdChevronLeft className='w-4 h-4 mr-1' />
             이전
@@ -332,7 +344,7 @@ export const AccessCodeManager = () => {
                   key={pageNum}
                   onClick={() => goToPage(pageNum)}
                   className={`px-3 py-2 text-sm rounded-lg transition-colors ${
-                    currentPage === pageNum ? 'bg-black text-white' : 'bg-white border border-gray-300 hover:bg-gray-50'
+                    currentPage === pageNum ? 'bg-[#7E6B6B] text-white' : 'bg-[#EBE7E4] hover:bg-gray-50'
                   }`}
                 >
                   {pageNum}
@@ -344,40 +356,13 @@ export const AccessCodeManager = () => {
           <button
             onClick={goToNextPage}
             disabled={currentPage === totalPages}
-            className='flex items-center px-3 py-2 text-sm bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+            className='flex items-center px-3 py-2 text-sm bg-[#EBE7E4] border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
           >
             다음
             <MdChevronRight className='w-4 h-4 ml-1' />
           </button>
         </div>
-      )}
-
-      {/* 통계 */}
-      <div className='mt-8 p-4 bg-[#EFECEC] rounded-lg'>
-        <h3 className='font-semibold mb-4'>통계</h3>
-        <div className='grid grid-cols-4 gap-4 text-center'>
-          <div>
-            <div className='text-lg font-bold text-black'>{accessCodes.length}</div>
-            <div className='text-sm text-gray-600'>총 코드</div>
-          </div>
-          <div>
-            <div className='text-lg font-bold text-green-600'>
-              {accessCodes.filter((code) => code.is_active).length}
-            </div>
-            <div className='text-sm text-gray-600'>활성 코드</div>
-          </div>
-          <div>
-            <div className='text-lg font-bold text-red-600'>{accessCodes.filter((code) => !code.is_active).length}</div>
-            <div className='text-sm text-gray-600'>비활성 코드</div>
-          </div>
-          <div>
-            <div className='text-lg font-bold text-gray-600'>
-              {Math.round((accessCodes.filter((code) => code.is_active).length / (accessCodes.length || 1)) * 100)}%
-            </div>
-            <div className='text-sm text-gray-600'>활성 비율</div>
-          </div>
-        </div>
       </div>
-    </div>
+    </>
   )
 }

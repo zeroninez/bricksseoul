@@ -1,8 +1,8 @@
 export const appinfo = {
-  name: 'Bricks Seoul',
-  title: 'Bricks Seoul',
-  titleTemplate: '%s - Bricks Seoul',
-  description: 'Bricks Seoul',
+  name: 'wellStay',
+  title: 'wellStay',
+  titleTemplate: '%s - wellStay',
+  description: 'wellStay',
   keywords: [],
   authors: [
     {
@@ -10,5 +10,5 @@ export const appinfo = {
       email: 'info@bricksseoul.com',
     },
   ],
-  url: 'https://bricksseoul.vercel.app/',
+  url: 'https://admin-wellstay.vercel.app',
 }

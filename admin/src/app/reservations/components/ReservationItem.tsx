@@ -16,8 +16,15 @@ interface ReservationItemProps {
     onClick?: () => void
     onDetailClick?: () => void
   }
+  syncSelectedReservation?: () => void
 }
-export const ReservationItem = ({ statusType, standardDate, reservation, action }: ReservationItemProps) => {
+export const ReservationItem = ({
+  statusType,
+  standardDate,
+  reservation,
+  action,
+  syncSelectedReservation,
+}: ReservationItemProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   // IN, OUT, STAY status
@@ -31,10 +38,12 @@ export const ReservationItem = ({ statusType, standardDate, reservation, action 
     if (evalDate >= checkOutDate) return 'OUT'
   })()
 
+  console.log(`${reservation.id}-${standardDate}-item`)
+
   return (
     <>
       <motion.div
-        key={reservation.id}
+        key={`${reservation.id}-${standardDate}-item`}
         className='w-full h-fit grid grid-cols-[48px_1fr] grid-rows-1 gap-3 justify-between items-center'
       >
         {statusType === 'request' ? (
@@ -79,7 +88,9 @@ export const ReservationItem = ({ statusType, standardDate, reservation, action 
             {action && (
               <button
                 onClick={() => {
-                  action.type === 'button' ? action.onClick?.() : setIsDropdownOpen(!isDropdownOpen)
+                  action.type === 'button'
+                    ? action.onClick?.()
+                    : (setIsDropdownOpen(!isDropdownOpen), syncSelectedReservation?.())
                 }}
                 className={classNames(
                   'w-fit h-fit flex-shrink-0 px-2 py-2 leading-none text-sm text-[#3C2F2F] active:scale-90 active:opacity-70 transition-all',

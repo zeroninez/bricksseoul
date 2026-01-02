@@ -112,9 +112,6 @@ export default function RequestList() {
       tabs={tabs}
       activeTab={tab}
       setActiveTab={handleTabChange}
-      backButton={{
-        href: '/reservations',
-      }}
       refreshHandler={{
         isLoading: isLoading,
         error: error,

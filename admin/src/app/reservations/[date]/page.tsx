@@ -1,7 +1,7 @@
 // admin/src/app/reservations/[date]/page.tsx
 'use client'
 
-import { Fragment, use, useMemo, useState } from 'react'
+import { Fragment, use, useEffect, useMemo, useState } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import { MiniCalendar, CalendarHeader, ReservationItem, DetailSheet } from '../components'
 import { useReservationsList } from '@/hooks/useReservation'
@@ -26,6 +26,9 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
   const filterOptions = ['all', 'in', 'stay', 'out']
   const [filter, setFilter] = useState<(typeof filterOptions)[number]>('all')
 
+  // ✅ 숙소 필터 상태 추가
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null)
+
   // ✅ React.use()로 params unwrap
   const { date } = use(params)
 
@@ -42,8 +45,10 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
   // 선택된 날짜 상태
   const [selectedDate, setSelectedDate] = useState(date)
 
-  // 선택된 예약 (상세보기용)
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null)
+
+  // 선택된 예약 (상세보기용)
+  const [selectedReservationDetail, setSelectedReservationDetail] = useState<Reservation | null>(null)
 
   // ✅ 해당 월의 예약만 필터링 (취소된 예약 제외)
   const monthReservations = useMemo(() => {
@@ -106,27 +111,59 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
     return dataMap
   }, [monthReservations])
 
-  // 선택된 날짜의 예약 목록 (필터 적용)
-  const selectedDayReservations = useMemo(() => {
+  // ✅ 선택된 날짜의 고유한 숙소 목록 추출
+  const availableProperties = useMemo(() => {
     const dayReservations = calendarData[selectedDate]?.allReservations || []
 
-    // ✅ 필터 적용
-    if (filter === 'all') {
-      return dayReservations
-    } else if (filter === 'in') {
-      return dayReservations.filter((r) => r.check_in_date === selectedDate)
+    // 숙소 ID 기준으로 중복 제거
+    const uniqueProperties = Array.from(
+      new Map(
+        dayReservations.map((r) => [
+          r.property.id,
+          {
+            id: r.property.id,
+            name: r.property.name,
+            count: 0,
+          },
+        ]),
+      ).values(),
+    )
+
+    // 각 숙소별 예약 개수 계산
+    uniqueProperties.forEach((prop) => {
+      prop.count = dayReservations.filter((r) => r.property.id === prop.id).length
+    })
+
+    return uniqueProperties
+  }, [calendarData, selectedDate])
+
+  // 선택된 날짜의 예약 목록 (필터 적용)
+  const selectedDayReservations = useMemo(() => {
+    let dayReservations = calendarData[selectedDate]?.allReservations || []
+
+    // ✅ 1. 상태 필터 적용 (in/stay/out)
+    if (filter === 'in') {
+      dayReservations = dayReservations.filter((r) => r.check_in_date === selectedDate)
     } else if (filter === 'out') {
-      return dayReservations.filter((r) => r.check_out_date === selectedDate)
+      dayReservations = dayReservations.filter((r) => r.check_out_date === selectedDate)
     } else if (filter === 'stay') {
-      return dayReservations.filter((r) => r.check_in_date !== selectedDate && r.check_out_date !== selectedDate)
+      dayReservations = dayReservations.filter(
+        (r) => r.check_in_date !== selectedDate && r.check_out_date !== selectedDate,
+      )
+    }
+
+    // ✅ 2. 숙소 필터 적용
+    if (selectedPropertyId) {
+      dayReservations = dayReservations.filter((r) => r.property.id === selectedPropertyId)
     }
 
     return dayReservations
-  }, [calendarData, selectedDate, filter])
+  }, [calendarData, selectedDate, filter, selectedPropertyId])
 
   const handleDateClick = (newDate: string) => {
     setSelectedDate(newDate)
-    setFilter('all') // ✅ 날짜 변경 시 필터 초기화
+    setFilter('all')
+    setSelectedPropertyId(null) // ✅ 날짜 변경 시 숙소 필터도 초기화
   }
 
   const handleBack = () => {
@@ -136,6 +173,10 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
   const handleUpdate = () => {
     refetchReservations()
   }
+
+  useEffect(() => {
+    setSelectedReservation(null)
+  }, [selectedDate])
 
   if (isLoading) {
     return (
@@ -173,47 +214,84 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
             selectedDate={selectedDate}
             calendarData={calendarData}
             onDateClick={handleDateClick}
+            selectedReservation={selectedReservation}
           />
         </div>
 
         {/* 예약 목록 */}
         <div className='space-y-4 w-full bg-white px-4 pt-3 pb-32'>
           <div className='w-full h-fit flex flex-row justify-between items-center'>
-            <span className='text-sm text-black'>{formatDate(selectedDate, 'ko')}</span>
+            <span className='w-fit text-sm text-black'>{formatDate(selectedDate, 'ko')}</span>
+            {/* ✅ 숙소 필터 셀렉트 */}
+            {availableProperties.length > 1 && (
+              <label className='w-1/3 h-fit flex flex-row gap-1 items-center justify-center relative active:opacity-70 transition-all cursor-pointer'>
+                <select
+                  id='property-filter'
+                  value={selectedPropertyId || ''}
+                  onChange={(e) => setSelectedPropertyId(e.target.value || null)}
+                  className='w-fit h-fit text-sm truncate appearance-none text-black focus:outline-none'
+                >
+                  <option value=''>전체 숙소보기 ({calendarData[selectedDate]?.allReservations.length || 0})</option>
+                  {availableProperties.map((property) => (
+                    <option key={property.id} value={property.id}>
+                      {property.name} ({property.count})
+                    </option>
+                  ))}
+                </select>
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  className='w-5 h-5 pointer-events-none text-black'
+                  viewBox='0 0 20 20'
+                  fill='currentColor'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.27a.75.75 0 01.02-1.06z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </label>
+            )}
           </div>
 
-          {/* ✅ 필터 버튼 */}
-          <div className='w-full h-fit flex flex-row gap-2 justify-start items-center'>
-            {filterOptions.map((option) => {
-              const count =
-                option === 'all'
-                  ? calendarData[selectedDate]?.allReservations.length || 0
-                  : option === 'in'
-                    ? calendarData[selectedDate]?.checkInCount || 0
-                    : option === 'out'
-                      ? calendarData[selectedDate]?.checkOutCount || 0
-                      : calendarData[selectedDate]?.stayingCount || 0
+          <div className='w-full h-fit flex flex-row justify-between items-center'>
+            {/* ✅ 상태 필터 버튼 */}
+            <div className='w-fit h-fit flex flex-row gap-2 justify-start items-center'>
+              {filterOptions.map((option) => {
+                const count =
+                  option === 'all'
+                    ? calendarData[selectedDate]?.allReservations.length || 0
+                    : option === 'in'
+                      ? calendarData[selectedDate]?.checkInCount || 0
+                      : option === 'out'
+                        ? calendarData[selectedDate]?.checkOutCount || 0
+                        : calendarData[selectedDate]?.stayingCount || 0
 
-              return (
-                <button
-                  key={option}
-                  className={`px-3 py-2 rounded-full text-xs leading-tight ${
-                    filter === option
-                      ? 'bg-[#3C2F2F] text-white font-medium'
-                      : 'bg-[#F5F4F4] text-black hover:bg-stone-300 transition-colors font-normal'
-                  }`}
-                  onClick={() => setFilter(option)}
-                >
-                  {option.toUpperCase()} {count}
-                </button>
-              )
-            })}
+                return (
+                  <button
+                    key={option}
+                    className={`px-3 py-2 rounded-full text-xs leading-tight ${
+                      filter === option
+                        ? 'bg-[#3C2F2F] text-white font-medium'
+                        : 'bg-[#F5F4F4] text-black hover:bg-stone-300 transition-colors font-normal'
+                    }`}
+                    onClick={() => setFilter(option)}
+                  >
+                    {option.toUpperCase()} {count}
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {selectedDayReservations.length === 0 ? (
-            <div className='text-center py-12 text-gray-500'>이 날짜에 예약이 없습니다.</div>
+            <div className='text-center py-12 text-gray-500'>
+              {selectedPropertyId || filter !== 'all'
+                ? '선택한 조건에 해당하는 예약이 없습니다.'
+                : '이 날짜에 예약이 없습니다.'}
+            </div>
           ) : (
-            <div className='space-y-3'>
+            <div key={`selected-day-reservations-${selectedDate}`} className='space-y-3'>
               {selectedDayReservations.map((reservation, index) => (
                 <Fragment key={reservation.id}>
                   <ReservationItem
@@ -224,8 +302,12 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
                       label: '더보기',
                       type: 'dropdown',
                       onDetailClick: () => {
-                        setSelectedReservation(reservation)
+                        setSelectedReservationDetail(reservation)
                       },
+                    }}
+                    syncSelectedReservation={() => {
+                      if (!selectedReservation) setSelectedReservation(reservation)
+                      else setSelectedReservation(null)
                     }}
                   />
                   {index < selectedDayReservations.length - 1 && <div className='w-full h-px bg-[#EFECEC]' />}
@@ -238,8 +320,8 @@ export default function ReservationByDatePage({ params }: { params: Promise<{ da
 
       {/* 상세보기 모달 */}
       <DetailSheet
-        reservation={selectedReservation}
-        onClose={() => setSelectedReservation(null)}
+        reservation={selectedReservationDetail}
+        onClose={() => setSelectedReservationDetail(null)}
         onUpdate={() => {
           handleUpdate()
         }}

@@ -4,6 +4,7 @@
 import { FaCaretLeft, FaCaretRight } from 'react-icons/fa'
 import { motion } from 'motion/react'
 import classNames from 'classnames'
+import { useMemo, useRef, useState } from 'react'
 
 interface CalendarHeaderProps {
   mini?: boolean
@@ -45,15 +46,13 @@ export const CalendarHeader = ({
         <button onClick={handlePrevMonth} className='w-fit h-fit p-1 opacity-50 transition-colors'>
           <FaCaretLeft className='text-lg text-[#5E4646]' />
         </button>
-        <h2
-          className={classNames(
-            mini
-              ? 'text-sm'
-              : 'text-[17px] font-medium text-[#3C2F2F] w-fit h-6 text-center flex items-center leading-[26px]',
-          )}
-        >
-          {year}년 {month}월
-        </h2>
+        <MonthTitleAsNativeInput
+          year={year}
+          month={month}
+          onChange={({ year, month }) => {
+            onMonthChange(year, month)
+          }}
+        />
         <button onClick={handleNextMonth} className='w-fit h-fit p-1 opacity-50 transition-colors'>
           <FaCaretRight className='text-lg text-[#5E4646]' />
         </button>
@@ -92,6 +91,65 @@ export const CalendarHeader = ({
           </motion.div>
         </motion.div>
       )}
+    </div>
+  )
+}
+
+export function MonthTitleAsNativeInput({
+  mini,
+  year,
+  month,
+  onChange,
+}: {
+  mini?: boolean
+  year: number
+  month: number
+  onChange: (next: { year: number; month: number }) => void
+}) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const value = useMemo(() => {
+    const mm = String(month).padStart(2, '0')
+    return `${year}-${mm}` // YYYY-MM
+  }, [year, month])
+
+  const titleClass = classNames(
+    mini ? 'text-sm' : 'text-[17px] font-medium text-[#3C2F2F] w-fit h-6 text-center flex items-center leading-[26px]',
+  )
+
+  const openPicker = () => {
+    const el = inputRef.current
+    if (!el) return // Chrome/Edge 등에서 지원. Safari는 없을 수 있음.
+    ;(el as any).showPicker?.()
+    el.focus()
+  }
+
+  return (
+    <div
+      className='relative inline-flex items-center'
+      onClick={openPicker}
+      role='button'
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') openPicker()
+      }}
+    >
+      <h2 className={classNames(titleClass, 'select-none')}>
+        {year}년 {month}월
+      </h2>
+
+      <input
+        ref={inputRef}
+        type='month'
+        value={value}
+        onChange={(e) => {
+          const [y, m] = e.target.value.split('-').map(Number)
+          if (!Number.isFinite(y) || !Number.isFinite(m)) return
+          onChange({ year: y, month: m })
+        }}
+        aria-label='연/월 선택'
+        className='absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer'
+      />
     </div>
   )
 }

@@ -19,9 +19,17 @@ interface MiniCalendarProps {
   selectedDate: string // ✅ 선택된 날짜
   calendarData: Record<string, DayData>
   onDateClick?: (date: string) => void
+  selectedReservation?: Reservation | null
 }
 
-export const MiniCalendar = ({ year, month, selectedDate, calendarData, onDateClick }: MiniCalendarProps) => {
+export const MiniCalendar = ({
+  year,
+  month,
+  selectedDate,
+  calendarData,
+  onDateClick,
+  selectedReservation,
+}: MiniCalendarProps) => {
   const weekDays = ['일', '월', '화', '수', '목', '금', '토']
 
   const todayString = getTodayString()
@@ -49,7 +57,7 @@ export const MiniCalendar = ({ year, month, selectedDate, calendarData, onDateCl
     const day = daysInPrevMonth - i
 
     calendarDays.push(
-      <div key={`empty-${i}`} className=''>
+      <div key={`empty-prev-${i}`} className=''>
         <div
           className={classNames(
             ' overflow-hidden px-2 pt-1 pb-2 flex flex-col justify-start items-center w-full relative rounded-md',
@@ -70,6 +78,9 @@ export const MiniCalendar = ({ year, month, selectedDate, calendarData, onDateCl
     const isSelected = selectedDate === dateStr
     const dayData = calendarData[dateStr]
     const hasConfirmed = dayData?.hasConfirmed || false
+    const currentSelected = selectedReservation
+      ? dayData?.allReservations.some((res) => res.id === selectedReservation.id)
+      : false
 
     calendarDays.push(
       <div
@@ -78,8 +89,13 @@ export const MiniCalendar = ({ year, month, selectedDate, calendarData, onDateCl
         className={classNames(
           'w-full h-fit overflow-hidden px-2 pt-1 pb-2 flex flex-col justify-start items-center relative rounded-md cursor-pointer active:bg-stone-100 transition-colors',
           isToday && 'border border-[#3C2F2F] text-black',
-          isSelected && 'bg-[#7E6B6B] text-white',
-          !isSelected && hasConfirmed && 'bg-[#EBE7E4] text-black',
+          isSelected
+            ? 'bg-[#7E6B6B] text-white'
+            : currentSelected
+              ? 'bg-[#CFC7C7] text-black'
+              : hasConfirmed
+                ? 'bg-[#EBE7E4] text-black'
+                : 'bg-transparent text-black',
         )}
       >
         <div className='w-full flex items-center justify-center text-center text-sm font-medium leading-none'>
@@ -97,7 +113,7 @@ export const MiniCalendar = ({ year, month, selectedDate, calendarData, onDateCl
     const dateStr = `${nextYear}-${String(nextMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 
     calendarDays.push(
-      <div key={`empty-${day}`} className=''>
+      <div key={`empty-next-${day}`} className=''>
         <div
           className={classNames(
             ' overflow-hidden px-2 pt-1 pb-2 flex flex-col justify-start items-center w-full relative rounded-md',
