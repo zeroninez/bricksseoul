@@ -37,7 +37,7 @@ export const Cover = ({ data }: CoverProps) => {
           )}
           <div className='absolute inset-0 bg-gradient-to-t from-black/90 to-transparent' />
         </div>
-        <div className='absolute bottom-0 p-5 '>
+        <div className='absolute bottom-0 p-5'>
           <motion.h1
             style={{
               fontSize: titleSize,

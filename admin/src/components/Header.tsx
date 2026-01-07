@@ -102,6 +102,7 @@ export const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
           >
+            {/* 리스트 */}
             <button className='opacity-30 active:opacity-70 active:scale-95 transition-all cursor-pointer'>
               <svg xmlns='http://www.w3.org/2000/svg' className='w-6 h-6' viewBox='0 0 28 28' fill='none'>
                 <path
@@ -113,7 +114,13 @@ export const Header = () => {
                 />
               </svg>
             </button>
-            <button className='active:opacity-70 active:scale-95 transition-all cursor-pointer'>
+            {/* 문의 관리 */}
+            <button
+              onClick={() => {
+                router.push('/inquiries')
+              }}
+              className='active:opacity-70 active:scale-95 transition-all cursor-pointer'
+            >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
                 className='w-6 h-6 active:'
@@ -124,6 +131,7 @@ export const Header = () => {
                 <path d='M21.1875 5.25L15.387 11.88C14.9646 12.3628 14.4439 12.7498 13.8598 13.0149C13.2756 13.28 12.6415 13.4172 12 13.4172C11.3585 13.4172 10.7244 13.28 10.1402 13.0149C9.55609 12.7498 9.03537 12.3628 8.613 11.88L2.8125 5.25H21.1875ZM4.806 5.25L9.741 10.8915C10.0226 11.2135 10.3698 11.4715 10.7592 11.6483C11.1487 11.8251 11.5715 11.9166 11.9992 11.9166C12.427 11.9166 12.8498 11.8251 13.2393 11.6483C13.6287 11.4715 13.9759 11.2135 14.2575 10.8915L19.194 5.25H4.806Z' />
               </svg>
             </button>
+            {/* 설정 */}
             <button
               className='active:opacity-70 active:scale-95 transition-all cursor-pointer'
               onClick={() => router.push('/settings')}

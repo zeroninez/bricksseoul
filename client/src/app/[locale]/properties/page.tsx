@@ -94,7 +94,7 @@ export default function PropertiesPage() {
     <>
       <PageStart />
 
-      <div className='space-y-10 px-4'>
+      <div className='space-y-10 px-5'>
         <div className='w-full h-fit flex flex-col items-center justify-center gap-2 pt-6 pb-6'>
           <div className='w-full h-fit text-left text-black text-3xl leading-[1.15] font-bold'>
             Find your <br />

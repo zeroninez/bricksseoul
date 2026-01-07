@@ -129,7 +129,7 @@ export default function ReservationPage() {
   return (
     <>
       <PageStart />
-      <div className='w-full h-fit p-4 mb-20 flex flex-col justify-start items-center gap-8'>
+      <div className='w-full h-fit p-5 mb-20 flex flex-col justify-start items-center gap-8'>
         <div className='w-full h-fit mb-2 flex flex-row gap-3 bg-primary/10 p-2 rounded-lg justify-between items-start'>
           <div className='w-28 h-20 bg-black/10 rounded-lg overflow-hidden'>
             <img
