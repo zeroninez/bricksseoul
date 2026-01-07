@@ -1,8 +1,8 @@
 export const appinfo = {
-  name: 'WELLNCHER',
-  title: 'WELLNCHER',
-  titleTemplate: '%s - WELLNCHER',
-  description: 'WELLNCHER - Place to relax',
+  name: 'Nukement',
+  title: 'Nukement',
+  titleTemplate: '%s - Nukement',
+  description: 'Nukement - Place to relax',
   keywords: [],
   authors: [
     {
@@ -10,5 +10,5 @@ export const appinfo = {
       email: 'info@bricksseoul.com',
     },
   ],
-  url: 'https://wellncher.vercel.app',
+  url: 'https://nukement.vercel.app',
 }

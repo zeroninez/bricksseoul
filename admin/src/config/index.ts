@@ -1,8 +1,8 @@
 export const appinfo = {
-  name: 'wellStay',
-  title: 'wellStay',
-  titleTemplate: '%s - wellStay',
-  description: 'wellStay',
+  name: 'Nookment',
+  title: 'Nookment',
+  titleTemplate: '%s - Nookment',
+  description: 'Nookment Admin',
   keywords: [],
   authors: [
     {
@@ -10,5 +10,5 @@ export const appinfo = {
       email: 'info@bricksseoul.com',
     },
   ],
-  url: 'https://admin-wellstay.vercel.app',
+  url: 'https://admin-nookment.vercel.app',
 }
