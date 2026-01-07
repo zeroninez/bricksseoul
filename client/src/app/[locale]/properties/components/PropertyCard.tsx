@@ -67,7 +67,7 @@ export const PropertyCard = (props: PropertyCardProps) => {
 
       {/* 정보 */}
       <div className='flex flex-col gap-1.5 px-1'>
-        <div className='text-xl leading-tight font-bold text-stone-800'>{property.name}</div>
+        <div className='text-xl leading-tight font-medium text-stone-800'>{property.name}</div>
         <div className='text-lg font-medium text-stone-800'>
           ₩{property.price_per_night.toLocaleString()}{' '}
           <span className='text-sm font-normal text-stone-500 tracking-tight'>for 1 night</span>

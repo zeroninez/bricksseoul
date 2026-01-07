@@ -8,7 +8,7 @@ interface LogoProps {
   onClick?: () => void
 }
 
-export const Logo = ({ className, onClick, height = 24, cursor = 'default' }: LogoProps) => {
+export const Logo = ({ className, onClick, height = 16, cursor = 'default' }: LogoProps) => {
   return (
     <MainLogo
       style={{

@@ -16,6 +16,48 @@ export const Header = () => {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
 
+  // 새 문의 개수 상태 추가
+  const [pendingCount, setPendingCount] = useState(0)
+
+  // 문의 개수 가져오기
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      try {
+        const res = await fetch('/api/inquiries/count')
+        const data = await res.json()
+        if (res.ok) {
+          setPendingCount(data.count)
+        }
+      } catch (error) {
+        console.error('Failed to fetch pending count:', error)
+      }
+    }
+
+    fetchPendingCount()
+
+    // 30초마다 갱신 (선택사항)
+    const interval = setInterval(fetchPendingCount, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // 문의 페이지에서 돌아올 때 개수 갱신
+  useEffect(() => {
+    if (pathname === '/inquiries') {
+      const fetchCount = async () => {
+        try {
+          const res = await fetch('/api/inquiries/count')
+          const data = await res.json()
+          if (res.ok) {
+            setPendingCount(data.count)
+          }
+        } catch (error) {
+          console.error('Failed to fetch count:', error)
+        }
+      }
+      fetchCount()
+    }
+  }, [pathname])
+
   const handleLogout = () => {
     if (confirm('정말로 로그아웃 하시겠습니까?')) {
       logout()
@@ -119,7 +161,7 @@ export const Header = () => {
               onClick={() => {
                 router.push('/inquiries')
               }}
-              className='active:opacity-70 active:scale-95 transition-all cursor-pointer'
+              className='relative active:opacity-70 active:scale-95 transition-all cursor-pointer'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -130,6 +172,12 @@ export const Header = () => {
                 <path d='M3 5.25V17.25C3 17.6478 3.15804 18.0294 3.43934 18.3107C3.72064 18.592 4.10218 18.75 4.5 18.75H19.5C19.8978 18.75 20.2794 18.592 20.5607 18.3107C20.842 18.0294 21 17.6478 21 17.25V5.25H3ZM3 3.75H21C21.3978 3.75 21.7794 3.90804 22.0607 4.18934C22.342 4.47064 22.5 4.85218 22.5 5.25V17.25C22.5 18.0456 22.1839 18.8087 21.6213 19.3713C21.0587 19.9339 20.2956 20.25 19.5 20.25H4.5C3.70435 20.25 2.94129 19.9339 2.37868 19.3713C1.81607 18.8087 1.5 18.0456 1.5 17.25V5.25C1.5 4.85218 1.65804 4.47064 1.93934 4.18934C2.22064 3.90804 2.60218 3.75 3 3.75Z' />
                 <path d='M21.1875 5.25L15.387 11.88C14.9646 12.3628 14.4439 12.7498 13.8598 13.0149C13.2756 13.28 12.6415 13.4172 12 13.4172C11.3585 13.4172 10.7244 13.28 10.1402 13.0149C9.55609 12.7498 9.03537 12.3628 8.613 11.88L2.8125 5.25H21.1875ZM4.806 5.25L9.741 10.8915C10.0226 11.2135 10.3698 11.4715 10.7592 11.6483C11.1487 11.8251 11.5715 11.9166 11.9992 11.9166C12.427 11.9166 12.8498 11.8251 13.2393 11.6483C13.6287 11.4715 13.9759 11.2135 14.2575 10.8915L19.194 5.25H4.806Z' />
               </svg>
+              {/* 새 문의 뱃지 */}
+              {pendingCount > 0 && (
+                <span className='absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-1'>
+                  {pendingCount > 99 ? '99+' : pendingCount}
+                </span>
+              )}
             </button>
             {/* 설정 */}
             <button

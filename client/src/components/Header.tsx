@@ -7,12 +7,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import { HEADER_HEIGHT } from '@/theme/constants'
 import { useRouter, usePathname, Link } from '@/i18n/routing'
 import { Logo } from './Logo'
-import { GoChevronRight } from 'react-icons/go'
-import { GoArrowLeft } from 'react-icons/go'
-import { HiPhone } from 'react-icons/hi2'
+import { GoChevronRight, GoArrowLeft } from 'react-icons/go'
 import { BsFillSuitcaseLgFill } from 'react-icons/bs'
-import { MdMarkEmailUnread } from 'react-icons/md'
-import { MdOutlineLanguage } from 'react-icons/md'
+import { MdMarkEmailUnread, MdManageSearch, MdLanguage, MdLogout } from 'react-icons/md'
 import classNames from 'classnames'
 
 interface MenuItem {
@@ -23,9 +20,9 @@ interface MenuItem {
 
 const MENU_ITEMS: MenuItem[] = [
   // { href: '/contact', label: 'Contact us', icon: 'phone' },
-  { href: '/inquiry', label: 'Inquiries', icon: 'phone' },
-  { href: '/business', label: 'For business', icon: 'briefcase' },
-  { href: '/reservations', label: 'My reservations', icon: 'mailsearch' },
+  // { href: '/business', label: 'For business', icon: 'business' },
+  { href: '/reservations', label: 'Check reservations', icon: 'reservation' },
+  { href: '/inquiry', label: 'Inquiries', icon: 'inquiry' },
   { href: '/language', label: 'Language', icon: 'language' },
 ]
 
@@ -156,22 +153,22 @@ export const Header: React.FC = () => {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.5 }}
-                  className='w-full flex flex-col justify-end rounded-[20px] bg-white border border-zinc-200 h-fit'
+                  className='w-full flex flex-col justify-end rounded-lg bg-white border border-zinc-200 h-fit'
                 >
                   {MENU_ITEMS.map((item, idx) => (
                     <div
                       key={item.href}
-                      className='pl-3.5 pr-2 py-4 w-full h-fit text-sm font-medium flex flex-row justify-between items-center active:opacity-70 transition-all cursor-pointer'
+                      className='pl-3.5 pr-2 py-4 w-full h-fit text-sm flex flex-row justify-between items-center active:opacity-70 transition-all cursor-pointer'
                       onClick={() => {
                         router.push(item.href)
                         setMobileOpen(false)
                       }}
                     >
                       <div className='w-full h-fit flex flex-row justify-start items-center gap-3'>
-                        {item.icon === 'phone' && <HiPhone className='text-lg' />}
-                        {item.icon === 'briefcase' && <BsFillSuitcaseLgFill className='text-lg' />}
-                        {item.icon === 'mailsearch' && <MdMarkEmailUnread className='text-lg' />}
-                        {item.icon === 'language' && <MdOutlineLanguage className='text-lg' />}
+                        {item.icon === 'inquiry' && <MdMarkEmailUnread className='text-lg' />}
+                        {item.icon === 'business' && <BsFillSuitcaseLgFill className='text-lg' />}
+                        {item.icon === 'reservation' && <MdManageSearch className='text-lg' />}
+                        {item.icon === 'language' && <MdLanguage className='text-lg' />}
                         {item.label}
                       </div>
                       <button className='block w-fit h-full text-lg text-black'>
@@ -187,8 +184,9 @@ export const Header: React.FC = () => {
                   exit={{ opacity: 0 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={toggleAuth}
-                  className='w-full border border-zinc-200 bg-white rounded-2xl h-fit px-5 text-sm text-rose-500 py-4 flex items-center justify-start'
+                  className='w-full border border-zinc-200 bg-white rounded-lg h-fit px-4 text-sm text-rose-500 py-4 flex items-center justify-start'
                 >
+                  <MdLogout className='mr-2' />
                   Log out
                 </motion.div>
               </>
@@ -207,7 +205,7 @@ export const Header: React.FC = () => {
             onClick={toggleAuth}
           >
             <motion.div
-              className='bg-white shadow-lg p-6 w-80'
+              className='bg-white shadow-lg p-5 w-80 rounded-lg'
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
@@ -215,8 +213,8 @@ export const Header: React.FC = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className='mb-4'>
-                <h3 className='text-lg font-medium'>Do you want to log out?</h3>
-                <p className='text-sm text-gray-600'>Access Code: {accessCode?.code || '-'}</p>
+                <h3 className='text-lg'>Do you want to log out?</h3>
+                <p className='text-sm'>Access Code: {accessCode?.code || '-'}</p>
               </div>
               <div className='flex gap-4'>
                 <button
@@ -224,11 +222,11 @@ export const Header: React.FC = () => {
                     logout()
                     setAuthOpen(false)
                   }}
-                  className='flex-1 bg-black text-white py-2'
+                  className='flex-1 bg-black rounded-lg text-white py-2'
                 >
                   Okay
                 </button>
-                <button onClick={toggleAuth} className='flex-1 border border-red-500 text-red-500 py-2'>
+                <button onClick={toggleAuth} className='flex-1 rounded-lg border border-red-500 text-red-500 py-2'>
                   Cancel
                 </button>
               </div>

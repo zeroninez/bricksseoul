@@ -88,7 +88,7 @@ export default function InquiryListPage() {
             placeholder='Search by email or subject...'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className='w-full focus:outline-none bg-transparent'
+            className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent'
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ export default function InquiryListPage() {
         {/* New Inquiry Button */}
         <Link
           href='/inquiry/new'
-          className='w-fit pl-3 pr-4 py-2 bg-[#3C2F2F] text-white text-center rounded-lg font-medium active:bg-[#2A2323] transition-colors flex items-center justify-center gap-2'
+          className='w-fit h-fit pl-3 pr-4 py-2 bg-[#5E4646] text-white text-center leading-none -translate-y-0.5 rounded-md font-medium active:bg-[#2A2323] transition-colors flex items-center justify-center gap-2'
         >
           <IoMdAdd size={20} />
           New
@@ -140,26 +140,27 @@ export default function InquiryListPage() {
             <Link
               key={inquiry.id}
               href={`/inquiry/${inquiry.id}`}
-              className='block bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow'
+              className='block bg-white text-black rounded-md p-4 hover:shadow-md transition-shadow'
             >
               <div className='flex items-start justify-between gap-3'>
-                <div className='flex-1 min-w-0'>
-                  <div className='flex items-center gap-2 mb-1'>
-                    {inquiry.has_password ? (
-                      <MdLock className='text-gray-400 flex-shrink-0' size={16} />
-                    ) : (
-                      <MdLockOpen className='text-gray-400 flex-shrink-0' size={16} />
-                    )}
-                    <h3 className='font-medium text-gray-900 truncate'>{inquiry.subject}</h3>
-                    <span className='text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded'>
-                      {INQUIRY_CATEGORIES.find((c) => c.value === inquiry.category)?.label_en}
-                    </span>
+                <div className='flex-1 min-w-0 space-y-1'>
+                  <div className='flex items-center gap-2 text-sm text-[#8E7D7D]'>
+                    <span className='leading-none'>{format(new Date(inquiry.created_at), 'MMM dd, yyyy HH:mm')}</span>
                   </div>
-                  <div className='flex items-center gap-2 text-sm text-gray-500'>
-                    <span>{format(new Date(inquiry.created_at), 'MMM dd, yyyy HH:mm')}</span>
+                  <span className=''>{inquiry.email}</span>
+                  <div className='flex flex-row justify-start items-center gap-1 mb-1 font-medium text-black '>
+                    {inquiry.has_password ? (
+                      <MdLock className='flex-shrink-0' size={14} />
+                    ) : (
+                      <MdLockOpen className='flex-shrink-0' size={14} />
+                    )}
+                    <span className=''>
+                      [{INQUIRY_CATEGORIES.find((c) => c.value === inquiry.category)?.label_en || 'Unknown'}]
+                    </span>
+                    <span className='truncate'>{inquiry.subject}</span>
                   </div>
                 </div>
-                <span className={`px-2 py-1 rounded text-xs font-medium flex-shrink-0`}>{inquiry.status}</span>
+                <span className={`rounded text-xs font-medium flex-shrink-0 uppercase`}>{inquiry.status}</span>
               </div>
             </Link>
           ))}

@@ -95,19 +95,19 @@ export default function PropertiesPage() {
       <PageStart />
 
       <div className='space-y-10 px-5'>
-        <div className='w-full h-fit flex flex-col items-center justify-center gap-2 pt-6 pb-6'>
-          <div className='w-full h-fit text-left text-black text-3xl leading-[1.15] font-bold'>
+        <div className='w-full h-fit flex flex-col items-center justify-center gap-2 pt-6 pb-4'>
+          <div className='w-full h-fit text-left text-2xl leading-[1.15] font-medium'>
             Find your <br />
             Place to relax
           </div>
-          <div className='w-full h-fit text-left text-stone-600 text-base'>Price exclude taxes, other fees</div>
+          <div className='w-full h-fit text-left text-base'>Price exclude taxes, other fees</div>
         </div>
 
         {/* date & filter */}
         <div className='w-full h-fit flex flex-col items-center justify-center gap-4'>
           <div className='w-full h-fit flex flex-row items-center justify-between gap-4'>
             <div className='w-fit h-fit flex flex-row justify-center items-center gap-1'>
-              <span className='text-2xl font-bold'>Find option</span>
+              <span className='text-xl font-medium'>Find option</span>
             </div>
           </div>
 
@@ -124,12 +124,12 @@ export default function PropertiesPage() {
         <div className='w-full h-fit flex flex-col items-center justify-center gap-4'>
           <div className='w-full h-fit flex flex-row items-center justify-between gap-4'>
             <div className='w-fit h-fit flex flex-row justify-center items-end gap-1'>
-              <span className='text-2xl font-bold'>Places</span>
+              <span className='text-xl font-medium'>Places</span>
               {!dateError && properties && (
                 <span className='text-base text-stone-500'>({properties.length} available)</span>
               )}
             </div>
-            <Input
+            {/* <Input
               type='select'
               placeholder='sort'
               mini
@@ -140,10 +140,10 @@ export default function PropertiesPage() {
                 { label: 'Lowest Price', value: 'lowest' },
                 { label: 'Highest Price', value: 'highest' },
               ]}
-            />
+            /> */}
           </div>
 
-          <div className='w-full h-fit flex flex-col items-center justify-center gap-4 pb-32'>
+          <div className='w-full h-fit flex flex-col items-center justify-center gap-8 pb-32'>
             {isLoading && (
               <div className='text-stone-500 text-center w-full h-auto aspect-square flex items-center justify-center'>
                 Finding available properties...

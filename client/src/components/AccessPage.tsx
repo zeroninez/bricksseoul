@@ -85,9 +85,9 @@ export const AccessPage = () => {
       <div className='absolute max-w-md mx-auto inset-0 bg-black/30 z-0' />
 
       <section className='w-full h-1/2 flex flex-col justify-between items-center z-10 px-6 py-6'>
-        <div className='w-full flex flex-col justify-start items-start gap-1 text-white'>
-          <Logo className='text-lg' />
-          <div className='text-base font-light leading-none'>Place to relax</div>
+        <div className='w-full flex flex-col justify-start items-start gap-1.5 text-white'>
+          <Logo />
+          <div className='text-base font-light leading-none text-left'>Place to relax</div>
         </div>
 
         <div className='w-full flex flex-col justify-start items-start gap-2 text-white'>
@@ -126,7 +126,7 @@ export const AccessPage = () => {
         ) : (
           <div className='w-full h-full flex flex-col'>
             <div className='w-full h-full text-zinc-800 flex flex-col gap-2 justify-start items-start'>
-              <span className='text-base font-medium'>{t('step2.typeSelect.label')}</span>
+              <span className='text-base'>{t('step2.typeSelect.label')}</span>
               <div className='w-full flex flex-row gap-3 justify-between items-center'>
                 {['personal', 'business'].map((key, i) => (
                   <button
@@ -173,7 +173,7 @@ export const AccessPage = () => {
               </div>
             </div>
             <div className='w-full h-full text-stone-800 flex flex-col gap-2 justify-start items-start'>
-              <span className='text-base font-medium'>{t('step2.languageSelect.label')}</span>
+              <span className='text-base'>{t('step2.languageSelect.label')}</span>
               <LocaleDropdown />
             </div>
             <Button onClick={handleSubmit} preset='primary'>

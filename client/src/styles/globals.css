@@ -29,6 +29,7 @@
   --color-primary: #3E160C;
   --color-disabled: #513E39;
   --color-background: #EFECE7;
+  --color-black: #3C2F2F;
 }
 
 @layer base {

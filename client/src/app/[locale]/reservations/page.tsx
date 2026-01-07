@@ -3,6 +3,7 @@
 import { Button, FormLabel, Input, PageStart, TextArea } from '@/components'
 import { useRouter } from '@/i18n/routing'
 import { useState } from 'react'
+import { MdOutlineSearch } from 'react-icons/md'
 
 export default function Reservations() {
   const router = useRouter()
@@ -25,7 +26,7 @@ export default function Reservations() {
       <PageStart />
       <div className='w-full h-full flex flex-col items-center justify-center gap-6 px-5 pb-20'>
         <div className='w-full h-fit flex flex-col items-start justify-center gap-2 py-5'>
-          <span className='text-2xl font-bold'>Start Here.</span>
+          <span className='text-2xl font-medium'>Start Here.</span>
           <p className='text-base text-left'>Easily access your reservation details and keep everything on track.</p>
         </div>
         <form onSubmit={handleSearch} className='w-full h-fit flex flex-col items-start justify-start gap-4'>
@@ -35,11 +36,11 @@ export default function Reservations() {
 
           <button
             type='submit'
-            className='w-full bg-black text-white rounded-xl px-6 py-4 font-medium flex items-center justify-center gap-2 active:scale-95 transition-all'
+            className='w-full h-fit bg-black text-white rounded-lg px-6 py-4 font-medium flex items-center justify-center gap-2 active:scale-95 transition-all'
           >
             {/* search icon */}
-
-            <span>Search Reservation</span>
+            <MdOutlineSearch size={20} />
+            <span className='leading-none -translate-y-0.5'>Search Reservation</span>
           </button>
         </form>
 

@@ -3,9 +3,10 @@
 
 import { useState } from 'react'
 import { useRouter } from '@/i18n/routing'
-import { PageHeader, PageStart } from '@/components'
-import { MdLock } from 'react-icons/md'
+import { PageStart } from '@/components'
+import { MdLock, MdMarkEmailUnread } from 'react-icons/md'
 import { INQUIRY_CATEGORIES } from '@/types/inquiry'
+import { RxCaretDown } from 'react-icons/rx'
 
 export default function NewInquiryPage() {
   const router = useRouter()
@@ -18,14 +19,13 @@ export default function NewInquiryPage() {
     content: '',
     sender_name: '',
   })
-  const [showPassword, setShowPassword] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
     if (!form.subject.trim() || !form.email.trim() || !form.content.trim()) {
-      alert('제목, 이메일, 내용을 입력해주세요.')
+      alert('Please enter a subject, email, and message.')
       return
     }
 
@@ -49,14 +49,14 @@ export default function NewInquiryPage() {
       const json = await res.json()
 
       if (res.ok) {
-        alert('문의가 등록되었습니다.')
+        alert('Your inquiry has been submitted.')
         router.push(`/inquiry/${json.data.id}`)
       } else {
-        alert(json.error || '문의 등록에 실패했습니다.')
+        alert(json.error || 'Failed to submit your inquiry.')
       }
     } catch (error) {
       console.error('Submit error:', error)
-      alert('오류가 발생했습니다.')
+      alert('Something went wrong. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -65,145 +65,225 @@ export default function NewInquiryPage() {
   return (
     <>
       <PageStart />
+      <div className='w-full h-fit px-5 flex flex-row items-center justify-start gap-3 py-2'>
+        <MdMarkEmailUnread className='text-xl' />{' '}
+        <span className='text-xl font-medium text-black -translate-y-0.5'>New Inquiry</span>
+      </div>
 
-      <form onSubmit={handleSubmit} className='bg-white border border-gray-200 rounded-lg p-6 space-y-4'>
-        {/* 제목 */}
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            제목 <span className='text-red-500'>*</span>
-          </label>
-          <input
-            type='text'
-            value={form.subject}
-            onChange={(e) => setForm({ ...form, subject: e.target.value })}
-            maxLength={200}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black'
-            placeholder='문의 제목을 입력하세요'
-          />
-        </div>
+      <form onSubmit={handleSubmit} className='p-5 space-y-6'>
+        {/* Subject */}
+        <InputItem
+          label='Subject'
+          type='text'
+          value={form.subject}
+          onChange={(e) => setForm({ ...form, subject: e.target.value })}
+          maxLength={200}
+          placeholder='Enter a subject'
+          required
+        />
 
-        <div>
-          <label>
-            문의유형 <span className='text-red-500'>*</span>
-          </label>
-          <select
-            value={form.category}
-            onChange={(e) => setForm({ ...form, category: e.target.value })}
-            className='w-full px-4 py-2 border rounded-lg'
-          >
-            <option value=''>선택하세요</option>
-            {INQUIRY_CATEGORIES.map((cat) => (
-              <option key={cat.value} value={cat.value}>
-                {cat.label_en}
-              </option>
-            ))}
-          </select>
-        </div>
+        {/* Message */}
+        <TextareaItem
+          label='Message'
+          value={form.content}
+          rows={8}
+          onChange={(e) => setForm({ ...form, content: e.target.value })}
+          placeholder='Enter your message'
+          required
+        />
 
-        {/* 이메일 */}
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            이메일 <span className='text-red-500'>*</span>
-          </label>
-          <input
-            type='email'
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black'
-            placeholder='답변 받을 이메일'
-          />
-        </div>
+        {/* Category */}
+        <SelectItem
+          required
+          label='Inquiry Type'
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+          options={INQUIRY_CATEGORIES.map((cat) => ({ value: cat.value, label: cat.label_en }))}
+        />
 
-        {/* 작성자 이름 */}
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>이름 (선택)</label>
-          <input
-            type='text'
-            value={form.sender_name}
-            onChange={(e) => setForm({ ...form, sender_name: e.target.value })}
-            maxLength={100}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black'
-            placeholder='작성자 이름'
-          />
-        </div>
+        {/* Email */}
+        <InputItem
+          label='Email'
+          type='email'
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          placeholder='Email for reply'
+          required
+        />
 
-        {/* 예약 코드 */}
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>예약 코드 (선택)</label>
-          <input
-            type='text'
-            value={form.reservation_code}
-            onChange={(e) => setForm({ ...form, reservation_code: e.target.value })}
-            maxLength={20}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black'
-            placeholder='예약과 연결하려면 입력하세요'
-          />
-        </div>
+        {/* Reservation Code */}
+        <InputItem
+          label='Reservation Code (optional)'
+          type='text'
+          value={form.reservation_code}
+          onChange={(e) => setForm({ ...form, reservation_code: e.target.value })}
+          maxLength={20}
+          placeholder='Enter if related to a reservation'
+        />
 
-        {/* 비밀번호 */}
-        <div>
-          <label className='flex items-center gap-2 text-sm font-medium text-gray-700 mb-1'>
-            <MdLock size={16} />
-            비밀번호 (선택)
-          </label>
-          <div className='space-y-2'>
-            <div className='flex items-center gap-2'>
-              <input
-                type='checkbox'
-                checked={showPassword}
-                onChange={(e) => setShowPassword(e.target.checked)}
-                id='show-password'
-                className='rounded'
-              />
-              <label htmlFor='show-password' className='text-sm text-gray-600'>
-                비밀글로 설정
-              </label>
-            </div>
-            {showPassword && (
-              <input
-                type='password'
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black'
-                placeholder='비밀번호 입력'
-              />
-            )}
-          </div>
-          <p className='text-xs text-gray-500 mt-1'>비밀번호를 설정하면 본인과 관리자만 조회할 수 있습니다.</p>
-        </div>
+        {/* Password */}
+        <InputItem
+          label='Password'
+          type='password'
+          value={form.password}
+          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          placeholder='Enter a password'
+          required
+          caption='If you set a password, only you and the admin can view this inquiry.'
+        />
 
-        {/* 내용 */}
-        <div>
-          <label className='block text-sm font-medium text-gray-700 mb-1'>
-            내용 <span className='text-red-500'>*</span>
-          </label>
-          <textarea
-            value={form.content}
-            onChange={(e) => setForm({ ...form, content: e.target.value })}
-            rows={8}
-            className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none'
-            placeholder='문의 내용을 입력하세요'
-          />
-        </div>
-
-        {/* 제출 버튼 */}
-        <div className='flex gap-3 pt-4'>
+        {/* Buttons */}
+        <div className='flex gap-3 pb-32 pt-4'>
           <button
             type='button'
             onClick={() => router.back()}
-            className='flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors'
+            className='flex-1 px-4 py-3 border border-[#DFDADA] text-black rounded-lg font-medium hover:bg-gray-50 transition-colors'
           >
-            취소
+            Cancel
           </button>
           <button
             type='submit'
             disabled={submitting}
-            className='flex-1 px-4 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400'
+            className='flex-1 px-4 py-3 bg-black text-white rounded-lg font-medium hover:bg-[#DFDADA] transition-colors disabled:bg-[#DFDADA]'
           >
-            {submitting ? '등록 중...' : '문의 등록'}
+            {submitting ? 'Submitting...' : 'Submit Inquiry'}
           </button>
         </div>
       </form>
     </>
+  )
+}
+
+const InputItem = ({
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  maxLength,
+  required,
+  caption,
+}: {
+  label?: string
+  type?: string
+  placeholder: any
+  value: any
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  maxLength?: number
+  required?: boolean
+  caption?: string
+}) => {
+  return (
+    <div>
+      {label && (
+        <label className='block text-sm font-medium text-black mb-3'>
+          {label}
+          {required && <span className='ml-1'>*</span>}
+        </label>
+      )}
+      <div className='px-3 py-2 rounded-md bg-white active:bg-stone-100 flex flex-row gap-2 justify-start items-center focus-within:bg-stone-200 transition-all'>
+        <input
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e)}
+          maxLength={maxLength}
+          required={required}
+          className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent'
+        />
+      </div>
+      {caption && <p className='text-xs text-gray-500 mt-2 px-0.5'>{caption}</p>}
+    </div>
+  )
+}
+
+const TextareaItem = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  maxLength,
+  required,
+  caption,
+  rows,
+}: {
+  label?: string
+  placeholder: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  maxLength?: number
+  required?: boolean
+  caption?: string
+  rows?: number
+}) => {
+  return (
+    <div>
+      {label && (
+        <label className='block text-sm font-medium text-black mb-3'>
+          {label}
+          {required && <span className='ml-1'>*</span>}
+        </label>
+      )}
+      <div className='px-3 py-2 rounded-md bg-white active:bg-stone-100 flex flex-row gap-2 justify-start items-center focus-within:bg-stone-200 transition-all'>
+        <textarea
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e)}
+          rows={rows || 4}
+          maxLength={maxLength}
+          required={required}
+          className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent resize-none'
+        />
+      </div>
+      {caption && <p className='text-xs text-gray-500 mt-2 px-0.5'>{caption}</p>}
+    </div>
+  )
+}
+
+const SelectItem = ({
+  label,
+  value,
+  required,
+  onChange,
+  options,
+  caption,
+}: {
+  label?: string
+  value: any
+  required?: boolean
+  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void
+  options: {
+    value: string
+    label: string
+  }[]
+  caption?: string
+}) => {
+  return (
+    <div>
+      {label && (
+        <label className='block text-sm font-medium text-black mb-3'>
+          {label}
+          {required && <span className='ml-1'>*</span>}
+        </label>
+      )}
+      <div className='px-3 py-2 rounded-md bg-white relative active:bg-stone-100 flex flex-row gap-2 justify-start items-center focus-within:bg-stone-200 transition-all'>
+        <select
+          value={value}
+          onChange={(e) => onChange(e)}
+          className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent'
+        >
+          {options?.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <RxCaretDown
+          size={20}
+          className='text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none'
+        />
+      </div>
+      {caption && <p className='text-xs text-gray-500 mt-2 px-0.5'>{caption}</p>}
+    </div>
   )
 }
