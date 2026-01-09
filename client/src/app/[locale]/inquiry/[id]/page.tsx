@@ -2,9 +2,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from '@/i18n/routing'
 import { format } from 'date-fns'
-import { PageHeader, PageStart, SplashScreen } from '@/components'
+import { PageStart, SplashScreen } from '@/components'
 import { MdLock, MdPerson, MdAdminPanelSettings } from 'react-icons/md'
 import { INQUIRY_CATEGORIES, InquiryType, MessageType } from '@/types/inquiry'
 
@@ -192,71 +193,98 @@ export default function InquiryDetailPage() {
   return (
     <>
       <PageStart />
-      <div className='space-y-10 px-4'>
+      <div className='space-y-6 px-4'>
         {/* Inquiry Info */}
-        <div className='bg-white border border-gray-200 rounded-lg p-4 mb-4 relative'>
-          <div className='flex flex-col items-start justify-start mb-2'>
-            <span className='text-lg font-semibold text-gray-900'>
-              [{INQUIRY_CATEGORIES.find((c) => c.value === inquiry.category)?.label_en || 'Unknown'}] {inquiry.subject}
+        <span className='text-base font-medium text-black'>Inquiry</span>
+        <div className='bg-white rounded-lg mt-2 p-4 relative flex flex-col items-start justify-start gap-1'>
+          <span className={`absolute top-4 right-4 text-xs px-2 py-0.5 rounded text-black bg-[#DFDADA] uppercase`}>
+            {inquiry.status}
+          </span>
+          <div className='text-base text-black'>
+            {inquiry.reservation_code && <span>{inquiry.reservation_code} | </span>}
+            <span>{inquiry.email}</span>
+          </div>
+          <div className='text-lg font-medium text-black'>
+            [{INQUIRY_CATEGORIES.find((c) => c.value === inquiry.category)?.label_en || 'Unknown'}] {inquiry.subject}
+          </div>
+          <div className='w-full h-fit flex mt-1 flex-col justify-start items-start gap-4'>
+            <p className='w-full min-h-24 h-fit text-black/90 whitespace-pre-wrap'>{messages[0]?.content}</p>
+            <span className='self-end text-sm text-[#8E7D7D]'>
+              {format(new Date(inquiry.created_at), 'MMM dd, yyyy HH:mm')}
             </span>
-            <div className='flex items-center gap-2 text-sm text-gray-600'>
-              {inquiry.has_password && <MdLock size={14} className='text-gray-400' />}
-              <span>{inquiry.email}</span>
-            </div>
-          </div>
-          <span className={`text-xs px-2 py-1 rounded absolute top-4 right-4 uppercase`}>{inquiry.status}</span>
-
-          <div className='text-xs text-gray-500'>
-            Posted: {format(new Date(inquiry.created_at), 'MMM dd, yyyy HH:mm')}
-          </div>
-          {inquiry.reservation_code && (
-            <div className='text-xs text-gray-500 mt-1'>Reservation Code: {inquiry.reservation_code}</div>
-          )}
-          <div className='mt-4 min-h-[80px]'>
-            <p className='text-gray-800 whitespace-pre-wrap'>{messages[0]?.content}</p>
           </div>
         </div>
 
-        {/* Messages (Board style) exclude original */}
-        <div className='space-y-3 mb-6'>
-          {messages.slice(1).map((message, index) => (
-            <div
-              key={message.id}
-              className={`bg-white border rounded-lg p-4 ${
-                message.sender_type === 'admin' ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
-              }`}
-            >
-              <div className='flex items-center gap-2 mb-2'>
-                {message.sender_type === 'admin' ? (
-                  <MdAdminPanelSettings size={18} className='text-blue-600' />
-                ) : (
-                  <MdPerson size={18} className='text-gray-600' />
-                )}
-                <span className='text-sm font-medium text-gray-900'>
-                  {message.sender_type === 'admin' ? 'Admin' : message.sender_name || 'Customer'}
-                </span>
-                <span className='text-xs text-gray-500'>
-                  {format(new Date(message.created_at), 'MMM dd, yyyy HH:mm')}
-                </span>
-                {index === 0 && <span className='text-xs px-2 py-0.5 bg-gray-200 text-gray-700 rounded'>Original</span>}
+        {/* Admin Reply and Nested Replies */}
+        {messages.length > 1 && (
+          <>
+            <span className='text-base font-medium text-black'>Admin Reply</span>
+            <div className='mt-2 mb-6'>
+              {/* 관리자 답변 (두 번째 메시지) */}
+              <div className='bg-white rounded-lg p-4'>
+                <div className='w-full h-fit flex mt-1 flex-col justify-start items-start gap-4'>
+                  <p className='w-full h-fit text-black/90 whitespace-pre-wrap'>{messages[1]?.content}</p>
+                  <div className='w-full h-fit flex flex-row justify-between items-end'>
+                    <div className='flex items-center gap-1'>
+                      {messages[1]?.sender_type === 'admin' ? (
+                        <MdAdminPanelSettings size={18} className='text-blue-600' />
+                      ) : (
+                        <MdPerson size={18} className='text-gray-600' />
+                      )}
+                      <span className='text-sm font-medium text-gray-900'>
+                        {messages[1]?.sender_type === 'admin' ? 'Admin' : messages[1]?.sender_name || 'Customer'}
+                      </span>
+                    </div>
+                    <span className='text-sm text-[#8E7D7D]'>
+                      {format(new Date(messages[1]?.created_at), 'MMM dd, yyyy HH:mm')}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <p className='text-gray-800 whitespace-pre-wrap'>{message.content}</p>
+
+              {/* 대댓글들 (세 번째 메시지부터) */}
+              {messages.length > 2 && (
+                <div className='ml-6 mt-3 space-y-3 border-l-2 border-gray-200 pl-4'>
+                  {messages.slice(2).map((message) => (
+                    <div key={message.id} className='bg-gray-50 rounded-lg p-4'>
+                      <div className='w-full h-fit flex mt-1 flex-col justify-start items-start gap-4'>
+                        <p className='w-full h-fit text-black/90 whitespace-pre-wrap'>{message.content}</p>
+                        <div className='w-full h-fit flex flex-row justify-between items-end'>
+                          <div className='flex items-center gap-1'>
+                            {message.sender_type === 'admin' ? (
+                              <MdAdminPanelSettings size={18} className='text-blue-600' />
+                            ) : (
+                              <MdPerson size={18} className='text-gray-600' />
+                            )}
+                            <span className='text-sm font-medium text-gray-900'>
+                              {message.sender_type === 'admin' ? 'Admin' : message.sender_name || 'Customer'}
+                            </span>
+                          </div>
+                          <span className='text-sm text-[#8E7D7D]'>
+                            {format(new Date(message.created_at), 'MMM dd, yyyy HH:mm')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          ))}
-        </div>
+          </>
+        )}
 
         {/* Reply Form */}
         {messages.some((m) => m.sender_type === 'admin') && (
           <form onSubmit={handleReply} className='bg-white border border-gray-200 rounded-lg p-4'>
             <label className='block text-sm font-medium text-gray-700 mb-2'>Write Reply</label>
-            <textarea
+            <TextareaItem
+              label=''
+              placeholder='Enter your reply'
               value={replyContent}
               onChange={(e) => setReplyContent(e.target.value)}
-              rows={4}
-              className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none mb-3'
-              placeholder='Enter your reply'
+              required
             />
-            <div className='flex gap-3'>
+            <div className='flex gap-3 mt-3'>
               <button
                 type='button'
                 onClick={() => router.push('/inquiry')}
@@ -321,6 +349,49 @@ const InputItem = ({
           maxLength={maxLength}
           required={required}
           className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent'
+        />
+      </div>
+      {caption && <p className='text-xs text-gray-500 mt-2 px-0.5'>{caption}</p>}
+    </div>
+  )
+}
+
+const TextareaItem = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  maxLength,
+  required,
+  caption,
+  rows,
+}: {
+  label?: string
+  placeholder: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+  maxLength?: number
+  required?: boolean
+  caption?: string
+  rows?: number
+}) => {
+  return (
+    <div>
+      {label && (
+        <label className='block text-sm font-medium text-black mb-3'>
+          {label}
+          {required && <span className='ml-1'>*</span>}
+        </label>
+      )}
+      <div className='px-3 py-2 rounded-md bg-white active:bg-stone-100 flex flex-row gap-2 justify-start items-center focus-within:bg-stone-200 transition-all'>
+        <textarea
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e)}
+          rows={rows || 4}
+          maxLength={maxLength}
+          required={required}
+          className='w-full placeholder:text-[#B4B4B4] focus:outline-none bg-transparent resize-none'
         />
       </div>
       {caption && <p className='text-xs text-gray-500 mt-2 px-0.5'>{caption}</p>}
