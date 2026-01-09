@@ -218,7 +218,7 @@ export default function InquiryDetailPage() {
         {/* Admin Reply and Nested Replies */}
         {messages.length > 1 && (
           <>
-            <span className='text-base font-medium text-black'>Admin Reply</span>
+            <span className='text-base font-medium text-black'>Reply</span>
             <div className='mt-2 mb-6'>
               {/* 관리자 답변 (두 번째 메시지) */}
               <div className='bg-white rounded-lg p-4'>
