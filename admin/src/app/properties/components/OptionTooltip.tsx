@@ -9,10 +9,12 @@ export function OptionTooltip({
   onEdit,
   propertyId,
   onDeleted,
+  children,
 }: {
   onEdit: () => void
   propertyId: string
   onDeleted?: () => void
+  children?: React.ReactNode
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -68,10 +70,13 @@ export function OptionTooltip({
     <div ref={rootRef} className='relative'>
       <button
         type='button'
-        onClick={() => setIsOpen((v) => !v)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsOpen((v) => !v)
+        }}
         className={classNames(
-          'w-auto h-full flex justify-center items-center',
-          'relative p-2 rounded-lg active:bg-stone-200 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center',
+          'w-fit h-fit flex justify-center items-center',
+          'relative p-1 rounded-lg bg-white active:bg-stone-200 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center',
           isOpen ? 'bg-stone-200' : 'bg-stone-100',
         )}
         aria-haspopup='menu'
@@ -89,6 +94,7 @@ export function OptionTooltip({
           className='absolute right-0 top-[45px] min-w-36 bg-white rounded-md border border-stone-200 shadow-xl overflow-hidden z-10'
           onClick={(e) => e.stopPropagation()}
         >
+          {children}
           <button
             role='menuitem'
             onClick={(e) => {
