@@ -7,7 +7,7 @@ export const AddButton = (props: AddButtonProps) => {
   return (
     <>
       <button
-        className='w-fit h-7 pl-1.5 pr-2.5 py-1 rounded bg-[#5E4646] text-white gap-1 inline-flex justify-center items-center  active:opacity-75 active:scale-90 transition-all'
+        className='w-fit h-8 pl-1.5 pr-2.5 py-1 rounded-lg bg-[#5E4646] text-white gap-1 inline-flex justify-center items-center  active:opacity-75 active:scale-90 transition-all'
         onClick={onClick}
       >
         <svg xmlns='http://www.w3.org/2000/svg' className='w-5 h-5' viewBox='0 0 20 20' fill='none'>

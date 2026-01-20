@@ -67,6 +67,7 @@ export type PropertyListItem = {
   price_per_night: number
   currency: string
   created_at: string
+  updated_at: string
   thumbnail: string | null
   images: { url: string }[]
   address1: string | null

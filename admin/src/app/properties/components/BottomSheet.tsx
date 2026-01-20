@@ -1,4 +1,5 @@
 'use client'
+import classNames from 'classnames'
 import { useRef } from 'react'
 import { Sheet, SheetRef } from 'react-modal-sheet'
 
@@ -16,10 +17,12 @@ interface HeaderProps {
   leftAction?: {
     text?: string
     onClick: () => void
+    className?: string
   }
   rightAction?: {
     text?: string
     onClick: () => void
+    className?: string
   }
 }
 
@@ -52,7 +55,10 @@ export const BottomSheet = ({
           <Sheet.Header>
             <div className='w-full h-fit flex bg-white flex-row justify-center items-center p-4'>
               {leftAction && (
-                <button className='absolute left-0 p-4 active:scale-90 transition-all' onClick={leftAction?.onClick}>
+                <button
+                  className={classNames('absolute left-0 p-4 active:scale-90 transition-all', leftAction.className)}
+                  onClick={leftAction?.onClick}
+                >
                   {leftAction.text ? (
                     leftAction.text
                   ) : (
@@ -64,7 +70,10 @@ export const BottomSheet = ({
               )}
               <div className='w-fit h-6 text-base font-semibold'>{title}</div>
               {rightAction && (
-                <button className='absolute right-0 p-4 active:scale-90 transition-all' onClick={rightAction?.onClick}>
+                <button
+                  className={classNames('absolute right-0 p-4 active:scale-90 transition-all', rightAction.className)}
+                  onClick={rightAction?.onClick}
+                >
                   {rightAction.text}
                 </button>
               )}

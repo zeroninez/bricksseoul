@@ -161,7 +161,7 @@ export const AccessLogsViewer = () => {
               key={option.value}
               onClick={() => setFilter(option.value)}
               className={`px-3 py-1 rounded-lg text-sm transition-colors ${
-                filter === option.value ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 active:bg-gray-200'
+                filter === option.value ? 'bg-black text-white' : 'bg-white text-black active:bg-gray-200'
               }`}
             >
               {option.label}
@@ -172,7 +172,7 @@ export const AccessLogsViewer = () => {
         {/* 새로고침 버튼을 위로 이동 */}
         <button
           onClick={fetchAccessLogs}
-          className='px-2 py-1 text-sm flex flex-row justify-center items-center gap-1.5 bg-gray-100 active:bg-gray-200 text-gray-700 rounded-lg transition-colors'
+          className='px-2 py-1 text-sm flex flex-row justify-center items-center gap-1.5 bg-white active:bg-gray-200 text-black rounded-lg transition-colors'
         >
           <TbRefresh />
           새로고침

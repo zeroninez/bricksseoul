@@ -37,6 +37,8 @@ const emptyForm = {
 export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
   const [depth, setDepth] = useState<StepKey | 0>(0)
 
+  const [isDeleting, setIsDeleting] = useState(false) // 삭제 상태 관리
+
   // ✅ 수정용 폼 상태
   const [form, setForm] = useState<{
     name: string
@@ -136,6 +138,36 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
   const isSaving = updating || isLoading
   const saveDisabled = isSaving || !form.name || form.price_per_night <= 0
 
+  const handleDelete = async () => {
+    if (!property) return
+
+    const ok = confirm('이 숙소를 정말 삭제할까요? 삭제 후에는 되돌릴 수 없어요.')
+    if (!ok) return
+
+    try {
+      setIsDeleting(true)
+
+      const res = await fetch(`/api/properties/delete?id=${encodeURIComponent(property.id)}`, {
+        method: 'DELETE',
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        throw new Error(data?.error ?? '삭제 요청에 실패했어요.')
+      }
+
+      alert('숙소가 삭제되었습니다.')
+
+      // 리스트 새로고침
+      onClose()
+    } catch (err: any) {
+      console.error(err)
+      alert(err?.message ?? '삭제 중 오류가 발생했어요.')
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
   return (
     <BottomSheet
       isOpen={isOpen}
@@ -143,6 +175,11 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
       title='숙소 수정'
       leftAction={{
         onClick: onExit,
+      }}
+      rightAction={{
+        text: isDeleting ? '삭제 중...' : '숙소 삭제',
+        onClick: handleDelete,
+        className: 'text-red-500',
       }}
     >
       <main className='w-full h-full overflow-y-scroll flex flex-col justify-start items-start gap-6 p-5 pb-32'>
@@ -281,7 +318,16 @@ export const EditSheet = ({ isOpen, onClose, propertyId }: EditSheetProps) => {
         {/* <div className='w-fit h-fit text-sm text-blue-500'>게스트 사이트 미리보기</div> */}
       </main>
 
-      <div className='absolute bottom-0 w-full h-fit px-5 pb-5 z-10'>
+      <div className='absolute bottom-0 w-full h-fit flex flex-row justify-between items-center gap-4 px-5 pb-5 z-10'>
+        {/* 취소하기 */}
+        <button
+          className='w-full h-14 px-6 py-3 bg-white text-stone-700 border border-stone-300 rounded-xl font-medium active:opacity-70 transition-all disabled:text-white disabled:bg-stone-300 disabled:cursor-not-allowed'
+          onClick={onExit}
+          disabled={isSaving}
+        >
+          취소하기
+        </button>
+        {/* 수정하기 */}
         <Button onClick={handleSave} disabled={saveDisabled}>
           {isSaving ? '저장 중...' : '수정하기'}
         </Button>

@@ -12,7 +12,7 @@ export default function Codes() {
 
   return (
     <>
-      <div className='fixed top-0 left-1/2 -translate-x-1/2 max-w-md w-full min-h-dvh h-full overflow-y-scroll bg-white z-50'>
+      <div className='fixed top-0 left-1/2 -translate-x-1/2 max-w-md w-full min-h-dvh h-full overflow-y-scroll bg-[#F4F3F1] z-50'>
         <div className='w-full h-fit flex flex-row justify-between items-center mb-4'>
           <button
             className='w-fit px-4 h-fit py-3 active:scale-90 active:opacity-70 transition-all text-black flex justify-center items-center'

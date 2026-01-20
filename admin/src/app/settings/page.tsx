@@ -111,27 +111,15 @@ export default function Settings() {
             </Fragment>
           ))}
         </div>
+        <div className='w-full h-full p-6 flex flex-col gap-2 justify-center items-center text-sm'>
+          <span>서비스 사용 중에 문제가 발생하면 아래 이메일로 문의해주세요</span>
+          <a href='mailto:dev@zeroninez.com' className='underline '>
+            dev@zeroninez.com
+          </a>
+          <span className='mt-6 opacity-50'>Nookment © {new Date().getFullYear()} All rights reserved.</span>
+        </div>
       </div>
 
-      {/* // item.key === 'password' ? (
-          //   <button
-          //     key={item.key}
-          //     onClick={() => setIsPasswordModalOpen(true)}
-          //     className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-background border-b border-gray-200 active:bg-gray-50 transition-colors'
-          //   >
-          //     <span className='font-medium'>{item.name}</span>
-          //     <span className='text-xs text-gray-500 mt-1'>{item.description}</span>
-          //   </button>
-          // ) : (
-          //   <Link
-          //     key={item.key}
-          //     href={`/${item.key}`}
-          //     className='px-6 py-4 flex flex-col text-sm items-start w-full text-left bg-background border-b border-gray-200 active:bg-gray-50 transition-colors'
-          //   >
-          //     <span className='font-medium'>{item.name}</span>
-          //     <span className='text-xs text-gray-500 mt-1'>{item.description}</span>
-          //   </Link>
-          // ), */}
       {/* 비밀번호 변경 모달 */}
       <PasswordChangeModal isOpen={isPasswordModalOpen} onClose={() => setIsPasswordModalOpen(false)} />
     </>

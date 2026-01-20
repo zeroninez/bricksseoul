@@ -155,7 +155,7 @@ export const AccessCodeManager = () => {
           {/* 새로고침 버튼 */}
           <button
             onClick={fetchAccessCodes}
-            className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-[#F4F3F1] hover:bg-gray-200 text-gray-700 rounded-lg transition-colors'
+            className='px-3 py-2 flex text-sm flex-row justify-center items-center gap-2 bg-white hover:bg-gray-200 text-black rounded-lg transition-colors'
           >
             <TbRefresh className='w-4 h-4' />
             새로고침
@@ -188,7 +188,7 @@ export const AccessCodeManager = () => {
               exit={{ opacity: 0, height: 0 }}
               className='overflow-hidden'
             >
-              <div className='p-4 rounded-lg bg-[#F4F3F1] space-y-4'>
+              <div className='p-4 rounded-lg bg-white space-y-4'>
                 <h3 className='text-base'>새 초대코드 추가</h3>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                   <div>
@@ -236,14 +236,14 @@ export const AccessCodeManager = () => {
         </AnimatePresence>
       </div>
 
-      <div className='w-full  bg-white h-full space-y-6 px-4 pt-4 pb-6'>
+      <div className='w-full h-full space-y-6 px-4 pt-4 pb-6'>
         {/* 페이지네이션 정보 */}
         {accessCodes.length > 0 && (
           <div className='flex justify-between items-center text-sm text-gray-600'>
-            <span>
+            <span className='text-black'>
               총 {accessCodes.length}개 중 {startIndex + 1}-{Math.min(endIndex, accessCodes.length)}개 표시
             </span>
-            <span>
+            <span className='text-black'>
               {currentPage} / {totalPages} 페이지
             </span>
           </div>
@@ -253,7 +253,7 @@ export const AccessCodeManager = () => {
           {accessCodes.length === 0 ? (
             <div className='text-center py-12 bg-white rounded-lg border border-gray-200'>
               <div className='text-4xl mb-4'>📝</div>
-              <p className='text-gray-500 mb-4'>등록된 초대코드가 없습니다.</p>
+              <p className='text-black mb-4'>등록된 초대코드가 없습니다.</p>
               <button
                 onClick={() => setIsAddingNew(true)}
                 className='px-4 py-2 bg-black text-white rounded-lg hover:bg-black/90 transition-colors'
@@ -269,7 +269,7 @@ export const AccessCodeManager = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  className='py-4'
+                  className='bg-white p-4 rounded-lg flex flex-col'
                 >
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>
@@ -283,7 +283,7 @@ export const AccessCodeManager = () => {
                           {code.is_active ? '활성' : '비활성'}
                         </span>
                       </div>
-                      <p className='text-sm text-gray-700 mb-1'>{code.name}</p>
+                      <p className='text-sm text-black mb-1'>{code.name}</p>
                       <p className='text-sm text-gray-500'>
                         생성일: {code.created_at ? new Date(code.created_at).toLocaleDateString('ko-KR') : '알 수 없음'}
                       </p>
@@ -308,7 +308,6 @@ export const AccessCodeManager = () => {
                     </div>
                   </div>
                 </motion.div>
-                {index < currentCodes.length - 1 && <hr className='my-2 border-gray-200' />}
               </div>
             ))
           )}

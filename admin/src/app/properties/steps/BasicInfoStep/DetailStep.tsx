@@ -31,6 +31,13 @@ export const DetailStep = ({
     const match = html.match(/src="([^"]+)"/)
     return match ? match[1] : null
   }
+
+  // 한국어 파라미터 추가하는 함수
+  const getLocalizedMapUrl = (baseUrl: string, language: string = 'ko') => {
+    if (!baseUrl) return ''
+    return baseUrl.includes('language=') ? baseUrl : `${baseUrl}&language=${language}`
+  }
+
   return (
     <div className='w-full h-fit flex flex-col gap-6 p-5 pb-32'>
       <Field label='기본주소 (영문)' rightText='재검색' rightAction={onResearch}>
@@ -79,7 +86,10 @@ export const DetailStep = ({
           placeholder='구글 지도 임베드 링크 입력'
           className='w-full h-12 bg-stone-100 px-4 rounded-md focus:bg-stone-200 transition-all outline-none'
           value={form.address.iframe_src || ''}
-          onChange={(e) => updateAddress('iframe_src', extractIframeSrc(e.target.value) || '')}
+          onChange={(e) => {
+            const extracted = extractIframeSrc(e.target.value)
+            updateAddress('iframe_src', extracted || e.target.value)
+          }}
           onFocus={onInputFocus}
         />
       </Field>
@@ -90,7 +100,7 @@ export const DetailStep = ({
         >
           <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white z-0'>로딩 중...</span>
           <iframe
-            src={form.address.iframe_src}
+            src={getLocalizedMapUrl(form.address.iframe_src, 'ko')} // 한국어로 표시
             width='100%'
             height='100%'
             style={{ border: 0 }}

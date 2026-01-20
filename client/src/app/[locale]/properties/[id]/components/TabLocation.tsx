@@ -8,6 +8,11 @@ interface TabContainerProps {
 }
 
 export const TabLocation = ({ id, ref, data }: TabContainerProps) => {
+  const getLocalizedMapUrl = (baseUrl: string, language: string = 'en') => {
+    if (!baseUrl) return ''
+    return baseUrl.includes('language=') ? baseUrl : `${baseUrl}&language=${language}`
+  }
+
   return (
     <>
       <section id={id} ref={ref} className='w-full h-fit scroll-mt-[240px] px-5'>
@@ -23,7 +28,7 @@ export const TabLocation = ({ id, ref, data }: TabContainerProps) => {
                 로딩 중...
               </span>
               <iframe
-                src={data.address?.iframe_src || ''}
+                src={getLocalizedMapUrl(data.address?.iframe_src || '', 'en')}
                 width='100%'
                 height='100%'
                 style={{

@@ -17,9 +17,9 @@ export default function Properties() {
 
   return (
     <div className='w-full min-h-dvh mt-14 px-4 pb-32'>
-      <div className='flex items-center justify-between gap-2 mb-3'>
+      <div className='flex items-center justify-between gap-2 mb-3 px-0.5'>
         <div className='inline-flex h-7 items-center justify-center gap-2 text-[#3C2F2F] text-sm font-medium'>
-          <span className='leading-none'>등록된 공간</span> <div className='w-[1.5px] h-3 bg-[#3C2F2F]' />
+          <span className='leading-none'>등록된 공간</span> <div className='w-[2px] h-3 bg-[#3C2F2F]' />
           <span className='leading-none'>{properties ? properties.length : 0}</span>
         </div>
         <AddButton onClick={() => setIsClickedAdd(true)} />

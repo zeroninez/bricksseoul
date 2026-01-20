@@ -14,6 +14,7 @@ export async function GET() {
       price_per_night,
       currency,
       created_at,
+      updated_at,
       property_images!left (
         url,
         is_primary,
@@ -48,6 +49,7 @@ export async function GET() {
       address1: p.property_address?.address1 ?? null, // ← 분리해서 그대로
       address2: p.property_address?.address2 ?? null,
       is_visible: p.is_visible, // ← 추가
+      updated_at: p.updated_at, // ← 추가
     }
   })
 
