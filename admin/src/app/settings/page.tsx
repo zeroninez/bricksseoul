@@ -111,8 +111,11 @@ export default function Settings() {
             </Fragment>
           ))}
         </div>
-        <div className='w-full h-full p-6 flex flex-col gap-2 justify-center items-center text-sm'>
-          <span>서비스 사용 중에 문제가 발생하면 아래 이메일로 문의해주세요</span>
+        <div className='w-full h-full p-6 flex flex-col gap-2 text-center justify-center items-center text-sm'>
+          <span className='text-xs'>
+            서비스 사용 중에 문제가 발생하면 <br />
+            아래 이메일로 문의해주세요
+          </span>
           <a href='mailto:dev@zeroninez.com' className='underline '>
             dev@zeroninez.com
           </a>
