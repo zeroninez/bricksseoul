@@ -33,7 +33,7 @@ export const PropertyItem = (
             <img src={property.thumbnail} alt={property.name} className='w-full h-full object-cover' />
           ) : (
             // 이미지 없음
-            <div className='w-full h-full text-sm bg-stone-300 flex items-center justify-center text-stone-500'>
+            <div className='w-full h-full text-xs bg-stone-300 flex items-center justify-center text-stone-500'>
               이미지 없음
             </div>
           )}
@@ -43,7 +43,7 @@ export const PropertyItem = (
           <div className='w-full h-fit flex flex-col gap-1 justify-start items-start'>
             <div className='text-sm leading-tight text-stone-500 mr-16'>{property.address2}</div>
             <div className='text-lg leading-tight font-medium text-black mr-16'>{property.name}</div>
-            <div className='text-sm leading-snug text-stone-500 pr-12'>{property.address1}</div>
+            <div className='text-xs leading-snug text-stone-500 pr-12'>{property.address1}</div>
           </div>
           <OptionTooltip
             onEdit={() => property.onClick?.(property.id)}
