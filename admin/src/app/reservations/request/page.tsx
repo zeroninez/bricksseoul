@@ -11,7 +11,7 @@ import { useQueryState } from '@/hooks/useQueryState'
 type SortOption = 'latest' | 'oldest' | 'check_in_asc' | 'check_in_desc'
 
 export default function RequestList() {
-  const tabs = ['신규예약', '지난예약']
+  const tabs = ['신규', '예약내역']
   const [tab, setTab] = useQueryState('tab', tabs[0], {
     allowed: tabs,
   })
@@ -83,11 +83,11 @@ export default function RequestList() {
     return sorted
   }, [allReservations, searchQuery, sortBy])
 
-  const isLoading = tab === '신규예약' ? isLoadingNew : isLoadingPast
-  const error = tab === '신규예약' ? errorNew : errorPast
+  const isLoading = tab === '신규' ? isLoadingNew : isLoadingPast
+  const error = tab === '신규' ? errorNew : errorPast
 
   const handleRefresh = () => {
-    if (tab === '신규예약') {
+    if (tab === '신규') {
       refetchNew()
     } else {
       refetchPast()
@@ -102,7 +102,7 @@ export default function RequestList() {
   // ✅ 탭 변경 시 검색어 초기화
   const handleTabChange = (tab: (typeof tabs)[number]) => {
     setTab(tab)
-    if (tab === '신규예약') {
+    if (tab === '신규') {
       setSearchQuery('')
     }
   }
@@ -138,7 +138,7 @@ export default function RequestList() {
       )}
 
       {/* 신규 예약 리스트 */}
-      {!isLoading && !error && tab === '신규예약' && (
+      {!isLoading && !error && tab === '신규' && (
         <div className='space-y-4 px-4 py-4'>
           {newReservations && newReservations.length > 0 ? (
             newReservations.map((reservation, index) => (
@@ -165,7 +165,7 @@ export default function RequestList() {
       )}
 
       {/* 지난 예약 리스트 */}
-      {!isLoading && !error && tab === '지난예약' && (
+      {!isLoading && !error && tab === '예약내역' && (
         <div className='flex flex-col'>
           {/* ✅ 검색 및 정렬 UI */}
           <div className='sticky top-0 z-10 p-4 space-y-3'>
