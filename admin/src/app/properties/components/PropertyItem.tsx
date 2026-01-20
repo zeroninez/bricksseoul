@@ -22,7 +22,7 @@ export const PropertyItem = (
   return (
     <>
       <div
-        className='w-full h-fit flex flex-col bg-white p-4 border border-[#E9E9E9] rounded-xl gap-4 cursor-pointer'
+        className='w-full h-fit flex flex-col bg-white p-4 border border-[#E9E9E9] rounded-xl gap-4 cursor-pointer mb-4'
         onClick={() => {
           property.onClick?.(property.id)
         }}
